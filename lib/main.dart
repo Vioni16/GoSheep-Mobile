@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/routes/app_routes.dart';
+import 'core/theme/theme.dart';
 import 'features/authentication/screens/login_screen.dart';
 
 void main() {
@@ -10,9 +12,13 @@ class GoSheepApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginPage(),
+      title: 'GoSheep',
+      home: LoginScreen(),
+      theme: AppTheme.lightTheme,
+      initialRoute: AppRoutes.login,
+      routes: AppRoutes.routes,
     );
   }
 }

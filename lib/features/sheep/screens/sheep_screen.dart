@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class SheepPage extends StatelessWidget {
-  const SheepPage({super.key});
+class SheepScreen extends StatelessWidget {
+  const SheepScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

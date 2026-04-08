@@ -1,27 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:gosheep_mobile/features/authentication/screens/register_screen.dart';
-import 'package:gosheep_mobile/features/navbar.dart';
-import '../../../core/widgets/custom_button.dart';
+import 'package:gosheep_mobile/routes/app_routes.dart';
 import '../../../core/widgets/custom_textfield.dart';
-import 'register_screen.dart';
-import '../dashboard/screens/dashboard_screen.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  final FocusNode emailFocus = FocusNode();
-  final FocusNode passwordFocus = FocusNode();
+class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _emailFocus = FocusNode();
+  final _passwordFocus = FocusNode();
 
   @override
   void dispose() {
-    emailFocus.dispose();
-    passwordFocus.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _emailFocus.dispose();
+    _passwordFocus.dispose();
     super.dispose();
+  }
+
+  void _onLogin() {
+    if (!_formKey.currentState!.validate()) return;
+
+    Navigator.pushReplacementNamed(context, AppRoutes.home);
   }
 
   @override
@@ -31,77 +38,57 @@ class _LoginPageState extends State<LoginPage> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30),
-          child: Column(
-            children: [
-              const SizedBox(height: 60),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                const SizedBox(height: 60),
 
-              Image.asset('assets/images/goSheep_logo.png', height: 230),
+                Image.asset('assets/images/goSheep_logo.png', height: 230),
 
-              const SizedBox(height: 20),
+                const SizedBox(height: 28),
 
-              const SizedBox(height: 8),
-              CustomTextField(icon: Icons.email, hint: 'Email'),
+                CustomTextFormField(
+                  icon: Icons.email,
+                  hint: 'Email',
+                  controller: _emailController,
+                  focusNode: _emailFocus,
+                  keyboardType: TextInputType.emailAddress,
+                ),
 
-              const SizedBox(height: 25),
+                const SizedBox(height: 16),
 
-              const SizedBox(height: 8),
-              CustomTextField(
-                icon: Icons.lock,
-                hint: 'Password',
-                isPassword: true,
-              ),
+                CustomTextFormField(
+                  icon: Icons.lock,
+                  hint: 'Password',
+                  isPassword: true,
+                  controller: _passwordController,
+                  focusNode: _passwordFocus,
+                ),
 
-              const SizedBox(height: 5),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text(
-                      'Lupa password?',
-                      style: TextStyle(color: Color(0xFF2E7D32)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {},
+                      child: const Text(
+                        'Lupa password?',
+                        style: TextStyle(color: Color(0xFF2E7D32)),
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
 
-              const SizedBox(height: 30),
+                const SizedBox(height: 16),
 
-              CustomButton(
-                text: "Login",
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-builder: (context) => const MainNavigation(),                    ),
-                  );
-                },
-              ),
+                ElevatedButton(
+                  onPressed: _onLogin,
+                  child: const Text('Login'),
+                ),
 
-              const SizedBox(height: 25),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Belum punya akun? "),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const RegisterPage(),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      'Daftar',
-                      style: TextStyle(color: Color(0xFF2E7D32)),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+                const SizedBox(height: 25),
+              ],
+            ),
           ),
         ),
       ),

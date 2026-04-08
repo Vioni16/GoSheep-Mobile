@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class BreedingPage extends StatelessWidget {
-  const BreedingPage({super.key});
+class BreedingScreen extends StatelessWidget {
+  const BreedingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
