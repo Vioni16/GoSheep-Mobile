@@ -12,7 +12,6 @@ class StatsSection extends StatelessWidget {
       _StatItem(title: 'Perlu Diperhatikan', value: '7', icon: Icons.warning_amber_rounded),
     ];
 
-    // Gradient per card: semua ungu-indigo, tapi arah & stop sedikit beda
     const gradients = [
       LinearGradient(
         colors: [Color(0xFF2044BD), Color(0xFF66BB6A)],

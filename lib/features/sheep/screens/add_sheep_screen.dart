@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/core/widgets/custom_button.dart';
 
-// ==========================================
-// ADD SHEEP SCREEN
-// ==========================================
 class AddSheepScreen extends StatefulWidget {
   const AddSheepScreen({super.key});
 
@@ -14,26 +11,26 @@ class AddSheepScreen extends StatefulWidget {
 class _AddSheepScreenState extends State<AddSheepScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  late TextEditingController _namaController;
-  late TextEditingController _jenisController;
-  late TextEditingController _beratController;
-  late TextEditingController _statusKesehatanController;
+  late TextEditingController _nameController;
+  late TextEditingController _breedController;
+  late TextEditingController _weightController;
+  late TextEditingController _healthStatusController;
 
   @override
   void initState() {
     super.initState();
-    _namaController = TextEditingController();
-    _jenisController = TextEditingController();
-    _beratController = TextEditingController();
-    _statusKesehatanController = TextEditingController();
+    _nameController = TextEditingController();
+    _breedController = TextEditingController();
+    _weightController = TextEditingController();
+    _healthStatusController = TextEditingController();
   }
 
   @override
   void dispose() {
-    _namaController.dispose();
-    _jenisController.dispose();
-    _beratController.dispose();
-    _statusKesehatanController.dispose();
+    _nameController.dispose();
+    _breedController.dispose();
+    _weightController.dispose();
+    _healthStatusController.dispose();
     super.dispose();
   }
 
@@ -42,16 +39,15 @@ class _AddSheepScreenState extends State<AddSheepScreen> {
       // TODO: Implement add sheep functionality
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Domba ${_namaController.text} berhasil ditambahkan!'),
+          content: Text('Domba ${_nameController.text} berhasil ditambahkan!'),
           duration: const Duration(seconds: 2),
         ),
       );
 
-      // Clear form
-      _namaController.clear();
-      _jenisController.clear();
-      _beratController.clear();
-      _statusKesehatanController.clear();
+      _nameController.clear();
+      _breedController.clear();
+      _weightController.clear();
+      _healthStatusController.clear();
 
       Navigator.pop(context);
     }
@@ -68,14 +64,13 @@ class _AddSheepScreenState extends State<AddSheepScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Nama
               const Text(
                 'Nama Domba',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: 8),
               TextFormField(
-                controller: _namaController,
+                controller: _nameController,
                 decoration: InputDecoration(
                   hintText: 'Contoh: Shaun',
                   border: OutlineInputBorder(
@@ -91,14 +86,13 @@ class _AddSheepScreenState extends State<AddSheepScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Jenis
               const Text(
                 'Jenis Domba',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: 8),
               TextFormField(
-                controller: _jenisController,
+                controller: _breedController,
                 decoration: InputDecoration(
                   hintText: 'Contoh: Merino, Garut, Texel',
                   border: OutlineInputBorder(
@@ -114,14 +108,13 @@ class _AddSheepScreenState extends State<AddSheepScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Berat
               const Text(
                 'Berat (kg)',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: 8),
               TextFormField(
-                controller: _beratController,
+                controller: _weightController,
                 decoration: InputDecoration(
                   hintText: 'Contoh: 45.5',
                   border: OutlineInputBorder(
@@ -141,14 +134,13 @@ class _AddSheepScreenState extends State<AddSheepScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Status Kesehatan
               const Text(
                 'Status Kesehatan',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: 8),
               TextFormField(
-                controller: _statusKesehatanController,
+                controller: _healthStatusController,
                 decoration: InputDecoration(
                   hintText: 'Contoh: Sehat, Sakit',
                   border: OutlineInputBorder(
@@ -164,7 +156,6 @@ class _AddSheepScreenState extends State<AddSheepScreen> {
               ),
               const SizedBox(height: 32),
 
-              // Custom Button
               CustomButton(text: 'Tambah Domba', onPressed: _addSheep),
             ],
           ),
