@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:gosheep_mobile/core/widgets/custom_textfield.dart'; // Pastikan path import ini benar
-import 'package:gosheep_mobile/data/models/requests/create_sheep_request.dart';
+import 'package:gosheep_mobile/core/widgets/custom_textfield.dart';
 import 'package:gosheep_mobile/features/sheep/widgets/status_toggle.dart';
 
 class AddSheepSheet extends StatefulWidget {
-  final void Function(CreateSheepRequest) onAdd;
+  final void Function() onAdd;
   final List<String> breedList;
   const AddSheepSheet({
     super.key,

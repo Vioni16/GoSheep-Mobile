@@ -1,80 +1,73 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:gosheep_mobile/features/sheep/widgets/add_sheep_sheet.dart';
 import 'package:gosheep_mobile/features/sheep/widgets/filter_pill.dart';
 import 'package:gosheep_mobile/features/sheep/widgets/sheep_card.dart';
 import 'package:gosheep_mobile/features/sheep/widgets/stat_card.dart';
+
 import '../../../data/models/sheep.dart';
+import '../../../data/providers/sheep_provider.dart';
 
 const _breedList = ['Merino', 'Garut', 'Texel', 'Dorper', 'Suffolk'];
 
-final _initialData = [
-  Sheep(
-    id: 1,
-    name: 'Shaun',
-    breed: 'Merino',
-    weight: 45.5,
-    statusUi: 'Sehat',
-    earTag: 'D001',
-    gender: 'Male'
-  ),
-  Sheep(
-    id: 2,
-    name: 'Mbandot',
-    breed: 'Garut',
-    weight: 40.1,
-    statusUi: 'Sakit',
-    earTag: 'D002',
-    gender: 'Female'
-  ),
-  Sheep(
-    id: 3,
-    name: 'Bolly',
-    breed: 'Texel',
-    weight: 49.5,
-    statusUi: 'Sehat',
-    earTag: 'D003',
-    gender: 'Male'
-  ),
-];
-
-class SheepScreen extends StatefulWidget {
+class SheepScreen extends StatelessWidget {
   const SheepScreen({super.key});
+
   @override
-  State<SheepScreen> createState() => _SheepScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => SheepProvider()..fetchInitial(),
+      child: const _SheepScreenView(),
+    );
+  }
 }
 
-class _SheepScreenState extends State<SheepScreen> {
-  final _sheep = List<Sheep>.from(_initialData);
+class _SheepScreenView extends StatefulWidget {
+  const _SheepScreenView();
+
+  @override
+  State<_SheepScreenView> createState() => _SheepScreenViewState();
+}
+
+class _SheepScreenViewState extends State<_SheepScreenView> {
   final _search = TextEditingController();
+  final _scrollController = ScrollController();
+
   String _filter = 'all';
+
+  @override
+  void initState() {
+    super.initState();
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent - 200) {
+        context.read<SheepProvider>().fetchMore();
+      }
+    });
+  }
 
   @override
   void dispose() {
     _search.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
-  List<Sheep> get _filtered => _sheep.where((s) {
+  List<Sheep> _filtered(List<Sheep> list) {
     final q = _search.text.toLowerCase();
-    return (_filter == 'all' || s.statusUi.toLowerCase() == _filter) &&
-        (q.isEmpty ||
-            s.name.toLowerCase().contains(q) ||
-            s.earTag.toLowerCase().contains(q));
-  }).toList();
 
-  double get _maxBerat => _sheep.isEmpty
-      ? 1
-      : _sheep.map((s) => s.weight).reduce((a, b) => a > b ? a : b);
+    return list.where((s) {
+      return (_filter == 'all' || s.statusUi == _filter) &&
+          (q.isEmpty || s.earTag.toLowerCase().contains(q));
+    }).toList();
+  }
 
-  void _delete(Sheep s) {
-    setState(() => _sheep.remove(s));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${s.name} berhasil dihapus'),
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Colors.black87,
-      ),
-    );
+  double _maxBerat(List<Sheep> list) {
+    if (list.isEmpty) return 1;
+    return list
+        .map((s) => s.weight ?? 0)
+        .reduce((a, b) => a > b ? a : b);
   }
 
   void _openAdd() => showModalBottomSheet(
@@ -83,23 +76,17 @@ class _SheepScreenState extends State<SheepScreen> {
     backgroundColor: Colors.transparent,
     builder: (_) => AddSheepSheet(
       breedList: _breedList,
-      onAdd: (s) {
-        // setState(() => _sheep.insert(0, s));
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   const SnackBar(
-        //     content: Text('Data domba berhasil ditambahkan'),
-        //     behavior: SnackBarBehavior.floating,
-        //     backgroundColor: Color(0xFF3B6D11),
-        //   ),
-        // );
-      },
+      onAdd: () {},
     ),
   );
 
   @override
   Widget build(BuildContext context) {
-    final sheepList = _filtered;
-    final healthy = _sheep.where((s) => s.statusUi == 'Sehat').length;
+    final provider = context.watch<SheepProvider>();
+
+    final sheepList = _filtered(provider.sheepList);
+    final healthy =
+        provider.sheepList.where((s) => s.statusUi == 'sehat').length;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F4F0),
@@ -107,6 +94,7 @@ class _SheepScreenState extends State<SheepScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            /// HEADER
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
               child: Row(
@@ -161,13 +149,20 @@ class _SheepScreenState extends State<SheepScreen> {
                 ],
               ),
             ),
+
+            /// BODY
             Expanded(
               child: ListView(
+                controller: _scrollController,
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
                 children: [
+                  /// STATS
                   Row(
                     children: [
-                      StatCard(label: 'Total', value: '${_sheep.length}'),
+                      StatCard(
+                        label: 'Total',
+                        value: '${provider.sheepList.length}',
+                      ),
                       const SizedBox(width: 10),
                       StatCard(
                         label: 'Sehat',
@@ -177,12 +172,16 @@ class _SheepScreenState extends State<SheepScreen> {
                       const SizedBox(width: 10),
                       StatCard(
                         label: 'Sakit',
-                        value: '${_sheep.length - healthy}',
+                        value:
+                        '${provider.sheepList.length - healthy}',
                         valueColor: const Color(0xFFA32D2D),
                       ),
                     ],
                   ),
+
                   const SizedBox(height: 14),
+
+                  /// SEARCH
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -191,60 +190,35 @@ class _SheepScreenState extends State<SheepScreen> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: Colors.black.withValues(alpha: 0.05),
-                      ),
                     ),
                     child: Row(
                       children: [
-                        Icon(
-                          Icons.search_rounded,
-                          size: 18,
-                          color: Colors.black.withValues(alpha: 0.4),
-                        ),
+                        const Icon(Icons.search_rounded, size: 18),
                         const SizedBox(width: 8),
                         Expanded(
                           child: TextField(
                             controller: _search,
                             onChanged: (_) => setState(() {}),
-                            style: const TextStyle(fontSize: 14),
-                            decoration: InputDecoration(
-                              hintText: 'Cari nama atau ID domba...',
-                              hintStyle: TextStyle(
-                                color: Colors.black.withValues(alpha: 0.3),
-                                fontSize: 14,
-                              ),
-                              isDense: true,
+                            decoration: const InputDecoration(
+                              hintText: 'Cari ID domba...',
                               border: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(
-                                vertical: 10,
-                              ),
                             ),
                           ),
                         ),
-                        if (_search.text.isNotEmpty)
-                          GestureDetector(
-                            onTap: () {
-                              _search.clear();
-                              setState(() {});
-                            },
-                            child: Icon(
-                              Icons.close_rounded,
-                              size: 16,
-                              color: Colors.black.withValues(alpha: 0.4),
-                            ),
-                          ),
                       ],
                     ),
                   ),
+
                   const SizedBox(height: 10),
+
+                  /// FILTER
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: [
                         for (final f in [
                           ('Semua', 'all'),
-                          ('Sehat', 'healthy'),
+                          ('Sehat', 'sehat'),
                           ('Sakit', 'sakit'),
                         ]) ...[
                           FilterPill(
@@ -257,48 +231,44 @@ class _SheepScreenState extends State<SheepScreen> {
                       ],
                     ),
                   ),
+
                   const SizedBox(height: 18),
-                  Text(
+
+                  const Text(
                     'DAFTAR TERNAK',
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
-                      color: Colors.black.withValues(alpha: 0.4),
+                      color: Colors.black54,
                       letterSpacing: 1.2,
                     ),
                   ),
+
                   const SizedBox(height: 12),
-                  if (sheepList.isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 40),
-                      child: Center(
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.search_off_rounded,
-                              size: 48,
-                              color: Colors.black.withValues(alpha: 0.2),
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              'Tidak ada domba ditemukan',
-                              style: TextStyle(
-                                color: Colors.black.withValues(alpha: 0.5),
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
+
+                  /// EMPTY STATE
+                  if (sheepList.isEmpty && !provider.isLoading)
+                    const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(40),
+                        child: Text('Tidak ada data'),
                       ),
                     )
                   else
                     ...sheepList.map(
-                      (s) => SheepCard(
+                          (s) => SheepCard(
                         key: ValueKey(s.id),
                         sheep: s,
-                        maxBerat: _maxBerat,
-                        onDelete: () => _delete(s),
+                        maxBerat: _maxBerat(sheepList),
+                        onDelete: () {},
                       ),
+                    ),
+
+                  /// LOADING
+                  if (provider.isLoading)
+                    const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(child: CircularProgressIndicator()),
                     ),
                 ],
               ),
