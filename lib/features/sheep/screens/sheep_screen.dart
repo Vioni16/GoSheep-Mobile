@@ -9,25 +9,31 @@ const _breedList = ['Merino', 'Garut', 'Texel', 'Dorper', 'Suffolk'];
 
 final _initialData = [
   Sheep(
-    id: 'D-001',
+    id: 1,
     name: 'Shaun',
     breed: 'Merino',
     weight: 45.5,
-    healthStatus: 'Sehat',
+    statusUi: 'Sehat',
+    earTag: 'D001',
+    gender: 'Male'
   ),
   Sheep(
-    id: 'D-002',
+    id: 2,
     name: 'Mbandot',
     breed: 'Garut',
-    weight: 50.2,
-    healthStatus: 'Sakit',
+    weight: 40.1,
+    statusUi: 'Sakit',
+    earTag: 'D002',
+    gender: 'Female'
   ),
   Sheep(
-    id: 'D-003',
+    id: 3,
     name: 'Bolly',
     breed: 'Texel',
-    weight: 42.0,
-    healthStatus: 'Sehat',
+    weight: 49.5,
+    statusUi: 'Sehat',
+    earTag: 'D003',
+    gender: 'Male'
   ),
 ];
 
@@ -50,10 +56,10 @@ class _SheepScreenState extends State<SheepScreen> {
 
   List<Sheep> get _filtered => _sheep.where((s) {
     final q = _search.text.toLowerCase();
-    return (_filter == 'all' || s.healthStatus.toLowerCase() == _filter) &&
+    return (_filter == 'all' || s.statusUi.toLowerCase() == _filter) &&
         (q.isEmpty ||
             s.name.toLowerCase().contains(q) ||
-            s.id.toLowerCase().contains(q));
+            s.earTag.toLowerCase().contains(q));
   }).toList();
 
   double get _maxBerat => _sheep.isEmpty
@@ -78,22 +84,22 @@ class _SheepScreenState extends State<SheepScreen> {
     builder: (_) => AddSheepSheet(
       breedList: _breedList,
       onAdd: (s) {
-        setState(() => _sheep.insert(0, s));
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Data domba berhasil ditambahkan'),
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: Color(0xFF3B6D11),
-          ),
-        );
+        // setState(() => _sheep.insert(0, s));
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   const SnackBar(
+        //     content: Text('Data domba berhasil ditambahkan'),
+        //     behavior: SnackBarBehavior.floating,
+        //     backgroundColor: Color(0xFF3B6D11),
+        //   ),
+        // );
       },
     ),
   );
 
   @override
   Widget build(BuildContext context) {
-    final list = _filtered;
-    final healthy = _sheep.where((s) => s.healthStatus == 'Sehat').length;
+    final sheepList = _filtered;
+    final healthy = _sheep.where((s) => s.statusUi == 'Sehat').length;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F4F0),
@@ -262,7 +268,7 @@ class _SheepScreenState extends State<SheepScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  if (list.isEmpty)
+                  if (sheepList.isEmpty)
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 40),
                       child: Center(
@@ -286,7 +292,7 @@ class _SheepScreenState extends State<SheepScreen> {
                       ),
                     )
                   else
-                    ...list.map(
+                    ...sheepList.map(
                       (s) => SheepCard(
                         key: ValueKey(s.id),
                         sheep: s,

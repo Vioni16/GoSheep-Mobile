@@ -120,14 +120,16 @@ class _StatCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 2),
-                Text(
-                  item.title,
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: Color.fromARGB(255, 115, 115, 115)
+                Expanded(
+                  child: Text(
+                    item.title,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Color.fromARGB(255, 115, 115, 115)
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),

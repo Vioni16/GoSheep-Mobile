@@ -13,7 +13,6 @@ class DashboardPage extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 50),
         child: Stack(
           children: [
-            // 1. LATAR BELAKANG HEADER (HIJAU/GAMBAR)
             Container(
               height: 220, 
               width: double.infinity,
@@ -26,14 +25,11 @@ class DashboardPage extends StatelessWidget {
               ),
             ),
 
-            // 2. KONTEN UTAMA
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Jarak atas diperkecil agar teks sapaan naik ke atas
-                const SizedBox(height: 45), 
+                const SizedBox(height: 45),
 
-                // --- TEKS SAPAAN ---
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25),
                   child: Column(
@@ -64,7 +60,6 @@ class DashboardPage extends StatelessWidget {
 
                 const SizedBox(height: 35),
 
-                // --- KARTU PUTIH MELAYANG (OVERLAPPING CARD) ---
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 20),
                   padding: const EdgeInsets.all(20),
@@ -73,7 +68,7 @@ class DashboardPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.08), 
+                        color: Colors.black.withValues(alpha: 0.08),
                         blurRadius: 15,
                         offset: const Offset(0, 8),
                       ),
@@ -84,7 +79,6 @@ class DashboardPage extends StatelessWidget {
 
                 const SizedBox(height: 25),
 
-                // --- SISA FITUR DI BAWAH (Rekomendasi AI & Activity) ---
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(

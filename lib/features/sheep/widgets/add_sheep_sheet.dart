@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:gosheep_mobile/data/models/sheep.dart';
-import 'package:gosheep_mobile/features/sheep/widgets/sheet_field.dart';
+import 'package:gosheep_mobile/core/widgets/custom_textfield.dart'; // Pastikan path import ini benar
+import 'package:gosheep_mobile/data/models/requests/create_sheep_request.dart';
 import 'package:gosheep_mobile/features/sheep/widgets/status_toggle.dart';
 
-import '../../../core/widgets/custom_button.dart';
-
 class AddSheepSheet extends StatefulWidget {
-  final void Function(Sheep) onAdd;
+  final void Function(CreateSheepRequest) onAdd;
   final List<String> breedList;
   const AddSheepSheet({
     super.key,
@@ -35,15 +33,18 @@ class AddSheepSheetState extends State<AddSheepSheet> {
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
-    widget.onAdd(
-      Sheep(
-        id: _id.text.trim(),
-        name: _name.text.trim(),
-        breed: _breed!,
-        weight: double.parse(_weight.text.trim()),
-        healthStatus: _status,
-      ),
-    );
+
+    // Logika pengiriman data (uncomment jika sudah siap)
+    // widget.onAdd(
+    //   CreateSheepRequest(
+    //     id: _id.text.trim(),
+    //     name: _name.text.trim(),
+    //     breed: _breed!,
+    //     weight: double.parse(_weight.text.trim()),
+    //     status: _status,
+    //   ),
+    // );
+
     Navigator.pop(context);
   }
 
@@ -108,37 +109,37 @@ class AddSheepSheetState extends State<AddSheepSheet> {
               ],
             ),
             const SizedBox(height: 20),
-            SheetField(
+
+            // MENGGUNAKAN CUSTOM TEXT FORM FIELD
+            CustomTextFormField(
               label: 'Nama Domba',
               controller: _name,
-              hint: 'Contoh: Shaun',
+              hint: 'Nama Domba (Contoh: Shaun)',
               icon: Icons.badge_outlined,
               validator: (v) => (v?.isEmpty ?? true) ? 'Wajib diisi' : null,
             ),
+
             const SizedBox(height: 14),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: SheetField(
-                    label: 'ID Domba',
+                  child: CustomTextFormField(
+                    label: 'Eartag domba',
                     controller: _id,
-                    hint: 'D-004',
+                    hint: 'ID (D-004)',
                     icon: Icons.tag_rounded,
-                    validator: (v) =>
-                    (v?.isEmpty ?? true) ? 'Wajib diisi' : null,
+                    validator: (v) => (v?.isEmpty ?? true) ? 'Wajib diisi' : null,
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: SheetField(
+                  child: CustomTextFormField(
                     label: 'Berat (kg)',
                     controller: _weight,
-                    hint: '45.0',
+                    hint: 'Berat (kg)',
                     icon: Icons.scale_rounded,
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     validator: (v) => (v?.isEmpty ?? true)
                         ? 'Wajib diisi'
                         : double.tryParse(v!) == null
@@ -148,6 +149,7 @@ class AddSheepSheetState extends State<AddSheepSheet> {
                 ),
               ],
             ),
+
             const SizedBox(height: 14),
             const Text(
               'Jenis Domba',
@@ -159,7 +161,7 @@ class AddSheepSheetState extends State<AddSheepSheet> {
             ),
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
-              initialValue: _breed,
+              value: _breed,
               hint: const Text(
                 'Pilih jenis...',
                 style: TextStyle(fontSize: 14),
@@ -230,7 +232,26 @@ class AddSheepSheetState extends State<AddSheepSheet> {
               ],
             ),
             const SizedBox(height: 24),
-            CustomButton(text: 'Simpan Data Domba', onPressed: _submit),
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: _submit,
+                child: const Text(
+                  'Simpan Data Domba',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

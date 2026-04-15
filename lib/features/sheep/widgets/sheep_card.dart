@@ -14,7 +14,7 @@ class SheepCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isHealthy = sheep.healthStatus == 'Sehat';
+    final isHealthy = sheep.statusUi == 'Sehat';
     final bg = isHealthy ? const Color(0xFFEAF3DE) : const Color(0xFFFCEBEB);
     final fg = isHealthy ? const Color(0xFF3B6D11) : const Color(0xFFA32D2D);
     final bar = isHealthy ? const Color(0xFF639922) : const Color(0xFFE24B4A);
@@ -120,7 +120,7 @@ class SheepCard extends StatelessWidget {
                       border: Border.all(color: border),
                     ),
                     child: Text(
-                      sheep.healthStatus,
+                      sheep.statusUi,
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,

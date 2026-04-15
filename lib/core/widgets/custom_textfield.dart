@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomTextFormField extends StatefulWidget {
   final IconData icon;
+  final String? label;
   final String hint;
   final bool isPassword;
   final FocusNode? focusNode;
@@ -13,7 +14,8 @@ class CustomTextFormField extends StatefulWidget {
   const CustomTextFormField({
     super.key,
     required this.icon,
-    required this.hint,
+    this.label,
+    this.hint = '',
     this.isPassword = false,
     this.focusNode,
     this.controller,
@@ -31,76 +33,97 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      focusNode: widget.focusNode,
-      controller: widget.controller,
-      validator: widget.validator,
-      keyboardType: widget.keyboardType,
-      enabled: widget.enabled,
-      obscureText: widget.isPassword && _isHidden,
-      style: TextStyle(
-        fontSize: 15,
-        fontWeight: FontWeight.w500,
-        color: Colors.grey.shade900,
-      ),
-      decoration: InputDecoration(
-        labelText: widget.hint,
-        floatingLabelStyle: const TextStyle(color: Color(0xFF2E7D32)),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
 
-        prefixIcon: Icon(widget.icon, color: Colors.grey.shade600),
-
-        suffixIcon: widget.isPassword
-            ? IconButton(
-          icon: Icon(
-            _isHidden ? Icons.visibility_off : Icons.visibility,
-            color: Colors.grey.shade600,
+        if (widget.label != null)
+        Text(
+          widget.label!,
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+            color: Colors.black87,
           ),
-          onPressed: () => setState(() => _isHidden = !_isHidden),
-        )
-            : null,
-
-        filled: true,
-        fillColor: Colors.white,
-
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade300, width: 1.5),
         ),
+        const SizedBox(height: 8),
+        TextFormField(
+          focusNode: widget.focusNode,
+          controller: widget.controller,
+          validator: widget.validator,
+          keyboardType: widget.keyboardType,
+          enabled: widget.enabled,
+          obscureText: widget.isPassword && _isHidden,
+          style: const TextStyle(fontSize: 14),
+          decoration: InputDecoration(
+            hintText: widget.hint,
+            hintStyle: const TextStyle(color: Colors.black26, fontSize: 14),
 
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFF2E7D32), width: 2),
+            prefixIcon: Icon(
+              widget.icon,
+              size: 20,
+              color: Colors.black.withValues(alpha: 0.4),
+            ),
+
+            suffixIcon: widget.isPassword
+                ? IconButton(
+              icon: Icon(
+                _isHidden ? Icons.visibility_off : Icons.visibility,
+                color: Colors.black.withValues(alpha: 0.4),
+                size: 20,
+              ),
+              onPressed: () => setState(() => _isHidden = !_isHidden),
+            )
+                : null,
+
+            isDense: true,
+            filled: true,
+            fillColor: Colors.white,
+
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 12,
+            ),
+
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: Colors.black.withValues(alpha: 0.1),
+              ),
+            ),
+
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                color: Colors.black,
+                width: 1.5,
+              ),
+            ),
+
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: Colors.black.withValues(alpha: 0.05),
+              ),
+            ),
+
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Colors.red),
+            ),
+
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Colors.red, width: 1.5),
+            ),
+
+            errorStyle: const TextStyle(
+              fontSize: 12,
+              height: 1.2,
+            ),
+          ),
         ),
-
-        disabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade100, width: 1.5),
-        ),
-
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.red.shade400, width: 1.5),
-        ),
-
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.red.shade500, width: 2),
-        ),
-
-        errorStyle: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-          color: Colors.red.shade600,
-          height: 1.4,
-        ),
-
-        errorMaxLines: 2,
-
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 16,
-        ),
-      ),
+      ],
     );
   }
 }
