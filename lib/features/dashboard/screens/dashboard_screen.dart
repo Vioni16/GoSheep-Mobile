@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/features/dashboard/widget/activity_card.dart';
+import 'package:gosheep_mobile/features/dashboard/widget/navigation_section.dart';
 import 'package:gosheep_mobile/features/dashboard/widget/stats_section.dart';
 
 class DashboardPage extends StatelessWidget {
@@ -14,7 +15,7 @@ class DashboardPage extends StatelessWidget {
         child: Stack(
           children: [
             Container(
-              height: 220, 
+              height: 220,
               width: double.infinity,
               decoration: const BoxDecoration(
                 color: Color(0xFF2E7D32),
@@ -39,10 +40,10 @@ class DashboardPage extends StatelessWidget {
                         'Selamat datang peternak',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 26, 
-                          fontWeight: FontWeight.w800, 
+                          fontSize: 26,
+                          fontWeight: FontWeight.w800,
                           letterSpacing: 0.2,
-                          height: 1.2, 
+                          height: 1.2,
                         ),
                       ),
                       SizedBox(height: 6),
@@ -74,7 +75,14 @@ class DashboardPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: StatsSection(), 
+                  child: StatsSection(),
+                ),
+
+                const SizedBox(height: 25),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: const MenuSection(),
                 ),
 
                 const SizedBox(height: 25),
@@ -92,7 +100,7 @@ class DashboardPage extends StatelessWidget {
                           color: Color.fromARGB(255, 115, 115, 115),
                         ),
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 15),
 
                       Container(
                         padding: const EdgeInsets.all(15),
@@ -120,8 +128,8 @@ class DashboardPage extends StatelessWidget {
                       ),
 
                       const SizedBox(height: 25),
-                      
-                      ActivityCard(), 
+
+                      ActivityCard(),
                     ],
                   ),
                 ),
