@@ -7,7 +7,7 @@ class SheepService {
 
   Future<SheepResponse> getSheep({
     int page = 1,
-    int perPage = 20,
+    int perPage = 10,
   }) async {
     try {
       final response = await _dio.get(
@@ -25,11 +25,12 @@ class SheepService {
   }
 
   Exception _handleError(DioException e) {
-    final message =
-        e.response?.data?['message'] ??
-            e.message ??
-            'Terjadi kesalahan';
+    if (e.type == DioExceptionType.connectionError ||
+        e.type == DioExceptionType.connectionTimeout) {
+      return Exception('Tidak ada koneksi internet');
+    }
 
+    final message = e.response?.data?['message'] ?? e.message ?? 'Terjadi kesalahan';
     return Exception(message);
   }
 }

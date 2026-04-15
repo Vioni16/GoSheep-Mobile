@@ -3,23 +3,47 @@ import 'package:gosheep_mobile/data/models/sheep.dart';
 
 class SheepCard extends StatelessWidget {
   final Sheep sheep;
-  final double maxBerat;
   final VoidCallback onDelete;
+
   const SheepCard({
     super.key,
     required this.sheep,
-    required this.maxBerat,
     required this.onDelete,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isHealthy = sheep.statusUi == 'Sehat';
-    final bg = isHealthy ? const Color(0xFFEAF3DE) : const Color(0xFFFCEBEB);
-    final fg = isHealthy ? const Color(0xFF3B6D11) : const Color(0xFFA32D2D);
-    final bar = isHealthy ? const Color(0xFF639922) : const Color(0xFFE24B4A);
-    final border = isHealthy ? const Color(0xFFC0DD97) : const Color(0xFFF7C1C1);
-    final progress = (sheep.weight / maxBerat).clamp(0.0, 1.0);
+    final isHealthy = sheep.statusUi == 'sehat';
+    final isAtRisk = sheep.statusUi == 'at_risk';
+    final isMale = sheep.gender == 'male';
+
+    final bg = isHealthy
+        ? const Color(0xFFEAF3DE)
+        : isAtRisk
+        ? const Color(0xFFFFF4D6)
+        : const Color(0xFFFCEBEB);
+
+    final fg = isHealthy
+        ? const Color(0xFF3B6D11)
+        : isAtRisk
+        ? const Color(0xFF8A6D1F)
+        : const Color(0xFFA32D2D);
+
+    final border = isHealthy
+        ? const Color(0xFFC0DD97)
+        : isAtRisk
+        ? const Color(0xFFF5D48A)
+        : const Color(0xFFF7C1C1);
+
+    final statusLabel = isHealthy
+        ? 'Sehat'
+        : isAtRisk
+        ? 'Berisiko'
+        : 'Sakit';
+
+    final genderLabel = isMale
+        ? 'Jantan'
+        : 'Betina';
 
     return Dismissible(
       key: ValueKey(sheep.id),
@@ -61,7 +85,9 @@ class SheepCard extends StatelessWidget {
                     ),
                     child: Icon(Icons.pets_rounded, color: fg, size: 24),
                   ),
+
                   const SizedBox(width: 14),
+
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,7 +95,7 @@ class SheepCard extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              sheep.name,
+                              sheep.earTag,
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -77,7 +103,7 @@ class SheepCard extends StatelessWidget {
                             ),
                             const SizedBox(width: 6),
                             Text(
-                              '• ${sheep.id}',
+                              '• $genderLabel',
                               style: const TextStyle(
                                 fontSize: 12,
                                 color: Colors.black45,
@@ -93,22 +119,12 @@ class SheepCard extends StatelessWidget {
                             color: Colors.black54,
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: LinearProgressIndicator(
-                            value: progress,
-                            backgroundColor: Colors.black.withValues(
-                              alpha: 0.04,
-                            ),
-                            valueColor: AlwaysStoppedAnimation(bar),
-                            minHeight: 4,
-                          ),
-                        ),
                       ],
                     ),
                   ),
+
                   const SizedBox(width: 12),
+
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -120,7 +136,7 @@ class SheepCard extends StatelessWidget {
                       border: Border.all(color: border),
                     ),
                     child: Text(
-                      sheep.statusUi,
+                      statusLabel,
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,

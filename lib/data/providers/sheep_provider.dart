@@ -24,6 +24,7 @@ class SheepProvider with ChangeNotifier {
     _currentPage = 1;
     _hasMore = true;
     _error = null;
+    _isLoading = false;
 
     await fetchMore();
   }
@@ -36,9 +37,7 @@ class SheepProvider with ChangeNotifier {
 
     try {
       final response = await _service.getSheep(page: _currentPage);
-
       _sheepList.addAll(response.data);
-
       _currentPage++;
 
       if (_currentPage > response.meta.lastPage) {
@@ -46,10 +45,10 @@ class SheepProvider with ChangeNotifier {
       }
     } catch (e) {
       _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
-
-    _isLoading = false;
-    notifyListeners();
   }
 
   Future<void> refresh() async {
