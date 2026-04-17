@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class BreedingSearchBar extends StatefulWidget {
   final TextEditingController controller;
   final VoidCallback onSearch;
-  final bool isLoading; // 1. Tambahkan parameter untuk status loading
+  final bool isLoading;
 
   const BreedingSearchBar({
     super.key,
     required this.controller,
     required this.onSearch,
-    this.isLoading = false, // Default-nya false agar tidak langsung loading
+    this.isLoading = false,
   });
 
   @override
@@ -43,11 +43,11 @@ class _BreedingSearchBarState extends State<BreedingSearchBar> {
     return TextField(
       controller: widget.controller,
       textCapitalization: TextCapitalization.characters,
-      // 2. Mencegah submit berulang ketika sedang loading
       onSubmitted: (_) {
+        if (widget.controller.value.text.isEmpty) return;
+
         if (!widget.isLoading) widget.onSearch();
       },
-      // 3. (Opsional) Membuat text field read-only saat loading agar user tidak mengetik
       readOnly: widget.isLoading,
       style: const TextStyle(fontSize: 14),
       decoration: InputDecoration(
@@ -56,9 +56,8 @@ class _BreedingSearchBarState extends State<BreedingSearchBar> {
         prefixIcon: const Icon(
           Icons.search_rounded,
           size: 20,
-          color: Color(0xFF2E7D32),
+          color: Color(0xFF0F5132),
         ),
-        // 4. Memisahkan logika suffix icon agar lebih rapi
         suffixIcon: _buildSuffixIcon(),
         isDense: true,
         filled: true,
@@ -79,10 +78,8 @@ class _BreedingSearchBarState extends State<BreedingSearchBar> {
     );
   }
 
-  // Fungsi khusus untuk mengatur apa yang tampil di sebelah kanan TextField
   Widget? _buildSuffixIcon() {
     if (widget.isLoading) {
-      // Tampilkan indikator loading kecil
       return const Padding(
         padding: EdgeInsets.all(12.0),
         child: SizedBox(
@@ -95,14 +92,12 @@ class _BreedingSearchBarState extends State<BreedingSearchBar> {
         ),
       );
     } else if (_hasText) {
-      // Tampilkan tombol clear jika ada teks dan tidak sedang loading
       return IconButton(
         icon: const Icon(Icons.clear, size: 18),
         color: Colors.grey,
         onPressed: widget.controller.clear,
       );
     }
-    // Kosongkan jika tidak ada teks dan tidak loading
     return null;
   }
 }

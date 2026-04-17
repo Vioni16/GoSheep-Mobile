@@ -25,7 +25,7 @@ class ActivityCard extends StatelessWidget {
                 color: Color.fromARGB(255, 115, 115, 115),
               ),
             ),
-            Text('Lihat semua', style: TextStyle(color: Color(0xFF2E7D32))),
+            Text('Lihat semua', style: TextStyle(color: Color(0xFF0F5132))),
           ],
         ),
 
@@ -47,7 +47,7 @@ class ActivityCard extends StatelessWidget {
                       width: 10,
                       height: 10,
                       decoration: const BoxDecoration(
-                        color: Color(0xFF2E7D32),
+                        color: Color(0xFF1B5E20),
                         shape: BoxShape.circle,
                       ),
                     ),

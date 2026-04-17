@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/breeding_search_bar.dart';
-import '../widgets/sheep_card.dart';
+import '../widgets/sheep_card_recommendation.dart';
 
 class BreedingScreen extends StatefulWidget {
   const BreedingScreen({super.key});
@@ -66,24 +66,21 @@ class _BreedingScreenState extends State<BreedingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFFF5F7F6),
-      child: SafeArea(
-        top: false,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 24),
-              _buildSearchRow(),
-              const SizedBox(height: 32),
-              if (_screenState == 'idle') _buildIdle(),
-              if (_screenState == 'not_found') _buildNotFound(),
-              if (_screenState == 'found') _buildResults(),
-            ],
-          ),
+    return SafeArea(
+      top: false,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeader(),
+            const SizedBox(height: 24),
+            _buildSearchRow(),
+            const SizedBox(height: 32),
+            if (_screenState == 'idle') _buildIdle(),
+            if (_screenState == 'not_found') _buildNotFound(),
+            if (_screenState == 'found') _buildResults(),
+          ],
         ),
       ),
     );
@@ -98,12 +95,12 @@ class _BreedingScreenState extends State<BreedingScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: const Color(0xFF2E7D32).withValues(alpha: 0.1),
+                color: const Color(0xFFD52B75).withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(
                 Icons.favorite_rounded,
-                color: Color(0xFF2E7D32),
+                color: Color(0xFFD52B75),
                 size: 20,
               ),
             ),
@@ -113,7 +110,7 @@ class _BreedingScreenState extends State<BreedingScreen> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF2E7D32),
+                color: Color(0xFF0F5132),
               ),
             ),
           ],
@@ -147,7 +144,7 @@ class _BreedingScreenState extends State<BreedingScreen> {
           child: ElevatedButton(
             onPressed: _handleSearch,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF2E7D32),
+              backgroundColor: const Color(0xFF0F5132),
               foregroundColor: Colors.white,
               minimumSize: const Size(48, 48),
               shape: RoundedRectangleBorder(
@@ -308,7 +305,7 @@ class _BreedingScreenState extends State<BreedingScreen> {
 
         // List rekomendasi
         for (int i = 0; i < _recommendations.length; i++)
-          SheepCard(
+          SheepCardRecommendation(
             eartag: _recommendations[i]['eartag'] as String,
             breed: _recommendations[i]['breed'] as String,
             gender: _recommendations[i]['gender'] as String,

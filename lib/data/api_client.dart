@@ -4,7 +4,7 @@ import 'package:gosheep_mobile/data/services/secure_storage_service.dart';
 class ApiClient {
   static final Dio dio = Dio(
     BaseOptions(
-      baseUrl: "http://172.30.11.207:8000/api",
+      baseUrl: "http://something:8000/api",
       connectTimeout: const Duration(seconds: 15),
       receiveTimeout: const Duration(seconds: 30),
       headers: {
@@ -23,12 +23,12 @@ class ApiClient {
 
           handler.next(options);
         },
-        onError: (DioException e, handler) {
+        onError: (DioException e, handler) async {
           if (e.response?.statusCode == 401) {
-            // handle unauthorized (logout / refresh token)
+            // await SecureStorageService.clearToken();
           }
 
-          handler.next(e);
+          handler.reject(e);
         },
       ),
     )
