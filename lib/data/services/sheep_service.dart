@@ -1,36 +1,51 @@
 import 'package:dio/dio.dart';
 import 'package:gosheep_mobile/data/api_client.dart';
+import 'package:gosheep_mobile/data/exceptions/error_handler.dart';
+import 'package:gosheep_mobile/data/models/api_response.dart';
+import 'package:gosheep_mobile/data/exceptions/api_exception.dart';
 import '../models/sheep_response.dart';
 
 class SheepService {
   final Dio _dio = ApiClient.dio;
 
-  Future<SheepResponse> getSheep({
-    int page = 1,
-    int perPage = 10,
-  }) async {
+  Future<SheepResponse> getSheep({int? lastId, int limit = 10}) async {
     try {
-      final response = await _dio.get(
-        '/sheep',
-        queryParameters: {
-          'page': page,
-          'per_page': perPage,
-        },
-      );
+      final queryParams = {'limit': limit};
+      if (lastId != null) {
+        queryParams['last_id'] = lastId;
+      }
 
-      return SheepResponse.fromJson(response.data);
+      final response = await _dio.get('/sheep', queryParameters: queryParams);
+
+      final apiResponse = SheepResponse.fromJson(response.data);
+
+      if (!apiResponse.success) {
+        throw ApiException(apiResponse.message);
+      }
+
+      return apiResponse;
     } on DioException catch (e) {
-      throw _handleError(e);
+      throw ErrorHandler.handle(e);
     }
   }
 
-  Exception _handleError(DioException e) {
-    if (e.type == DioExceptionType.connectionError ||
-        e.type == DioExceptionType.connectionTimeout) {
-      return Exception('Tidak ada koneksi internet');
-    }
+  Future<String> deleteSheep(int sheepId) async {
+    try {
+      final response = await _dio.delete('/sheep/$sheepId');
 
-    final message = e.response?.data?['message'] ?? e.message ?? 'Terjadi kesalahan';
-    return Exception(message);
+      final apiResponse = ApiResponse<Null>.fromJson(
+        response.data,
+        (_) => null,
+      );
+
+      if (!apiResponse.success) {
+        throw ApiException(apiResponse.message);
+      }
+
+      return apiResponse.message;
+
+    } on DioException catch (e) {
+      throw ErrorHandler.handle(e);
+    }
   }
 }

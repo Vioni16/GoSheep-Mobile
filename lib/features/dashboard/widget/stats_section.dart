@@ -5,34 +5,13 @@ class StatsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     const stats = [
       _StatItem(title: 'Total Domba', value: '120', icon: Icons.pets_rounded),
       _StatItem(title: 'Siap Breeding', value: '98', icon: Icons.favorite_rounded),
       _StatItem(title: 'Sedang Bunting', value: '15', icon: Icons.access_time_rounded),
       _StatItem(title: 'Perlu Diperhatikan', value: '7', icon: Icons.warning_amber_rounded),
-    ];
-
-    const gradients = [
-      LinearGradient(
-        colors: [Color(0xFF2044BD), Color(0xFF66BB6A)],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-      LinearGradient(
-        colors: [Color(0xFF66BB6A), Color(0xFF2044BD)],
-        begin: Alignment.bottomLeft,
-        end: Alignment.topRight,
-      ),
-      LinearGradient(
-        colors: [Color(0xFF2044BD), Color(0xFF66BB6A)],
-        begin: Alignment.bottomLeft,
-        end: Alignment.topRight,
-      ),
-      LinearGradient(
-        colors: [Color(0xFF2044BD), Color(0xFF66BB6A)],
-        begin: Alignment.bottomRight,
-        end: Alignment.topLeft,
-      ),
     ];
 
     return Column(
@@ -41,17 +20,20 @@ class StatsSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               'Statistik Kandang',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: Color.fromARGB(255, 115, 115, 115),
+                color: scheme.onSurface,
               ),
             ),
             Text(
               'Hari ini',
-              style: TextStyle(fontSize: 12, color: Colors.grey.shade400),
+              style: TextStyle(
+                fontSize: 12,
+                color: scheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),
@@ -66,11 +48,10 @@ class StatsSection extends StatelessWidget {
             crossAxisCount: 2,
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
-            childAspectRatio: 2.4,
+            childAspectRatio: 2.2,
           ),
           itemBuilder: (context, index) => _StatCard(
             item: stats[index],
-            gradient: gradients[index],
           ),
         ),
       ],
@@ -80,18 +61,19 @@ class StatsSection extends StatelessWidget {
 
 class _StatCard extends StatelessWidget {
   final _StatItem item;
-  final LinearGradient gradient;
 
-  const _StatCard({required this.item, required this.gradient});
+  const _StatCard({required this.item});
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: scheme.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: scheme.outlineVariant),
       ),
       child: Row(
         children: [
@@ -99,12 +81,18 @@ class _StatCard extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              gradient: gradient,
+              color: scheme.primaryContainer,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(item.icon, color: Colors.white, size: 20),
+            child: Icon(
+              item.icon,
+              color: scheme.onPrimaryContainer,
+              size: 20,
+            ),
           ),
+
           const SizedBox(width: 12),
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,23 +101,21 @@ class _StatCard extends StatelessWidget {
                 Text(
                   item.value,
                   style: TextStyle(
-                    fontSize: 22,
+                    fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: Colors.grey[800],
+                    color: scheme.onSurface,
                     height: 1.1,
                   ),
                 ),
                 const SizedBox(height: 2),
-                Expanded(
-                  child: Text(
-                    item.title,
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Color.fromARGB(255, 115, 115, 115)
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                Text(
+                  item.title,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: scheme.onSurfaceVariant,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),

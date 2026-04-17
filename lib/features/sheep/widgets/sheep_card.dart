@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/core/widgets/confirmation_dialog.dart';
+import 'package:gosheep_mobile/core/widgets/sheep_icon.dart';
 import 'package:gosheep_mobile/data/models/sheep.dart';
 
 class SheepCard extends StatelessWidget {
   final Sheep sheep;
-  final VoidCallback onDelete;
+  final Function(BuildContext)? onConfirmDelete;
 
-  const SheepCard({
-    super.key,
-    required this.sheep,
-    required this.onDelete,
-  });
+  const SheepCard({super.key, required this.sheep, this.onConfirmDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -17,23 +15,11 @@ class SheepCard extends StatelessWidget {
     final isAtRisk = sheep.statusUi == 'at_risk';
     final isMale = sheep.gender == 'male';
 
-    final bg = isHealthy
-        ? const Color(0xFFEAF3DE)
-        : isAtRisk
-        ? const Color(0xFFFFF4D6)
-        : const Color(0xFFFCEBEB);
-
-    final fg = isHealthy
+    final bg =  isHealthy
         ? const Color(0xFF3B6D11)
         : isAtRisk
-        ? const Color(0xFF8A6D1F)
-        : const Color(0xFFA32D2D);
-
-    final border = isHealthy
-        ? const Color(0xFFC0DD97)
-        : isAtRisk
         ? const Color(0xFFF5D48A)
-        : const Color(0xFFF7C1C1);
+        : const Color(0xFFA32D2D);
 
     final statusLabel = isHealthy
         ? 'Sehat'
@@ -41,14 +27,30 @@ class SheepCard extends StatelessWidget {
         ? 'Berisiko'
         : 'Sakit';
 
-    final genderLabel = isMale
-        ? 'Jantan'
-        : 'Betina';
+    final genderLabel = isMale ? 'Jantan' : 'Betina';
 
     return Dismissible(
       key: ValueKey(sheep.id),
       direction: DismissDirection.endToStart,
-      onDismissed: (_) => onDelete(),
+      confirmDismiss: (direction) async {
+        final shouldDelete = await showDialog<bool>(
+          context: context,
+          builder: (confirmDialogContext) => ConfirmationDialog(
+            "Apakah kamu yakin ingin menghapus domba ini?",
+            onTap: () {
+              Navigator.pop(confirmDialogContext, true);
+            },
+          ),
+        );
+
+        if (shouldDelete == true &&
+            context.mounted &&
+            onConfirmDelete != null) {
+          onConfirmDelete!(context);
+        }
+
+        return shouldDelete ?? false;
+      },
       background: Container(
         margin: const EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(
@@ -76,14 +78,9 @@ class SheepCard extends StatelessWidget {
               padding: const EdgeInsets.all(14),
               child: Row(
                 children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: bg,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(Icons.pets_rounded, color: fg, size: 24),
+                  SheepIcon(
+                    color: isMale ? Colors.blue : Colors.pink,
+                    size: 28,
                   ),
 
                   const SizedBox(width: 14),
@@ -133,14 +130,13 @@ class SheepCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: bg,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: border),
                     ),
                     child: Text(
                       statusLabel,
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: fg,
+                        color: Colors.white
                       ),
                     ),
                   ),
