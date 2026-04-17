@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/core/utils/navigator_key.dart';
 import 'package:gosheep_mobile/routes/app_routes.dart';
 import 'core/theme/theme.dart';
-import 'features/authentication/screens/login_screen.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('id_ID', null);
   runApp(const GoSheepApp());
 }
 
@@ -13,9 +16,9 @@ class GoSheepApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       title: 'GoSheep',
-      home: LoginScreen(),
       theme: AppTheme.lightTheme,
       initialRoute: AppRoutes.login,
       routes: AppRoutes.routes,

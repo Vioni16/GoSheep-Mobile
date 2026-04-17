@@ -3,20 +3,19 @@ import 'package:flutter/material.dart';
 class MenuSection extends StatelessWidget {
   const MenuSection({super.key});
 
-  static const gradients = [
-    LinearGradient(colors: [Color(0xFF2044BD), Color(0xFF66BB6A)]),
-    LinearGradient(colors: [Color(0xFF66BB6A), Color(0xFF2044BD)]),
-    LinearGradient(colors: [Color(0xFF2044BD), Color(0xFF66BB6A)]),
-    LinearGradient(colors: [Color(0xFF2044BD), Color(0xFF66BB6A)]),
-  ];
-
   @override
   Widget build(BuildContext context) {
     final menus = [
-      {"icon": Icons.agriculture, "label": "Manajemen\nKandang"},
-      {"icon": Icons.favorite, "label": "Riwayat\nKawin"},
-      {"icon": Icons.pets, "label": "Riwayat\nTernak"},
-      {"icon": Icons.bar_chart, "label": "Laporan"},
+      {
+        "icon": Icons.agriculture,
+        "label": "Manajemen\nKandang",
+        "onTap": () {
+          Navigator.pushNamed(context, '/cage');
+        },
+      },
+      {"icon": Icons.favorite, "label": "Riwayat\nKawin", "onTap": () {}},
+      {"icon": Icons.pets, "label": "Riwayat\nTernak", "onTap": () {}},
+      {"icon": Icons.bar_chart, "label": "Laporan", "onTap": () {}},
     ];
 
     return Column(
@@ -38,9 +37,15 @@ class MenuSection extends StatelessWidget {
             return _MenuItemWidget(
               icon: menus[index]["icon"] as IconData,
               label: menus[index]["label"] as String,
-              gradient: gradients[index],
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                stops: [0.8, 0.6],
+                colors: [Color(0xFF0F5132), Color(0xFF8D6E63)],
+              ),
               onTap: () {
-                print("Klik ${menus[index]["label"]}");
+                final onTap = menus[index]["onTap"] as VoidCallback;
+                onTap();
               },
             );
           }),
@@ -80,8 +85,8 @@ class _MenuItemWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(50),
               onTap: onTap,
 
-              splashColor: Colors.black.withOpacity(0.2),
-              highlightColor: Colors.black.withOpacity(0.1),
+              splashColor: Colors.black.withValues(alpha: 0.2),
+              highlightColor: Colors.black.withValues(alpha: 0.1),
 
               child: Icon(icon, color: Colors.white, size: 26),
             ),

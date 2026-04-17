@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class SheepCard extends StatelessWidget {
+class SheepCardRecommendation extends StatelessWidget {
   final String eartag;
   final String breed;
   final String gender;
   final int matchScore;
 
-  const SheepCard({
+  const SheepCardRecommendation({
     super.key,
     required this.eartag,
     required this.breed,
@@ -20,9 +20,8 @@ class SheepCard extends StatelessWidget {
     final genderColor = isJantan ? const Color(0xFF2196F3) : const Color(0xFFE91E63);
     final genderIcon = isJantan ? Icons.male_rounded : Icons.female_rounded;
 
-    // Warna progress match berdasarkan skor
-    final Color scoreColor = matchScore >= 80 
-        ? const Color(0xFF2E7D32) 
+    final Color scoreColor = matchScore >= 80
+        ? const Color(0xFF2E7D32)
         : (matchScore >= 50 ? Colors.orange[700]! : Colors.red[700]!);
 
     return Container(
@@ -30,7 +29,7 @@ class SheepCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey.withValues(alpha: 0.1)), // Border tipis untuk definisi
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -44,7 +43,6 @@ class SheepCard extends StatelessWidget {
         child: IntrinsicHeight(
           child: Row(
             children: [
-              // Aksen warna di pinggir (indikator gender)
               Container(width: 6, color: genderColor),
               
               Expanded(
@@ -52,7 +50,6 @@ class SheepCard extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   child: Row(
                     children: [
-                      // Avatar Icon dengan Glassmorphism effect sederhana
                       Container(
                         width: 56,
                         height: 56,
@@ -64,7 +61,6 @@ class SheepCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 16),
 
-                      // Informasi Domba
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,7 +69,7 @@ class SheepCard extends StatelessWidget {
                               eartag,
                               style: const TextStyle(
                                 fontSize: 18,
-                                fontWeight: FontWeight.w800, // Lebih tebal untuk kesan modern
+                                fontWeight: FontWeight.w800,
                                 color: Color(0xFF2D3436),
                                 letterSpacing: 0.5,
                               ),
@@ -97,7 +93,6 @@ class SheepCard extends StatelessWidget {
                         ),
                       ),
 
-                      // Match Score dengan Circular Progress kecil
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

@@ -23,7 +23,7 @@ class _MainNavigationState extends State<MainNavigation> {
     ProfileScreen(),
   ];
 
-  static const _activeColor = Color(0xFF2E7D32);
+  static const _activeColor = Color(0xFF0F5132);
   static const _inactiveColor = Colors.grey;
 
   @override
@@ -48,7 +48,7 @@ class _MainNavigationState extends State<MainNavigation> {
             bottom: Radius.circular(25)
           )
         ),
-        backgroundColor: Color(0xFF2E7D32),
+        backgroundColor: Theme.of(context).colorScheme.primary,
         automaticallyImplyLeading: false,
         leading: FloatingLogo(height: 5,),
         actions: [
