@@ -4,6 +4,7 @@ class AppTheme {
   static const Color primaryGreen = Color(0xFF0F5132);
   static const Color primaryGreenDark = Color(0xFF1B5E20);
   static const Color brown = Color(0xFF8D6E63);
+  static const Color cream = Color(0xFFFAEEDA);
 
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,

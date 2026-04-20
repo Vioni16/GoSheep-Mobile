@@ -3,6 +3,7 @@ import 'package:gosheep_mobile/data/api_client.dart';
 import 'package:gosheep_mobile/data/exceptions/error_handler.dart';
 import 'package:gosheep_mobile/data/models/api_response.dart';
 import 'package:gosheep_mobile/data/exceptions/api_exception.dart';
+import 'package:gosheep_mobile/data/models/sheep_detail.dart';
 import '../models/sheep_response.dart';
 
 class SheepService {
@@ -29,6 +30,25 @@ class SheepService {
     }
   }
 
+  Future<SheepDetail> getSheepDetails(int sheepId) async {
+    try {
+      final response = await _dio.get('/sheep/$sheepId');
+
+      final apiResponse = ApiResponse.fromJson(
+        response.data,
+        (data) => SheepDetail.fromJson(data),
+      );
+
+      if (!apiResponse.success) {
+        throw ApiException(apiResponse.message);
+      }
+
+      return apiResponse.data!;
+    } on DioException catch (e) {
+      throw ErrorHandler.handle(e);
+    }
+  }
+
   Future<String> deleteSheep(int sheepId) async {
     try {
       final response = await _dio.delete('/sheep/$sheepId');
@@ -43,7 +63,6 @@ class SheepService {
       }
 
       return apiResponse.message;
-
     } on DioException catch (e) {
       throw ErrorHandler.handle(e);
     }

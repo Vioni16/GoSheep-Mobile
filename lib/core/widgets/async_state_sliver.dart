@@ -4,6 +4,7 @@ class AsyncStateSliver<T> extends StatelessWidget {
   final bool isLoading;
   final String? error;
   final List<T> data;
+  final bool showErrorWhenHasData;
 
   final Widget Function() onLoading;
   final Widget Function(String err) onError;
@@ -19,6 +20,7 @@ class AsyncStateSliver<T> extends StatelessWidget {
     required this.onError,
     required this.onEmpty,
     required this.onSuccess,
+    this.showErrorWhenHasData = false,
   });
 
   @override
@@ -28,6 +30,10 @@ class AsyncStateSliver<T> extends StatelessWidget {
     }
 
     if (error != null && data.isEmpty) {
+      return onError(error!);
+    }
+
+    if (error != null && showErrorWhenHasData) {
       return onError(error!);
     }
 

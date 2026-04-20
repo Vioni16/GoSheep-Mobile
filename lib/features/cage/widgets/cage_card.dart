@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/data/models/cage.dart';
 import 'package:gosheep_mobile/features/cage/widgets/ear_tag_chip.dart';
+import 'package:gosheep_mobile/features/sheep/screens/sheep_detail_screen.dart';
 import 'package:intl/intl.dart';
 
 import 'cage_sheep_sheet.dart';
@@ -30,17 +31,6 @@ class CageCard extends StatelessWidget {
     return const Color(0xFF1D9E75);
   }
 
-  Color _badgeBg(String status) {
-    switch (status.toLowerCase()) {
-      case 'penuh':
-        return const Color(0xFFFAEEDA);
-      case 'hampir penuh':
-        return const Color(0xFFFCEBEB);
-      default:
-        return const Color(0xFFEAF3DE);
-    }
-  }
-
   Color _badgeFg(String status) {
     switch (status.toLowerCase()) {
       case 'penuh':
@@ -48,7 +38,7 @@ class CageCard extends StatelessWidget {
       case 'hampir penuh':
         return const Color(0xFF501313);
       default:
-        return const Color(0xFF27500A);
+        return const Color(0xFF1B5E20);
     }
   }
 
@@ -100,7 +90,7 @@ class CageCard extends StatelessWidget {
                             vertical: 3,
                           ),
                           decoration: BoxDecoration(
-                            color: _badgeBg(cage.statusLabel),
+                            color: Color(0xFFFAEEDA),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
@@ -194,7 +184,14 @@ class CageCard extends StatelessWidget {
                         ...visibleSheep.map((s) {
                           return EarTagChip(
                             sheep: s,
-                            onTap: () {}
+                            onTap: () {
+                              Navigator.push(
+                                context, 
+                                MaterialPageRoute(
+                                  builder: (context) => SheepDetailScreen(id: s.id),
+                                )
+                              );
+                            }
                           );
                         }),
 

@@ -3,7 +3,7 @@ class Sheep {
   final String earTag;
   final String earTagColor;
   final String gender;
-  final String breed;
+  final String? breed;
   final double weight;
   final String statusUi;
 
@@ -23,7 +23,7 @@ class Sheep {
         earTag: json['ear_tag'],
         earTagColor: json['ear_tag_color'],
         gender: json['gender'],
-        breed: json['breed'],
+        breed: json['breed'] ?? 'Tidak Diketahui',
         weight: (json['weight'] as num).toDouble(),
         statusUi: json['status_ui'],
     );

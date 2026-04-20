@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/data/models/cage.dart';
+import 'package:gosheep_mobile/features/sheep/screens/sheep_detail_screen.dart';
 import 'ear_tag_chip.dart';
 
 class CageSheepSheet extends StatefulWidget {
@@ -153,7 +154,12 @@ class _CageSheepSheetState extends State<CageSheepSheet> {
                       return EarTagChip(
                         sheep: s,
                         onTap: () {
-                          // TODO: detail sheep
+                          Navigator.push(
+                            context, 
+                            MaterialPageRoute(
+                              builder: (context) => SheepDetailScreen(id: s.id),
+                            )
+                          );
                         },
                       );
                     }).toList(),

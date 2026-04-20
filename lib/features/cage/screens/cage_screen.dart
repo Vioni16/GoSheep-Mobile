@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/core/utils/format_helper.dart';
 import 'package:gosheep_mobile/core/widgets/empty_data.dart';
 import 'package:gosheep_mobile/core/widgets/no_connection.dart';
 import 'package:gosheep_mobile/data/models/cage.dart';
@@ -98,7 +99,7 @@ class _CageScreenView extends StatelessWidget {
 
             onError: (err) => SliverFillRemaining(
               hasScrollBody: false,
-              child: err.contains('Tidak ada koneksi')
+              child: FormatHelper.isNoConnection(err)
                   ? NoConnection(onRetry: provider.refresh)
                   : EmptyData(description: err),
             ),

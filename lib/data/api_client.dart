@@ -4,7 +4,7 @@ import 'package:gosheep_mobile/data/services/secure_storage_service.dart';
 class ApiClient {
   static final Dio dio = Dio(
     BaseOptions(
-      baseUrl: "http://something:8000/api",
+      baseUrl: "http://10.207.213.207:8000/api",
       connectTimeout: const Duration(seconds: 15),
       receiveTimeout: const Duration(seconds: 30),
       headers: {

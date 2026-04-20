@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/core/utils/sheep_status_util.dart';
 import 'package:gosheep_mobile/core/widgets/confirmation_dialog.dart';
 import 'package:gosheep_mobile/core/widgets/sheep_icon.dart';
 import 'package:gosheep_mobile/data/models/sheep.dart';
@@ -6,28 +7,21 @@ import 'package:gosheep_mobile/data/models/sheep.dart';
 class SheepCard extends StatelessWidget {
   final Sheep sheep;
   final Function(BuildContext)? onConfirmDelete;
+  final VoidCallback onTap;
 
-  const SheepCard({super.key, required this.sheep, this.onConfirmDelete});
+  const SheepCard({
+    super.key,
+    required this.sheep,
+    this.onConfirmDelete,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final isHealthy = sheep.statusUi == 'sehat';
-    final isAtRisk = sheep.statusUi == 'at_risk';
-    final isMale = sheep.gender == 'male';
+    final bg = SheepStatusUtil.getHealthColor(sheep.statusUi);
+    final statusLabel = SheepStatusUtil.getHealthLabel(sheep.statusUi);
 
-    final bg =  isHealthy
-        ? const Color(0xFF3B6D11)
-        : isAtRisk
-        ? const Color(0xFFF5D48A)
-        : const Color(0xFFA32D2D);
-
-    final statusLabel = isHealthy
-        ? 'Sehat'
-        : isAtRisk
-        ? 'Berisiko'
-        : 'Sakit';
-
-    final genderLabel = isMale ? 'Jantan' : 'Betina';
+    final genderLabel = SheepStatusUtil.getGenderLabel(sheep.gender);
 
     return Dismissible(
       key: ValueKey(sheep.id),
@@ -64,7 +58,7 @@ class SheepCard extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: const Color(0xFFFFFFFF),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
         ),
@@ -73,13 +67,13 @@ class SheepCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(14),
           child: InkWell(
             borderRadius: BorderRadius.circular(14),
-            onTap: () {},
+            onTap: onTap,
             child: Padding(
               padding: const EdgeInsets.all(14),
               child: Row(
                 children: [
                   SheepIcon(
-                    color: isMale ? Colors.blue : Colors.pink,
+                    color: SheepStatusUtil.getGenderColor(sheep.gender),
                     size: 28,
                   ),
 
@@ -91,12 +85,23 @@ class SheepCard extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            Text(
-                              sheep.earTag,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.sell,
+                                  color: Color(0xFFFAEEDA),
+                                ),
+
+                                const SizedBox(width: 10),
+
+                                Text(
+                                  sheep.earTag,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
                             ),
                             const SizedBox(width: 6),
                             Text(
@@ -128,7 +133,7 @@ class SheepCard extends StatelessWidget {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: bg,
+                      color: Color(0xFFFAEEDA),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -136,7 +141,7 @@ class SheepCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white
+                        color: bg
                       ),
                     ),
                   ),

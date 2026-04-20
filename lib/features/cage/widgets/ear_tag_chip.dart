@@ -28,7 +28,7 @@ class EarTagChip extends StatelessWidget {
               begin: Alignment.bottomRight,
               end: Alignment.topLeft,
               stops: [0.9, 0.5],
-              colors: [Color(0xFF8D6E63), Color(0xFFFFFFFF)],
+              colors: [Color(0xFFFAEEDA), Color(0xFF8D6E63)],
             ),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
@@ -41,7 +41,7 @@ class EarTagChip extends StatelessWidget {
             style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: Colors.white,
+              color: Colors.black,
               letterSpacing: 0.3,
             ),
           ),

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/core/utils/format_helper.dart';
 import 'package:gosheep_mobile/core/widgets/app_refresh_indicator.dart';
 import 'package:gosheep_mobile/core/widgets/async_state_sliver.dart';
 import 'package:gosheep_mobile/core/widgets/empty_data.dart';
 import 'package:gosheep_mobile/core/widgets/no_connection.dart';
 import 'package:gosheep_mobile/core/widgets/toast_widget.dart';
 import 'package:gosheep_mobile/data/providers/sheep_stats_provider.dart';
+import 'package:gosheep_mobile/features/sheep/screens/sheep_detail_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:gosheep_mobile/features/sheep/widgets/add_sheep_sheet.dart';
 import 'package:gosheep_mobile/features/sheep/widgets/filter_pill.dart';
@@ -312,7 +314,7 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
                 ),
               ),
               onError: (err) => SliverToBoxAdapter(
-                child: err.contains('Tidak ada koneksi')
+                child: FormatHelper.isNoConnection(err)
                     ? NoConnection(onRetry: provider.refresh)
                     : EmptyData(),
               ),
@@ -323,6 +325,15 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                 sliver: SliverList.builder(
                   itemBuilder: (_, index) => SheepCard(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => SheepDetailScreen(
+                          id: data[index].id,
+                          initialData: data[index],
+                        ),
+                      ),
+                    ),
                     sheep: data[index],
                     onConfirmDelete: (context) => _handleConfirmDelete(
                       context,
