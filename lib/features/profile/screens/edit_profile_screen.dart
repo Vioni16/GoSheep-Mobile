@@ -1,88 +1,130 @@
 import 'package:flutter/material.dart';
 
-class EditProfileScreen extends StatefulWidget {
+class EditProfileScreen extends StatelessWidget {
   const EditProfileScreen({super.key});
 
   @override
-  State<EditProfileScreen> createState() => _EditProfileScreenState();
-}
-
-class _EditProfileScreenState extends State<EditProfileScreen> {
-  final _nameController = TextEditingController(text: "Vioni Az Zahra");
-  final _emailController = TextEditingController(text: "vioni@email.com");
-  final _phoneController = TextEditingController(text: "08123456789");
-
-  @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
     return Scaffold(
-      appBar: AppBar(title: const Text("Edit Profil"), elevation: 0),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent, 
+        toolbarHeight: 60,
+        centerTitle: false, 
+        automaticallyImplyLeading: false, 
+        
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            color: Color(0xFF2E5D3F), 
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(30),
+              bottomRight: Radius.circular(30),
+            ),
+          ),
+        ),
+        
+        title: Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => Navigator.pop(context),
+            ),
+            const Text(
+              "Edit Profil",
+              style: TextStyle(
+                color: Colors.white, 
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+          ],
+        ),
+      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(24),
         child: Column(
           children: [
-            // FOTO PROFILE
-            CircleAvatar(
-              radius: 45,
-              backgroundColor: Colors.grey.shade300,
-              backgroundImage: const NetworkImage(
-                'https://i.pravatar.cc/150?img=3',
+            const SizedBox(height: 20),
+            Center(
+              child: Stack(
+                children: [
+                  const CircleAvatar(
+                    radius: 70,
+                    backgroundImage: AssetImage('assets/images/user_placeholder.png'),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF2E5D3F), 
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.camera_alt, color: Colors.white, size: 16),
+                    ),
+                  ),
+                ],
               ),
-              child: const Icon(Icons.person, size: 40, color: Colors.white),
             ),
+            const SizedBox(height: 10),
+            const Text(
+              "Ubah Foto Profil",
+              style: TextStyle(color: Color(0xFF2E5D3F), fontWeight: FontWeight.bold), 
+            ),
+            
             const SizedBox(height: 30),
-            // FORM
-            _inputField("Nama", _nameController),
-            const SizedBox(height: 15),
-            _inputField("Email", _emailController),
-            const SizedBox(height: 15),
-            _inputField("No HP", _phoneController),
-
-            const SizedBox(height: 30),
-
+            _inputField("Nama Lengkap", "Dhominica Riskana"), 
+            _inputField("Email", "dhominica@farm.id"), 
+            _inputField("Nomor Telepon", "+62 812 3456 7890"),
+            _inputField("Nama Peternakan", "Mandiri Jaya Farm"), 
+            _inputField("Lokasi Peternakan", "Batam, Kepulauan Riau"), 
+            
+            const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
+              height: 55,
               child: ElevatedButton(
-                onPressed: () {
-                  // nanti bisa connect ke API
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Profil berhasil disimpan")),
-                  );
-                },
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  backgroundColor: scheme.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                  backgroundColor: const Color(0xFF1B4332), 
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 ),
-                child: const Text("Simpan"),
+                onPressed: () => Navigator.pop(context),
+                child: const Text(
+                  "Simpan Perubahan",
+                  style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
+            const SizedBox(height: 70), 
           ],
         ),
       ),
     );
   }
 
-  Widget _inputField(String label, TextEditingController controller) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(fontSize: 13, color: Colors.grey)),
-        const SizedBox(height: 6),
-        TextField(
-          controller: controller,
-          decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 12,
+  Widget _inputField(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: const TextStyle(fontSize: 13, color: Colors.grey)),
+          const SizedBox(height: 8),
+          TextFormField(
+            initialValue: value,
+            decoration: InputDecoration(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+              ),
             ),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
