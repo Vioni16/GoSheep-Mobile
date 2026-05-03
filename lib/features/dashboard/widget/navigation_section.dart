@@ -13,8 +13,20 @@ class MenuSection extends StatelessWidget {
           Navigator.pushNamed(context, '/cage');
         },
       },
-      {"icon": Icons.favorite, "label": "Riwayat\nKawin", "onTap": () {}},
-      {"icon": Icons.pets, "label": "Riwayat\nTernak", "onTap": () {}},
+      {
+        "icon": Icons.favorite,
+        "label": "Riwayat\nKawin",
+        "onTap": () {
+          Navigator.pushNamed(context, '/breeding-history');
+        },
+      },
+      {
+        "icon": Icons.pets,
+        "label": "Riwayat\nTernak",
+        "onTap": () {
+          Navigator.pushNamed(context, '/livestock-history');
+        },
+      },
       {"icon": Icons.bar_chart, "label": "Laporan", "onTap": () {}},
     ];
 
