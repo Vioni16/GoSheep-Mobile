@@ -43,7 +43,6 @@ class BreedingCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // pasangan kecil
                 Row(
                   children: [
                     _GenderAvatar(isMale: true),
@@ -67,18 +66,13 @@ class BreedingCard extends StatelessWidget {
 
                 const SizedBox(height: 6),
 
-                // judul
-                Text(
-                  "$male × $female",
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15,
-                  ),
+                const Text(
+                  "Pasangan Breeding",
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
                 ),
 
                 const SizedBox(height: 6),
 
-                // tanggal
                 Row(
                   children: [
                     const Icon(
@@ -129,14 +123,8 @@ class _GenderAvatar extends StatelessWidget {
     return Container(
       width: 24,
       height: 24,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: isMale
-            ? Colors.green.withValues(alpha: 0.12)
-            : Colors.pink.withValues(alpha: 0.12),
-      ),
       child: Icon(
-        Icons.circle_outlined,
+        Icons.sell,
         size: 14,
         color: isMale ? Colors.green : Colors.pink,
       ),

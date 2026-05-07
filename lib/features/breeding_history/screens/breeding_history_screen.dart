@@ -15,20 +15,20 @@ class _BreedingHistoryScreenState extends State<BreedingHistoryScreen> {
 
   final List<Map<String, dynamic>> data = [
     {
-      "male": "Domba A",
-      "female": "Domba B",
+      "male": "Domba ET020",
+      "female": "Domba ET017",
       "date": "10 Mei 2026",
       "status": "Berhasil",
     },
     {
-      "male": "Domba C",
-      "female": "Domba D",
+      "male": "Domba ET021",
+      "female": "Domba ET018",
       "date": "8 Mei 2026",
       "status": "Proses",
     },
     {
-      "male": "Domba E",
-      "female": "Domba F",
+      "male": "Domba ET022",
+      "female": "Domba ET019",
       "date": "5 Mei 2026",
       "status": "Gagal",
     },
