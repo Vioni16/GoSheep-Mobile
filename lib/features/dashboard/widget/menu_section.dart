@@ -27,7 +27,16 @@ class MenuSection extends StatelessWidget {
           Navigator.pushNamed(context, '/livestock-history');
         },
       },
-      {"icon": Icons.bar_chart, "label": "Laporan", "onTap": () {}},
+      {
+        "icon": Icons.bar_chart,
+        "label": "Laporan",
+        "onTap": () {},
+      },
+      {
+        "icon": Icons.medical_services_rounded,
+        "label": "Catatan\nKesehatan",
+        "onTap": () {},
+      },
     ];
 
     return Column(
@@ -41,26 +50,40 @@ class MenuSection extends StatelessWidget {
             color: Color.fromARGB(255, 115, 115, 115),
           ),
         ),
+
         const SizedBox(height: 15),
 
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: List.generate(menus.length, (index) {
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: menus.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4,
+            mainAxisSpacing: 3,
+            crossAxisSpacing: 20,
+            childAspectRatio: 0.78,
+          ),
+          itemBuilder: (context, index) {
             return _MenuItemWidget(
               icon: menus[index]["icon"] as IconData,
               label: menus[index]["label"] as String,
-              gradient: LinearGradient(
+              gradient: const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 stops: [0.8, 0.6],
-                colors: [Color(0xFF0F5132), Color(0xFF8D6E63)],
+                colors: [
+                  Color(0xFF0F5132),
+                  Color(0xFF8D6E63),
+                ],
               ),
               onTap: () {
-                final onTap = menus[index]["onTap"] as VoidCallback;
+                final onTap =
+                menus[index]["onTap"] as VoidCallback;
+
                 onTap();
               },
             );
-          }),
+          },
         ),
       ],
     );
@@ -96,19 +119,26 @@ class _MenuItemWidget extends StatelessWidget {
             child: InkWell(
               borderRadius: BorderRadius.circular(50),
               onTap: onTap,
-
               splashColor: Colors.black.withValues(alpha: 0.2),
               highlightColor: Colors.black.withValues(alpha: 0.1),
-
-              child: Icon(icon, color: Colors.white, size: 26),
+              child: Icon(
+                icon,
+                color: Colors.white,
+                size: 26,
+              ),
             ),
           ),
         ),
+
         const SizedBox(height: 6),
+
         Text(
           label,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 10.5, height: 1.2),
+          style: const TextStyle(
+            fontSize: 10.5,
+            height: 1.2,
+          ),
         ),
       ],
     );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/features/dashboard/widget/activity_card.dart';
-import 'package:gosheep_mobile/features/dashboard/widget/navigation_section.dart';
+import 'package:gosheep_mobile/features/dashboard/widget/menu_section.dart';
 import 'package:gosheep_mobile/features/dashboard/widget/stats_section.dart';
 
 class DashboardPage extends StatelessWidget {
@@ -106,10 +106,7 @@ class DashboardPage extends StatelessWidget {
                       padding: const EdgeInsets.all(15),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [
-                            scheme.primary,
-                            scheme.primaryFixedDim,
-                          ],
+                          colors: [scheme.primary, scheme.primaryFixedDim],
                         ),
                         borderRadius: BorderRadius.circular(15),
                       ),
