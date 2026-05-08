@@ -17,11 +17,7 @@ class SheepDetailScreen extends StatelessWidget {
   final int id;
   final Sheep? initialData;
 
-  const SheepDetailScreen({
-    super.key,
-    required this.id,
-    this.initialData,
-  });
+  const SheepDetailScreen({super.key, required this.id, this.initialData});
 
   @override
   Widget build(BuildContext context) {
@@ -74,9 +70,8 @@ class _SheepDetailView extends StatelessWidget {
             isLoading: provider.isLoading,
             error: provider.error,
             data: provider.sheepDetail != null ? [provider.sheepDetail!] : [],
-            onLoading: () => const SliverToBoxAdapter(
-              child: SheepDetailSkeleton(),
-            ),
+            onLoading: () =>
+                const SliverToBoxAdapter(child: SheepDetailSkeleton()),
             onError: (err) => SliverFillRemaining(
               hasScrollBody: false,
               child: FormatHelper.isNoConnection(err)
@@ -128,8 +123,10 @@ class _SheepDetailView extends StatelessWidget {
                         value: FormatHelper.formatAge(sheep.birthDate),
                         isLoading: sheep.isFromInitial,
                       ),
-                      buildStatusTile(sheep.status,
-                          isLoading: sheep.isFromInitial),
+                      buildStatusTile(
+                        sheep.status,
+                        isLoading: sheep.isFromInitial,
+                      ),
                       ModernInfoRow(
                         label: 'Kandang',
                         value: sheep.cage ?? '-',
@@ -142,10 +139,18 @@ class _SheepDetailView extends StatelessWidget {
                     icon: Icons.family_restroom_rounded,
                     title: 'Orang Tua',
                     children: [
-                      buildParentTile(context, 'Sire', sheep.sire,
-                          isLoading: sheep.isFromInitial),
-                      buildParentTile(context, 'Dam', sheep.dam,
-                          isLoading: sheep.isFromInitial),
+                      buildParentTile(
+                        context,
+                        'Sire',
+                        sheep.sire,
+                        isLoading: sheep.isFromInitial,
+                      ),
+                      buildParentTile(
+                        context,
+                        'Dam',
+                        sheep.dam,
+                        isLoading: sheep.isFromInitial,
+                      ),
                     ],
                   ),
 
@@ -157,10 +162,12 @@ class _SheepDetailView extends StatelessWidget {
                       ModernInfoRow(
                         label: 'Kondisi',
                         value: SheepStatusUtil.healthConditionStatus(
-                            sheep.healthCondition),
+                          sheep.healthCondition,
+                        ),
                         isLoading: sheep.isFromInitial,
-                        valueColor:
-                        SheepStatusUtil.getHealthColor(sheep.statusUi),
+                        valueColor: SheepStatusUtil.getHealthColor(
+                          sheep.statusUi,
+                        ),
                       ),
                     ],
                   ),

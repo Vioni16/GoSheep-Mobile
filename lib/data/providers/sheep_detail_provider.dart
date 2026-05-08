@@ -14,8 +14,11 @@ class SheepDetailProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
 
-  Future<void> init(int id, {Sheep? initialData, bool forceRefresh = false}) async {
-
+  Future<void> init(
+    int id, {
+    Sheep? initialData,
+    bool forceRefresh = false,
+  }) async {
     if (!forceRefresh && initialData != null) {
       _sheepDetail = SheepDetail.fromSheep(initialData);
       notifyListeners();

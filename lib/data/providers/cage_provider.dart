@@ -14,8 +14,6 @@ class CageProvider with ChangeNotifier {
   String? _error;
   String? get error => _error;
 
-  bool get hasError => _error != null;
-
   Future<void> fetchCages({bool forceRefresh = false}) async {
     if (_isLoading) return;
 

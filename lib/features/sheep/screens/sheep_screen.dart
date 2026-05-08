@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/core/utils/format_helper.dart';
 import 'package:gosheep_mobile/core/widgets/app_refresh_indicator.dart';
@@ -17,8 +19,6 @@ import '../../../data/models/sheep.dart';
 import '../../../data/providers/sheep_provider.dart';
 import '../widgets/sheep_card_skeleton.dart';
 
-const _breedList = ['Merino', 'Garut', 'Texel', 'Dorper', 'Suffolk'];
-
 class SheepScreen extends StatelessWidget {
   const SheepScreen({super.key});
 
@@ -26,9 +26,7 @@ class SheepScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (_) => SheepProvider()..fetchInitial(),
-        ),
+        ChangeNotifierProvider(create: (_) => SheepProvider()..fetchInitial()),
         ChangeNotifierProvider(
           create: (_) => SheepStatsProvider()..fetchHealthStats(),
         ),
@@ -46,54 +44,72 @@ class _SheepScreenView extends StatefulWidget {
 }
 
 class _SheepScreenViewState extends State<_SheepScreenView> {
+  List<Sheep> _filteredByStatus(List<Sheep> list) {
+    if (_filter == 'all') {
+      return list;
+    }
+
+    return list
+        .where((sheep) => sheep.statusUi == _filter)
+        .toList();
+  }
   final _search = TextEditingController();
   final _scrollController = ScrollController();
 
   String _filter = 'all';
+  Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
+
     _scrollController.addListener(_onScroll);
+
+    _search.addListener(() {
+      if (_debounce?.isActive ?? false) {
+        _debounce!.cancel();
+      }
+
+      _debounce = Timer(
+        const Duration(milliseconds: 300),
+        () {
+          context.read<SheepProvider>().searchSheep(_search.text);
+        }
+      );
+    });
   }
 
   @override
   void dispose() {
     _search.dispose();
+
     _scrollController
       ..removeListener(_onScroll)
       ..dispose();
+
     super.dispose();
   }
 
   void _onScroll() {
     final pos = _scrollController.position;
+
     if (pos.pixels >= pos.maxScrollExtent - 200) {
       context.read<SheepProvider>().fetchMore();
     }
-  }
-
-  List<Sheep> _filtered(List<Sheep> list) {
-    final q = _search.text.toLowerCase();
-    return list.where((s) {
-      final matchStatus = _filter == 'all' || s.statusUi == _filter;
-      final matchQuery = q.isEmpty || s.earTag.toLowerCase().contains(q);
-      return matchStatus && matchQuery;
-    }).toList();
   }
 
   void _openAdd() => showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (_) => AddSheepSheet(breedList: _breedList, onAdd: () {}),
+    builder: (_) => AddSheepSheet(onAdd: (data) {}),
   );
 
   Future<void> _handleConfirmDelete(
-      BuildContext context,
-      int sheepId,
-      String sheepEarTag,
-      ) async {
+    BuildContext context,
+    int sheepId,
+    String sheepEarTag,
+  ) async {
     if (!context.mounted) return;
 
     final sheepProvider = context.read<SheepProvider>();
@@ -122,8 +138,12 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
 
   @override
   Widget build(BuildContext context) {
+
     final provider = context.watch<SheepProvider>();
-    final sheepList = _filtered(provider.sheepList);
+    final sheepList = _filteredByStatus(
+      provider.sheepList,
+    );
+    final isSearching = provider.isSearching;
 
     return SafeArea(
       child: AppRefreshIndicator(
@@ -232,30 +252,16 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.search_rounded, size: 18),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: TextField(
-                          controller: _search,
-                          onChanged: (_) => setState(() {}),
-                          decoration: const InputDecoration(
-                            hintText: 'Cari ID domba...',
-                            border: InputBorder.none,
-                          ),
-                        ),
-                      ),
-                    ],
+                child: SearchBar(
+                  controller: _search,
+                  hintText: 'Cari Eartag domba...',
+                  leading: const Icon(Icons.search_rounded),
+                  elevation: WidgetStateProperty.all(0),
+                  backgroundColor: WidgetStateProperty.all(Colors.white),
+                  shape: WidgetStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ),
@@ -316,10 +322,21 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
               onError: (err) => SliverToBoxAdapter(
                 child: FormatHelper.isNoConnection(err)
                     ? NoConnection(onRetry: provider.refresh)
-                    : EmptyData(),
+                    : EmptyData(
+                        title: 'Terjadi Kesalahan!',
+                        description: err,
+                        onRetry: provider.refresh,
+                      ),
               ),
-              onEmpty: () => const SliverToBoxAdapter(
-                child: EmptyData(description: 'Belum ada domba yang terdaftar'),
+              onEmpty: () => SliverToBoxAdapter(
+                child: EmptyData(
+                  title: isSearching
+                      ? 'Domba Tidak Ditemukan'
+                      : 'Belum Ada Data',
+                  description: isSearching
+                      ? 'Tidak ada domba dengan Eartag tersebut'
+                      : 'Belum ada domba yang terdaftar',
+                ),
               ),
               onSuccess: (data) => SliverPadding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),

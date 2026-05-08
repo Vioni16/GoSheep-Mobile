@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 
 class EmptyData extends StatelessWidget {
-  final String? message;
+  final String? title;
   final String? description;
+  final VoidCallback? onRetry;
 
-  const EmptyData({
-    super.key,
-    this.message,
-    this.description
-  });
+  const EmptyData({super.key, this.title, this.description, this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +30,7 @@ class EmptyData extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              message ?? 'Tidak ada data',
+              title ?? 'Tidak ada data',
               style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
@@ -50,6 +47,30 @@ class EmptyData extends StatelessWidget {
                 height: 1.5,
               ),
             ),
+            if (onRetry != null) ...[
+              const SizedBox(height: 20),
+              GestureDetector(
+                onTap: onRetry,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF000000),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Text(
+                    'Coba lagi',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),

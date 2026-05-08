@@ -43,7 +43,6 @@ class _CageScreenView extends StatelessWidget {
 
       body: CustomScrollView(
         slivers: [
-
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
@@ -61,10 +60,7 @@ class _CageScreenView extends StatelessWidget {
 
                   Text(
                     'Kelola kandang dan pantau kondisi domba secara real-time',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 13,
-                    ),
+                    style: TextStyle(color: Colors.grey, fontSize: 13),
                   ),
                 ],
               ),
@@ -79,21 +75,19 @@ class _CageScreenView extends StatelessWidget {
             onLoading: () => SliverPadding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
               sliver: SliverList(
-                delegate: SliverChildListDelegate(
-                  [
-                    const CageSummaryHeaderSkeleton(),
+                delegate: SliverChildListDelegate([
+                  const CageSummaryHeaderSkeleton(),
 
-                    const SizedBox(height: 10),
+                  const SizedBox(height: 10),
 
-                    ...List.generate(
-                      4,
-                          (_) => const Padding(
-                        padding: EdgeInsets.only(bottom: 10),
-                        child: CageCardSkeleton(),
-                      ),
+                  ...List.generate(
+                    4,
+                    (_) => const Padding(
+                      padding: EdgeInsets.only(bottom: 10),
+                      child: CageCardSkeleton(),
                     ),
-                  ],
-                ),
+                  ),
+                ]),
               ),
             ),
 
@@ -101,7 +95,11 @@ class _CageScreenView extends StatelessWidget {
               hasScrollBody: false,
               child: FormatHelper.isNoConnection(err)
                   ? NoConnection(onRetry: provider.refresh)
-                  : EmptyData(description: err),
+                  : EmptyData(
+                      title: 'Terjadi Kesalahan!',
+                      description: err,
+                      onRetry: provider.refresh,
+                    ),
             ),
 
             onEmpty: () => const SliverFillRemaining(
@@ -110,18 +108,19 @@ class _CageScreenView extends StatelessWidget {
             ),
 
             onSuccess: (data) {
-              final totalSheep =
-              data.fold<int>(0, (sum, c) => sum + c.currentCapacity);
+              final totalSheep = data.fold<int>(
+                0,
+                (sum, c) => sum + c.currentCapacity,
+              );
 
               final avgCapacity = data.isEmpty
                   ? 0.0
                   : data.fold<double>(
-                0,
-                    (sum, c) =>
-                sum + (c.currentCapacity / c.maxCapacity),
-              ) /
-                  data.length *
-                  100;
+                          0,
+                          (sum, c) => sum + (c.currentCapacity / c.maxCapacity),
+                        ) /
+                        data.length *
+                        100;
 
               return SliverPadding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),

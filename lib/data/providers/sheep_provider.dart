@@ -28,6 +28,9 @@ class SheepProvider with ChangeNotifier {
   String? _error;
   String? get error => _error;
 
+  String _search = '';
+  bool get isSearching => _search.isNotEmpty;
+
   Future<void> fetchInitial({bool forceRefresh = false}) async {
     if (_isInitialized && !forceRefresh) return;
 
@@ -49,7 +52,12 @@ class SheepProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await _service.getSheep(lastId: _lastId, limit: _limit);
+      final response = await _service.getSheep(
+        lastId: _lastId,
+        limit: _limit,
+        search: _search,
+      );
+
       _sheepList.addAll(response.data);
 
       if (response.data.isNotEmpty) {
@@ -64,6 +72,19 @@ class SheepProvider with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  Future<void> searchSheep(String value) async {
+    _search = value;
+
+    _sheepList = [];
+    _lastId = null;
+    _hasMore = true;
+    _error = null;
+
+    notifyListeners();
+
+    await fetchMore();
   }
 
   Future<void> refresh() async {

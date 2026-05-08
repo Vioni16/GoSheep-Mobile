@@ -9,11 +9,20 @@ import '../models/sheep_response.dart';
 class SheepService {
   final Dio _dio = ApiClient.dio;
 
-  Future<SheepResponse> getSheep({int? lastId, int limit = 10}) async {
+  Future<SheepResponse> getSheep({
+    int? lastId,
+    int limit = 10,
+    String? search,
+  }) async {
     try {
-      final queryParams = {'limit': limit};
+      final Map<String, dynamic> queryParams = {'limit': limit};
+
       if (lastId != null) {
         queryParams['last_id'] = lastId;
+      }
+
+      if (search != null && search.isNotEmpty) {
+        queryParams['search'] = search;
       }
 
       final response = await _dio.get('/sheep', queryParameters: queryParams);

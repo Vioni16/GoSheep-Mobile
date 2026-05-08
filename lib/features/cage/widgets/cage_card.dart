@@ -18,10 +18,7 @@ class CageCard extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => CageSheepSheet(
-        cageName: cage.name,
-        sheep: sheep,
-      ),
+      builder: (_) => CageSheepSheet(cageName: cage.name, sheep: sheep),
     );
   }
 
@@ -68,7 +65,6 @@ class CageCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               Padding(
                 padding: const EdgeInsets.fromLTRB(14, 12, 14, 10),
                 child: Column(
@@ -113,7 +109,9 @@ class CageCard extends StatelessWidget {
                           '${cage.currentCapacity} / ${cage.maxCapacity}',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -126,8 +124,9 @@ class CageCard extends StatelessWidget {
                               backgroundColor: Theme.of(
                                 context,
                               ).colorScheme.surfaceContainerHighest,
-                              valueColor:
-                              AlwaysStoppedAnimation<Color>(capColor),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                capColor,
+                              ),
                             ),
                           ),
                         ),
@@ -170,62 +169,65 @@ class CageCard extends StatelessWidget {
 
                     cage.sheep.isEmpty
                         ? Text(
-                      'Belum ada domba',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    )
-                        : Wrap(
-                      spacing: 5,
-                      runSpacing: 5,
-                      children: [
-                        ...visibleSheep.map((s) {
-                          return EarTagChip(
-                            sheep: s,
-                            onTap: () {
-                              Navigator.push(
-                                context, 
-                                MaterialPageRoute(
-                                  builder: (context) => SheepDetailScreen(id: s.id),
-                                )
-                              );
-                            }
-                          );
-                        }),
-
-                        if (hasMore)
-                          Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(20),
-                              onTap: () => _onCardTap(context),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 3,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFE0E0E0),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: const Color(0xFFBDBDBD),
-                                  ),
-                                ),
-                                child: Text(
-                                  '+$remaining lainnya',
-                                  style: const TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w500,
-                                    color: Color(0xFF424242),
-                                  ),
-                                ),
-                              ),
+                            'Belum ada domba',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                              fontStyle: FontStyle.italic,
                             ),
+                          )
+                        : Wrap(
+                            spacing: 5,
+                            runSpacing: 5,
+                            children: [
+                              ...visibleSheep.map((s) {
+                                return EarTagChip(
+                                  sheep: s,
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            SheepDetailScreen(id: s.id),
+                                      ),
+                                    );
+                                  },
+                                );
+                              }),
+
+                              if (hasMore)
+                                Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(20),
+                                    onTap: () => _onCardTap(context),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 3,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFE0E0E0),
+                                        borderRadius: BorderRadius.circular(20),
+                                        border: Border.all(
+                                          color: const Color(0xFFBDBDBD),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        '+$remaining lainnya',
+                                        style: const TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w500,
+                                          color: Color(0xFF424242),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
-                      ],
-                    ),
                   ],
                 ),
               ),
