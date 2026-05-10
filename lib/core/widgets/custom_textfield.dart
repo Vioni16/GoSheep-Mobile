@@ -8,6 +8,7 @@ class CustomTextFormField extends StatefulWidget {
   final FocusNode? focusNode;
   final TextEditingController? controller;
   final String? Function(String?)? validator;
+  final AutovalidateMode? autovalidateMode;
   final TextInputType keyboardType;
   final bool enabled;
 
@@ -22,6 +23,7 @@ class CustomTextFormField extends StatefulWidget {
     this.validator,
     this.keyboardType = TextInputType.text,
     this.enabled = true,
+    this.autovalidateMode,
   });
 
   @override
@@ -48,6 +50,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         const SizedBox(height: 8),
         TextFormField(
           focusNode: widget.focusNode,
+          autovalidateMode: widget.autovalidateMode,
           controller: widget.controller,
           validator: widget.validator,
           keyboardType: widget.keyboardType,

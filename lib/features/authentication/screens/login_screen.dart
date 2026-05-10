@@ -42,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     final success = await userProvider.login(
       email: _emailController.text.trim(),
-      password: _passwordController.text,
+      password: _passwordController.text.trim(),
     );
 
     if (!mounted) return;
@@ -97,6 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 CustomTextFormField(
                   icon: Icons.email,
                   hint: 'Email',
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   controller: _emailController,
                   focusNode: _emailFocus,
                   keyboardType: TextInputType.emailAddress,

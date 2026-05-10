@@ -4,14 +4,11 @@ class SheepOption {
 
   const SheepOption({required this.id, required this.label});
 
-  factory SheepOption.fromJson(Map<String, dynamic> json) {
-    return SheepOption(id: json['id'], label: json['label']);
+  factory SheepOption.fromBreedJson(Map<String, dynamic> json) {
+    return SheepOption(id: json['id'], label: json['name']);
   }
 
-  Map<String, dynamic> toJson() {
-    return {'id': id, 'label': label};
+  factory SheepOption.fromSireDamJson(Map<String, dynamic> json) {
+    return SheepOption(id: json['id'], label: json['eartag']);
   }
-
-  @override
-  String toString() => label;
 }

@@ -3,19 +3,20 @@ import 'package:gosheep_mobile/data/api_client.dart';
 import 'package:gosheep_mobile/data/exceptions/error_handler.dart';
 import 'package:gosheep_mobile/data/models/api_response.dart';
 import 'package:gosheep_mobile/data/exceptions/api_exception.dart';
+import 'package:gosheep_mobile/data/models/cursor_response.dart';
+import 'package:gosheep_mobile/data/models/sheep.dart';
 import 'package:gosheep_mobile/data/models/sheep_detail.dart';
-import '../models/sheep_response.dart';
 
 class SheepService {
   final Dio _dio = ApiClient.dio;
 
-  Future<SheepResponse> getSheep({
+  Future<CursorResponse<Sheep>> getSheep({
     int? lastId,
     int limit = 10,
     String? search,
   }) async {
     try {
-      final Map<String, dynamic> queryParams = {'limit': limit};
+      final queryParams = <String, dynamic>{'limit': limit};
 
       if (lastId != null) {
         queryParams['last_id'] = lastId;
@@ -27,13 +28,16 @@ class SheepService {
 
       final response = await _dio.get('/sheep', queryParameters: queryParams);
 
-      final apiResponse = SheepResponse.fromJson(response.data);
+      final result = CursorResponse<Sheep>.fromJson(
+        response.data,
+        (e) => Sheep.fromJson(e),
+      );
 
-      if (!apiResponse.success) {
-        throw ApiException(apiResponse.message);
+      if (!result.success) {
+        throw ApiException(result.message);
       }
 
-      return apiResponse;
+      return result;
     } on DioException catch (e) {
       throw ErrorHandler.handle(e);
     }

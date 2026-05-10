@@ -11,13 +11,14 @@ class SheepProvider with ChangeNotifier {
 
   List<Sheep> _sheepList = [];
   List<Sheep> get sheepList => _sheepList;
+
   String _message = '';
+  String get message => _message;
+
   bool _isInitialized = false;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
-
-  String get message => _message;
 
   bool _hasMore = true;
   bool get hasMore => _hasMore;
@@ -32,7 +33,9 @@ class SheepProvider with ChangeNotifier {
   bool get isSearching => _search.isNotEmpty;
 
   Future<void> fetchInitial({bool forceRefresh = false}) async {
-    if (_isInitialized && !forceRefresh) return;
+    if (_isInitialized && !forceRefresh) {
+      return;
+    }
 
     _isInitialized = true;
 
@@ -46,7 +49,9 @@ class SheepProvider with ChangeNotifier {
   }
 
   Future<void> fetchMore() async {
-    if (_isLoading || !_hasMore) return;
+    if (_isLoading || !_hasMore) {
+      return;
+    }
 
     _isLoading = true;
     notifyListeners();
@@ -60,9 +65,7 @@ class SheepProvider with ChangeNotifier {
 
       _sheepList.addAll(response.data);
 
-      if (response.data.isNotEmpty) {
-        _lastId = response.data.last.id;
-      }
+      _lastId = response.nextCursor;
 
       _hasMore = response.hasMore;
       _error = null;
@@ -96,30 +99,47 @@ class SheepProvider with ChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
-      final deletedIndex = _sheepList.indexWhere((s) => s.id == sheepId);
-      if (deletedIndex == -1) return false;
+      final deletedIndex = _sheepList.indexWhere(
+        (sheep) => sheep.id == sheepId,
+      );
+
+      if (deletedIndex == -1) {
+        _isLoading = false;
+        notifyListeners();
+
+        return false;
+      }
 
       final deletedSheep = _sheepList[deletedIndex];
 
       _sheepList.removeAt(deletedIndex);
+
       notifyListeners();
 
       try {
         final message = await _service.deleteSheep(sheepId);
+
         _message = message;
+        _error = null;
         _isLoading = false;
+
         notifyListeners();
+
+        return true;
       } catch (e) {
         _sheepList.insert(deletedIndex, deletedSheep);
-        _isLoading = false;
+
         _error = e.toString();
+        _isLoading = false;
+
         notifyListeners();
+
         return false;
       }
-
-      return true;
     } catch (e) {
       _error = e.toString();
+      _isLoading = false;
+
       notifyListeners();
 
       return false;

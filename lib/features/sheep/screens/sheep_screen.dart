@@ -7,6 +7,7 @@ import 'package:gosheep_mobile/core/widgets/async_state_sliver.dart';
 import 'package:gosheep_mobile/core/widgets/empty_data.dart';
 import 'package:gosheep_mobile/core/widgets/no_connection.dart';
 import 'package:gosheep_mobile/core/widgets/toast_widget.dart';
+import 'package:gosheep_mobile/data/providers/sheep_form_option_provider.dart';
 import 'package:gosheep_mobile/data/providers/sheep_stats_provider.dart';
 import 'package:gosheep_mobile/features/sheep/screens/sheep_detail_screen.dart';
 import 'package:provider/provider.dart';
@@ -49,10 +50,9 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
       return list;
     }
 
-    return list
-        .where((sheep) => sheep.statusUi == _filter)
-        .toList();
+    return list.where((sheep) => sheep.statusUi == _filter).toList();
   }
+
   final _search = TextEditingController();
   final _scrollController = ScrollController();
 
@@ -70,12 +70,9 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
         _debounce!.cancel();
       }
 
-      _debounce = Timer(
-        const Duration(milliseconds: 300),
-        () {
-          context.read<SheepProvider>().searchSheep(_search.text);
-        }
-      );
+      _debounce = Timer(const Duration(milliseconds: 300), () {
+        context.read<SheepProvider>().searchSheep(_search.text);
+      });
     });
   }
 
@@ -102,7 +99,20 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (_) => AddSheepSheet(onAdd: (data) {}),
+    builder: (context) {
+      return ChangeNotifierProvider(
+        create: (_) => SheepFormOptionProvider(),
+        child: AddSheepSheet(
+          onAdd: (data) async {
+            // await context.read<SheepProvider>().createSheep(data);
+
+            if (!context.mounted) return;
+
+            Navigator.pop(context);
+          },
+        ),
+      );
+    },
   );
 
   Future<void> _handleConfirmDelete(
@@ -138,11 +148,8 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
 
   @override
   Widget build(BuildContext context) {
-
     final provider = context.watch<SheepProvider>();
-    final sheepList = _filteredByStatus(
-      provider.sheepList,
-    );
+    final sheepList = _filteredByStatus(provider.sheepList);
     final isSearching = provider.isSearching;
 
     return SafeArea(
