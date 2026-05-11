@@ -99,18 +99,14 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (context) {
-      return ChangeNotifierProvider(
-        create: (_) => SheepFormOptionProvider(),
-        child: AddSheepSheet(
-          onAdd: (data) async {
-            // await context.read<SheepProvider>().createSheep(data);
+    builder: (_) {
+      return MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: context.read<SheepProvider>()),
 
-            if (!context.mounted) return;
-
-            Navigator.pop(context);
-          },
-        ),
+          ChangeNotifierProvider(create: (_) => SheepFormOptionProvider()),
+        ],
+        child: const AddSheepSheet(),
       );
     },
   );

@@ -40,4 +40,31 @@ class Validators {
 
     return null;
   }
+
+  static String? weight(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Berat wajib diisi';
+    }
+
+    final parsed = double.tryParse(value.trim());
+
+    if (parsed == null) {
+      return 'Berat harus berupa angka';
+    }
+
+    if (parsed <= 0) {
+      return 'Berat harus lebih dari 0';
+    }
+
+    if (parsed > 200) {
+      return 'Berat maksimal 200 kg';
+    }
+
+    final decimalRegex = RegExp(r'^\d+(\.\d{1,2})?$');
+    if (!decimalRegex.hasMatch(value.trim())) {
+      return 'Maks 2 angka belakang koma';
+    }
+
+    return null;
+  }
 }

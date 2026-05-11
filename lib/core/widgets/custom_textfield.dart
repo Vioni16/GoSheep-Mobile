@@ -6,11 +6,13 @@ class CustomTextFormField extends StatefulWidget {
   final String hint;
   final bool isPassword;
   final FocusNode? focusNode;
+  final void Function(String?)? onChanged;
   final TextEditingController? controller;
   final String? Function(String?)? validator;
   final AutovalidateMode? autovalidateMode;
   final TextInputType keyboardType;
   final bool enabled;
+  final String? serverError;
 
   const CustomTextFormField({
     super.key,
@@ -20,10 +22,12 @@ class CustomTextFormField extends StatefulWidget {
     this.isPassword = false,
     this.focusNode,
     this.controller,
+    this.onChanged,
     this.validator,
     this.keyboardType = TextInputType.text,
     this.enabled = true,
     this.autovalidateMode,
+    this.serverError,
   });
 
   @override
@@ -52,11 +56,12 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           focusNode: widget.focusNode,
           autovalidateMode: widget.autovalidateMode,
           controller: widget.controller,
-          validator: widget.validator,
           keyboardType: widget.keyboardType,
           enabled: widget.enabled,
           obscureText: widget.isPassword && _isHidden,
+          onChanged: widget.onChanged,
           style: const TextStyle(fontSize: 14),
+          validator: (v) => widget.validator?.call(v) ?? widget.serverError,
           decoration: InputDecoration(
             hintText: widget.hint,
             hintStyle: const TextStyle(color: Colors.black26, fontSize: 14),

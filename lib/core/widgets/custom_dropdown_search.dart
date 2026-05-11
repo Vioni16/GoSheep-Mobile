@@ -13,6 +13,7 @@ class CustomDropdownSearch<T> extends StatelessWidget {
   final String? Function(T?)? validator;
   final bool enabled;
   final bool searchable;
+  final String? serverError;
 
   const CustomDropdownSearch({
     super.key,
@@ -27,6 +28,7 @@ class CustomDropdownSearch<T> extends StatelessWidget {
     this.validator,
     this.enabled = true,
     this.searchable = false,
+    this.serverError,
   });
 
   InputDecoration get _decoration => InputDecoration(
@@ -88,7 +90,7 @@ class CustomDropdownSearch<T> extends StatelessWidget {
           itemAsString: itemAsString,
           compareFn: compareFn,
           onSelected: onSelected,
-          validator: validator,
+          validator: (v) => validator?.call(v) ?? serverError,
           decoratorProps: DropDownDecoratorProps(decoration: _decoration),
           popupProps: PopupProps.menu(
             fit: FlexFit.loose,

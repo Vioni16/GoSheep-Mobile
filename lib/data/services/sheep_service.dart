@@ -62,6 +62,56 @@ class SheepService {
     }
   }
 
+  Future<ApiResponse<Sheep>> createSheep({
+    required String earTag,
+    required String earTagColor,
+    required String gender,
+    required String birthDate,
+    int? breedId,
+    int? cageId,
+    int? sireId,
+    int? damId,
+    required String condition,
+    required String category,
+    required String severity,
+    required double weight,
+    String? notes,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/sheep',
+        data: {
+          'eartag': earTag,
+          'eartag_color': earTagColor,
+          'gender': gender,
+          'birth_date': birthDate,
+          'breed_id': breedId,
+          'cage_id': cageId,
+          'sire_id': sireId,
+          'dam_id': damId,
+          'condition': condition,
+          'category': category,
+          'severity': severity,
+          'weight': weight,
+          'notes': notes,
+        },
+      );
+
+      final result = ApiResponse<Sheep>.fromJson(
+        response.data,
+        (data) => Sheep.fromJson(data),
+      );
+
+      if (!result.success) {
+        throw ApiException(result.message);
+      }
+
+      return result;
+    } on DioException catch (e) {
+      throw ErrorHandler.handle(e);
+    }
+  }
+
   Future<String> deleteSheep(int sheepId) async {
     try {
       final response = await _dio.delete('/sheep/$sheepId');

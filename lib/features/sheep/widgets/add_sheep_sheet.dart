@@ -4,22 +4,22 @@ import 'package:gosheep_mobile/core/utils/validators.dart';
 import 'package:gosheep_mobile/core/widgets/custom_dropdown_search.dart';
 import 'package:gosheep_mobile/core/widgets/custom_textfield.dart';
 import 'package:gosheep_mobile/core/widgets/sheep_picker_field.dart';
+import 'package:gosheep_mobile/core/widgets/toast_widget.dart';
+import 'package:gosheep_mobile/data/models/cage_option.dart';
 import 'package:gosheep_mobile/data/models/sheep_option.dart';
+import 'package:gosheep_mobile/data/providers/sheep_form_option_provider.dart';
+import 'package:gosheep_mobile/data/providers/sheep_provider.dart';
+import 'package:provider/provider.dart';
 
 class AddSheepSheet extends StatefulWidget {
-  final void Function(Map<String, dynamic> data) onAdd;
-
-  const AddSheepSheet({super.key, required this.onAdd});
+  const AddSheepSheet({super.key});
 
   @override
   State<AddSheepSheet> createState() => _AddSheepSheetState();
 }
 
 class _AddSheepSheetState extends State<AddSheepSheet> {
-  final PageController _pageController = PageController();
-
-  final _formKey1 = GlobalKey<FormState>();
-  final _formKey2 = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
 
   final _earTag = TextEditingController();
   final _weight = TextEditingController();
@@ -27,13 +27,11 @@ class _AddSheepSheetState extends State<AddSheepSheet> {
   final _notes = TextEditingController();
   final _condition = TextEditingController();
 
-  int _currentPage = 0;
-
   String? _gender;
   DateTime? _birthDate;
 
-  Map<String, dynamic>? _selectedBreed;
-  Map<String, dynamic>? _selectedCage;
+  SheepOption? _selectedBreed;
+  CageOption? _selectedCage;
 
   SheepOption? _selectedSire;
   SheepOption? _selectedDam;
@@ -41,17 +39,19 @@ class _AddSheepSheetState extends State<AddSheepSheet> {
   String? _selectedCategory;
   String? _selectedSeverity;
 
-  static const _totalSteps = 2;
+  @override
+  void initState() {
+    super.initState();
 
-  final breeds = [
-    {'id': 1, 'name': 'Dorper'},
-    {'id': 2, 'name': 'Suffolk'},
-  ];
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final provider = context.read<SheepFormOptionProvider>();
 
-  final cages = [
-    {'id': 1, 'name': 'Kandang A'},
-    {'id': 2, 'name': 'Kandang B'},
-  ];
+      await Future.wait([
+        provider.loadBreedOptions(),
+        provider.loadCageOptions(),
+      ]);
+    });
+  }
 
   Future<void> _pickDate() async {
     _dismissKeyboard();
@@ -64,52 +64,62 @@ class _AddSheepSheetState extends State<AddSheepSheet> {
     );
 
     if (picked != null) {
-      setState(() {
-        _birthDate = picked;
+      context.read<SheepProvider>().clearValidationError('birth_date');
+      setState(() => _birthDate = picked);
+    }
+  }
+
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    final provider = context.read<SheepProvider>();
+
+    final success = await provider.createSheep(
+      earTag: _earTag.text.trim(),
+      earTagColor: _color.text.trim(),
+      gender: FormOptions.genders[_gender]!,
+      birthDate: _birthDate!.toIso8601String(),
+      breedId: _selectedBreed?.id,
+      cageId: _selectedCage?.id,
+      sireId: _selectedSire?.id,
+      damId: _selectedDam?.id,
+      condition: _condition.text.trim(),
+      category: FormOptions.categories[_selectedCategory]!,
+      severity: FormOptions.severities[_selectedSeverity]!,
+      weight: double.parse(_weight.text),
+      notes: _notes.text.trim().isEmpty ? null : _notes.text.trim(),
+    );
+
+    if (!mounted) return;
+
+    if (success) {
+      Navigator.pop(context);
+
+      ToastService.show(
+        context,
+        provider.message,
+        title: 'Berhasil Menambah!',
+        type: ToastType.success,
+      );
+
+      return;
+    }
+
+    if (provider.validationError != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _formKey.currentState!.validate();
       });
-    }
-  }
-
-  void _nextStep() {
-    if (_currentPage == 0 && !_formKey1.currentState!.validate()) {
       return;
     }
 
-    _pageController.nextPage(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
+    ToastService.show(
+      context,
+      provider.error ?? "Gagal menambah domba",
+      title: 'Gagal Menambah Domba!',
+      type: ToastType.error,
     );
-  }
-
-  void _prevStep() {
-    _pageController.previousPage(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
-  }
-
-  void _submit() {
-    if (!_formKey2.currentState!.validate()) {
-      return;
-    }
-
-    widget.onAdd({
-      'eartag': _earTag.text.trim(),
-      'eartag_color': _color.text.trim(),
-      'gender': FormOptions.genders[_gender],
-      'birth_date': _birthDate?.toIso8601String(),
-      'breed': _selectedBreed?['id'],
-      'cage': _selectedCage?['id'],
-      'sire': _selectedSire?.id,
-      'dam': _selectedDam?.id,
-      'condition': _condition.text.trim(),
-      'category': FormOptions.categories[_selectedCategory],
-      'severity': FormOptions.severities[_selectedSeverity],
-      'weight': double.tryParse(_weight.text),
-      'notes': _notes.text.trim().isEmpty ? null : _notes.text.trim(),
-    });
-
-    Navigator.pop(context);
   }
 
   void _dismissKeyboard() {
@@ -118,70 +128,14 @@ class _AddSheepSheetState extends State<AddSheepSheet> {
     FocusScope.of(context).requestFocus(FocusNode());
   }
 
-  Widget _buildStepIndicator() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(_totalSteps * 2 - 1, (i) {
-        if (i.isOdd) {
-          final filled = _currentPage >= (i ~/ 2) + 1;
-
-          return AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            width: 32,
-            height: 2,
-            color: filled
-                ? Theme.of(context).colorScheme.primary
-                : Colors.grey.shade300,
-          );
-        }
-
-        final step = i ~/ 2;
-        final isActive = step == _currentPage;
-        final isDone = step < _currentPage;
-
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          width: 28,
-          height: 28,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: isDone
-                ? Theme.of(context).colorScheme.primary
-                : isActive
-                ? Theme.of(context).colorScheme.primary
-                : Colors.grey.shade200,
-            border: isActive
-                ? Border.all(
-                    color: Theme.of(context).colorScheme.primary,
-                    width: 2,
-                  )
-                : null,
-          ),
-          child: Center(
-            child: isDone
-                ? const Icon(Icons.check, size: 14, color: Colors.white)
-                : Text(
-                    '${step + 1}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: isActive ? Colors.white : Colors.grey.shade500,
-                    ),
-                  ),
-          ),
-        );
-      }),
-    );
-  }
-
-  Widget _dateField() {
+  Widget _dateField(String? serverError) {
     return FormField<DateTime>(
       validator: (_) {
         if (_birthDate == null) {
           return 'Tanggal Lahir wajib diisi';
         }
 
-        return null;
+        return serverError;
       },
       builder: (field) {
         return Column(
@@ -268,59 +222,43 @@ class _AddSheepSheetState extends State<AddSheepSheet> {
     );
   }
 
-  Widget _navButtons({bool isLast = false}) {
-    return Row(
-      children: [
-        if (_currentPage > 0) ...[
-          Expanded(
-            child: OutlinedButton.icon(
-              onPressed: _prevStep,
-              icon: const Icon(Icons.arrow_back_ios, size: 14),
-              label: const Text('Back'),
-              style: OutlinedButton.styleFrom(
-                minimumSize: const Size.fromHeight(46),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-          ),
+  Widget _submitButton() {
+    final isCreating = context.watch<SheepProvider>().isCreating;
 
-          const SizedBox(width: 12),
-        ],
-
-        Expanded(
-          flex: 2,
-          child: ElevatedButton.icon(
-            onPressed: isLast ? _submit : _nextStep,
-            icon: Icon(
-              isLast ? Icons.save_alt_rounded : Icons.arrow_forward_ios,
-              size: 14,
-            ),
-            label: Text(isLast ? 'Simpan' : 'Lanjut'),
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size.fromHeight(46),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+    return ElevatedButton.icon(
+      onPressed: isCreating ? null : _submit,
+      icon: isCreating
+          ? const SizedBox(
+              width: 14,
+              height: 14,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.white,
               ),
-            ),
-          ),
-        ),
-      ],
+            )
+          : const Icon(Icons.save_alt_rounded, size: 14),
+      label: Text(
+        isCreating ? 'Menyimpan...' : 'Simpan',
+        style: TextStyle(color: Colors.white),
+      ),
+      style: ElevatedButton.styleFrom(
+        minimumSize: const Size.fromHeight(46),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<SheepFormOptionProvider>();
+    final sheepProvider = context.watch<SheepProvider>();
     final bottom = MediaQuery.of(context).viewInsets.bottom;
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Padding(
       padding: EdgeInsets.only(bottom: bottom),
       child: Container(
-        constraints: BoxConstraints(
-          maxHeight: screenHeight * (_currentPage == 0 ? 0.6 : 0.7),
-        ),
+        constraints: BoxConstraints(maxHeight: screenHeight * 0.85),
         decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
@@ -338,282 +276,282 @@ class _AddSheepSheetState extends State<AddSheepSheet> {
               ),
             ),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              child: _buildStepIndicator(),
-            ),
-
             const Divider(height: 1),
 
             Flexible(
-              child: PageView(
-                controller: _pageController,
-                physics: const NeverScrollableScrollPhysics(),
-                onPageChanged: (i) {
-                  setState(() {
-                    _currentPage = i;
-                  });
-                },
-                children: [_buildStep1(), _buildStep2()],
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _sectionHeader('Data Domba', 'Informasi identitas domba'),
+
+                      const SizedBox(height: 16),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomTextFormField(
+                              label: 'Eartag',
+                              hint: 'D-001',
+                              icon: Icons.tag,
+                              controller: _earTag,
+                              serverError: sheepProvider.fieldError('eartag'),
+                              validator: (v) =>
+                                  Validators.required(v, 'Eartag'),
+                              onChanged: (_) =>
+                                  sheepProvider.clearValidationError('eartag'),
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                            ),
+                          ),
+
+                          const SizedBox(width: 12),
+
+                          Expanded(
+                            child: CustomTextFormField(
+                              label: 'Warna Eartag',
+                              hint: 'Putih',
+                              icon: Icons.color_lens,
+                              controller: _color,
+                              serverError: sheepProvider.fieldError(
+                                'eartag_color',
+                              ),
+                              validator: (v) =>
+                                  Validators.required(v, 'Warna Eartag'),
+                              onChanged: (_) => sheepProvider
+                                  .clearValidationError('eartag_color'),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomDropdownSearch<String>(
+                              icon: Icons.wc,
+                              label: 'Gender',
+                              hint: 'Pilih gender',
+                              items: (_) => FormOptions.genders.keys.toList(),
+                              selectedItem: _gender,
+                              serverError: sheepProvider.fieldError('gender'),
+                              validator: (v) =>
+                                  Validators.requiredDropdown(v, 'Gender'),
+                              onSelected: (v) {
+                                sheepProvider.clearValidationError('gender');
+                                _dismissKeyboard();
+                                setState(() => _gender = v);
+                              },
+                            ),
+                          ),
+
+                          const SizedBox(width: 12),
+
+                          Expanded(
+                            child: _dateField(
+                              sheepProvider.fieldError('birth_date'),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      CustomDropdownSearch<SheepOption>(
+                        icon: Icons.pets,
+                        label: 'Breed',
+                        hint: 'Pilih breed',
+                        items: (_) => provider.breedOptions,
+                        selectedItem: _selectedBreed,
+                        itemAsString: (item) => item.label,
+                        compareFn: (a, b) => a.id == b.id,
+                        onSelected: (v) {
+                          _dismissKeyboard();
+
+                          setState(() {
+                            _selectedBreed = v;
+                          });
+                        },
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      _sectionHeader(
+                        'Data Tambahan',
+                        'Kandang, kesehatan & lainnya',
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      CustomDropdownSearch<CageOption>(
+                        icon: Icons.home,
+                        label: 'Kandang',
+                        hint: 'Pilih kandang',
+                        items: (_) => provider.cageOptions,
+                        selectedItem: _selectedCage,
+                        itemAsString: (item) => item.name,
+                        compareFn: (a, b) => a.id == b.id,
+                        onSelected: (v) {
+                          _dismissKeyboard();
+
+                          setState(() {
+                            _selectedCage = v;
+                          });
+                        },
+                        validator: (v) =>
+                            Validators.requiredDropdown(v, 'Kandang'),
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child: SheepPickerField(
+                              label: 'Sire',
+                              hint: 'Pilih sire',
+                              icon: Icons.male,
+                              type: SheepPickerType.sire,
+                              selectedItem: _selectedSire,
+                              itemAsString: (item) => item.label,
+                              onSelected: (item) {
+                                _dismissKeyboard();
+                                setState(() {
+                                  _selectedSire = item;
+                                });
+                              },
+                            ),
+                          ),
+
+                          const SizedBox(width: 12),
+
+                          Expanded(
+                            child: SheepPickerField(
+                              label: 'Dam',
+                              hint: 'Pilih dam',
+                              icon: Icons.female,
+                              type: SheepPickerType.dam,
+                              selectedItem: _selectedDam,
+                              itemAsString: (item) => item.label,
+                              onSelected: (item) {
+                                _dismissKeyboard();
+                                setState(() {
+                                  _selectedDam = item;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomTextFormField(
+                              label: 'Kondisi',
+                              hint: 'Sehat',
+                              icon: Icons.medical_services_rounded,
+                              controller: _condition,
+                              serverError: sheepProvider.fieldError(
+                                'condition',
+                              ),
+                              validator: (v) =>
+                                  Validators.required(v, 'Kondisi'),
+                              onChanged: (_) => sheepProvider
+                                  .clearValidationError('condition'),
+                            ),
+                          ),
+
+                          const SizedBox(width: 12),
+
+                          Expanded(
+                            child: CustomTextFormField(
+                              label: 'Berat (kg)',
+                              hint: '35',
+                              icon: Icons.scale,
+                              controller: _weight,
+                              keyboardType: TextInputType.number,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              serverError: sheepProvider.fieldError('weight'),
+                              validator: (v) => Validators.weight(v),
+                              onChanged: (_) =>
+                                  sheepProvider.clearValidationError('weight'),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomDropdownSearch<String>(
+                              icon: Icons.category,
+                              label: 'Kategori',
+                              hint: 'Pilih kategori',
+                              items: (_) =>
+                                  FormOptions.categories.keys.toList(),
+                              selectedItem: _selectedCategory,
+                              serverError: sheepProvider.fieldError('category'),
+                              validator: (v) =>
+                                  Validators.requiredDropdown(v, 'Kategori'),
+                              onSelected: (v) {
+                                sheepProvider.clearValidationError('category');
+                                _dismissKeyboard();
+                                setState(() => _selectedCategory = v);
+                              },
+                            ),
+                          ),
+
+                          const SizedBox(width: 12),
+
+                          Expanded(
+                            child: CustomDropdownSearch<String>(
+                              icon: Icons.warning_amber_rounded,
+                              label: 'Keparahan',
+                              hint: 'Pilih keparahan',
+                              items: (_) =>
+                                  FormOptions.severities.keys.toList(),
+                              selectedItem: _selectedSeverity,
+                              serverError: sheepProvider.fieldError('severity'),
+                              validator: (v) =>
+                                  Validators.requiredDropdown(v, 'Keparahan'),
+                              onSelected: (v) {
+                                sheepProvider.clearValidationError('severity');
+                                _dismissKeyboard();
+                                setState(() => _selectedSeverity = v);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      CustomTextFormField(
+                        label: 'Catatan',
+                        hint: 'Opsional',
+                        icon: Icons.notes,
+                        controller: _notes,
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      _submitButton(),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStep1() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-      child: Form(
-        key: _formKey1,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _sectionHeader('Data Domba', 'Informasi identitas domba'),
-
-            const SizedBox(height: 16),
-
-            Row(
-              children: [
-                Expanded(
-                  child: CustomTextFormField(
-                    label: 'Eartag',
-                    hint: 'D-001',
-                    icon: Icons.tag,
-                    controller: _earTag,
-                    validator: (v) => Validators.required(v, 'Eartag'),
-                  ),
-                ),
-
-                const SizedBox(width: 12),
-
-                Expanded(
-                  child: CustomTextFormField(
-                    label: 'Warna Eartag',
-                    hint: 'Putih',
-                    icon: Icons.color_lens,
-                    controller: _color,
-                    validator: (v) => Validators.required(v, 'Warna Eartag'),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 14),
-
-            Row(
-              children: [
-                Expanded(
-                  child: CustomDropdownSearch<String>(
-                    icon: Icons.wc,
-                    label: 'Gender',
-                    hint: 'Pilih gender',
-                    items: (_) => FormOptions.genders.keys.toList(),
-                    selectedItem: _gender,
-                    validator: (v) => Validators.requiredDropdown(v, 'Gender'),
-                    onSelected: (v) {
-                      _dismissKeyboard();
-
-                      setState(() {
-                        _gender = v;
-                      });
-                    },
-                  ),
-                ),
-
-                const SizedBox(width: 12),
-
-                Expanded(child: _dateField()),
-              ],
-            ),
-
-            const SizedBox(height: 14),
-
-            CustomDropdownSearch<Map<String, dynamic>>(
-              icon: Icons.pets,
-              label: 'Breed',
-              hint: 'Pilih breed',
-              items: (_) => breeds,
-              selectedItem: _selectedBreed,
-              itemAsString: (item) => item['name'],
-              compareFn: (a, b) => a['id'] == b['id'],
-              onSelected: (v) {
-                _dismissKeyboard();
-
-                setState(() {
-                  _selectedBreed = v;
-                });
-              },
-            ),
-
-            const SizedBox(height: 24),
-
-            _navButtons(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStep2() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-      child: Form(
-        key: _formKey2,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _sectionHeader('Data Tambahan', 'Kandang, kesehatan & lainnya'),
-
-            const SizedBox(height: 16),
-
-            CustomDropdownSearch<Map<String, dynamic>>(
-              icon: Icons.home,
-              label: 'Kandang',
-              hint: 'Pilih kandang',
-              items: (_) => cages,
-              selectedItem: _selectedCage,
-              itemAsString: (item) => item['name'],
-              compareFn: (a, b) => a['id'] == b['id'],
-              onSelected: (v) {
-                _dismissKeyboard();
-
-                setState(() {
-                  _selectedCage = v;
-                });
-              },
-              validator: (v) => Validators.requiredDropdown(v, 'Kandang'),
-            ),
-
-            const SizedBox(height: 14),
-
-            Row(
-              children: [
-                Expanded(
-                  child: SheepPickerField(
-                    label: 'Sire',
-                    hint: 'Pilih sire',
-                    icon: Icons.male,
-                    type: SheepPickerType.sire,
-                    selectedItem: _selectedSire,
-                    itemAsString: (item) => item.label,
-                    onSelected: (item) {
-                      _dismissKeyboard();
-                      setState(() {
-                        _selectedSire = item;
-                      });
-                    },
-                  ),
-                ),
-
-                const SizedBox(width: 12),
-
-                Expanded(
-                  child: SheepPickerField(
-                    label: 'Dam',
-                    hint: 'Pilih dam',
-                    icon: Icons.female,
-                    type: SheepPickerType.dam,
-                    selectedItem: _selectedDam,
-                    itemAsString: (item) => item.label,
-                    onSelected: (item) {
-                      _dismissKeyboard();
-                      setState(() {
-                        _selectedDam = item;
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 14),
-
-            Row(
-              children: [
-                Expanded(
-                  child: CustomTextFormField(
-                    label: 'Kondisi',
-                    hint: 'Sehat',
-                    icon: Icons.medical_services_rounded,
-                    controller: _condition,
-                    validator: (v) => Validators.required(v, 'Kondisi'),
-                  ),
-                ),
-
-                const SizedBox(width: 12),
-
-                Expanded(
-                  child: CustomTextFormField(
-                    label: 'Berat (kg)',
-                    hint: '35',
-                    icon: Icons.scale,
-                    controller: _weight,
-                    keyboardType: TextInputType.number,
-                    validator: (v) => Validators.required(v, 'Berat'),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 14),
-
-            Row(
-              children: [
-                Expanded(
-                  child: CustomDropdownSearch<String>(
-                    icon: Icons.category,
-                    label: 'Kategori',
-                    hint: 'Pilih kategori',
-                    items: (_) => FormOptions.categories.keys.toList(),
-                    selectedItem: _selectedCategory,
-                    onSelected: (v) {
-                      _dismissKeyboard();
-                      setState(() {
-                        _selectedCategory = v;
-                      });
-                    },
-                    validator: (v) =>
-                        Validators.requiredDropdown(v, 'Kategori'),
-                  ),
-                ),
-
-                const SizedBox(width: 12),
-
-                Expanded(
-                  child: CustomDropdownSearch<String>(
-                    icon: Icons.warning_amber_rounded,
-                    label: 'Keparahan',
-                    hint: 'Pilih keparahan',
-                    items: (_) => FormOptions.severities.keys.toList(),
-                    selectedItem: _selectedSeverity,
-                    onSelected: (v) {
-                      _dismissKeyboard();
-                      setState(() {
-                        _selectedSeverity = v;
-                      });
-                    },
-                    validator: (v) =>
-                        Validators.requiredDropdown(v, 'Keparahan'),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 14),
-
-            CustomTextFormField(
-              label: 'Catatan',
-              hint: 'Opsional',
-              icon: Icons.notes,
-              controller: _notes,
-            ),
-
-            const SizedBox(height: 24),
-
-            _navButtons(isLast: true),
           ],
         ),
       ),
