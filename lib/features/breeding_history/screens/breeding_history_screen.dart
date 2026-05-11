@@ -39,19 +39,6 @@ class _BreedingHistoryScreenState extends State<BreedingHistoryScreen> {
     return data.where((e) => e["status"] == selectedFilter).toList();
   }
 
-  Color _getColor(String label) {
-    switch (label) {
-      case "Berhasil":
-        return Colors.green;
-      case "Proses":
-        return Colors.orange;
-      case "Gagal":
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final success = data.where((e) => e["status"] == "Berhasil").length;
@@ -151,7 +138,7 @@ class _BreedingHistoryScreenState extends State<BreedingHistoryScreen> {
           if (filteredData.isEmpty)
             const Center(child: Text("Tidak ada data"))
           else
-            ...filteredData.map((item) => BreedingCard(item: item)).toList(),
+            ...filteredData.map((item) => BreedingCard(item: item)),
         ],
       ),
     );
