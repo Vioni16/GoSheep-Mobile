@@ -16,6 +16,28 @@ class BreedingCard extends StatelessWidget {
     }
   }
 
+  IconData get _statusIcon {
+    switch (item["status"]) {
+      case "Berhasil":
+        return Icons.check;
+      case "Gagal":
+        return Icons.close;
+      default:
+        return Icons.access_time;
+    }
+  }
+
+  String get _statusText {
+    switch (item["status"]) {
+      case "Berhasil":
+        return "Bunting";
+      case "Gagal":
+        return "Gagal";
+      default:
+        return "Proses";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final color = _statusColor;
@@ -26,108 +48,177 @@ class BreedingCard extends StatelessWidget {
     final status = item["status"] ?? "-";
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(14),
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border(left: BorderSide(color: color, width: 3)),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 6),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6),
         ],
       ),
-      child: Row(
+
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    _GenderAvatar(isMale: true),
-                    const SizedBox(width: 4),
-                    Text(
-                      male,
-                      style: const TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 6),
-                      child: Text("×", style: TextStyle(color: Colors.grey)),
-                    ),
-                    _GenderAvatar(isMale: false),
-                    const SizedBox(width: 4),
-                    Text(
-                      female,
-                      style: const TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                  ],
+          // TOP
+          Row(
+            children: [
+              _animalChip(female, Colors.pink),
+
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: Icon(
+                  Icons.favorite_border,
+                  size: 16,
+                  color: Colors.grey,
                 ),
+              ),
 
-                const SizedBox(height: 6),
+              _animalChip(male, Colors.green),
 
-                const Text(
-                  "Pasangan Breeding",
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+              const Spacer(),
+
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 5,
                 ),
-
-                const SizedBox(height: 6),
-
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.calendar_today,
-                      size: 12,
-                      color: Colors.grey,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      date,
-                      style: const TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                  ],
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(20),
                 ),
-              ],
-            ),
+                child: Text(
+                  _statusText,
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
           ),
 
-          // status
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              status,
-              style: TextStyle(
-                color: color,
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
+          const SizedBox(height: 14),
+
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.sell_outlined, size: 16, color: Colors.pink),
+
+                  const SizedBox(width: 6),
+
+                  const Text(
+                    "Betina:",
+                    style: TextStyle(fontSize: 12, color: Colors.black),
+                  ),
+
+                  const SizedBox(width: 8),
+
+                  Text(
+                    female,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
-            ),
+
+              const SizedBox(height: 10),
+
+              Row(
+                children: [
+                  const Icon(
+                    Icons.sell_outlined,
+                    size: 16,
+                    color: Colors.green,
+                  ),
+
+                  const SizedBox(width: 6),
+
+                  const Text(
+                    "Jantan:",
+                    style: TextStyle(fontSize: 12, color: Colors.black),
+                  ),
+
+                  const SizedBox(width: 8),
+
+                  Text(
+                    male,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 10),
+
+          Divider(color: Colors.grey.shade200),
+
+          const SizedBox(height: 10),
+
+          // TANGGAL
+          _infoRow(Icons.calendar_today_outlined, "Kawin: $date"),
+
+          const SizedBox(height: 8),
+
+          _infoRow(Icons.event_available_outlined, "Selesai: 25 Mei 2026"),
+
+          const SizedBox(height: 8),
+
+          _infoRow(
+            _statusIcon,
+            status == "Proses" ? "Menunggu hasil konfirmasi" : "Hasil dicatat",
+            iconColor: color,
           ),
         ],
       ),
     );
   }
-}
 
-class _GenderAvatar extends StatelessWidget {
-  final bool isMale;
-
-  const _GenderAvatar({required this.isMale});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _animalChip(String text, Color color) {
     return Container(
-      width: 24,
-      height: 24,
-      child: Icon(
-        Icons.sell,
-        size: 14,
-        color: isMale ? Colors.green : Colors.pink,
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.grey.shade300),
       ),
+      child: Row(
+        children: [
+          Container(
+            width: 7,
+            height: 7,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          ),
+
+          const SizedBox(width: 6),
+
+          Text(
+            text,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _infoRow(IconData icon, String text, {Color? iconColor}) {
+    return Row(
+      children: [
+        Icon(icon, size: 15, color: iconColor ?? Colors.grey),
+
+        const SizedBox(width: 8),
+
+        Text(text, style: const TextStyle(fontSize: 13, color: Colors.black87)),
+      ],
     );
   }
 }

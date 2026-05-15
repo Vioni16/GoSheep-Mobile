@@ -75,7 +75,7 @@ class _BreedingHistoryScreenState extends State<BreedingHistoryScreen> {
             children: [
               Expanded(
                 child: SummaryCard(
-                  label: "Berhasil",
+                  label: "Bunting",
                   count: success,
                   color: Colors.green,
                 ),
@@ -106,28 +106,30 @@ class _BreedingHistoryScreenState extends State<BreedingHistoryScreen> {
               FilterChipItem(
                 label: "Semua",
                 isActive: selectedFilter == "Semua",
-                color: Colors.grey,
                 onTap: () => setState(() => selectedFilter = "Semua"),
               ),
+
               const SizedBox(width: 8),
+
               FilterChipItem(
-                label: "Berhasil",
-                isActive: selectedFilter == "Berhasil",
-                color: Colors.green,
-                onTap: () => setState(() => selectedFilter = "Berhasil"),
+                label: "Bunting",
+                isActive: selectedFilter == "Bunting",
+                onTap: () => setState(() => selectedFilter = "Bunting"),
               ),
+
               const SizedBox(width: 8),
+
               FilterChipItem(
                 label: "Proses",
                 isActive: selectedFilter == "Proses",
-                color: Colors.orange,
                 onTap: () => setState(() => selectedFilter = "Proses"),
               ),
+
               const SizedBox(width: 8),
+
               FilterChipItem(
                 label: "Gagal",
                 isActive: selectedFilter == "Gagal",
-                color: Colors.red,
                 onTap: () => setState(() => selectedFilter = "Gagal"),
               ),
             ],

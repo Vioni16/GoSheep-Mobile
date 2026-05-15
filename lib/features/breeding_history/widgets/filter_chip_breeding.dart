@@ -3,14 +3,12 @@ import 'package:flutter/material.dart';
 class FilterChipItem extends StatelessWidget {
   final String label;
   final bool isActive;
-  final Color color;
   final VoidCallback onTap;
 
   const FilterChipItem({
     super.key,
     required this.label,
     required this.isActive,
-    required this.color,
     required this.onTap,
   });
 
@@ -18,16 +16,20 @@ class FilterChipItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 9,
+        ),
         decoration: BoxDecoration(
-          color: isActive ? color : color.withValues(alpha: 0.1),
+          color: isActive ? Colors.black : Colors.grey.shade200,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isActive ? Colors.white : color,
+            color: isActive ? Colors.white : Colors.black87,
             fontSize: 12,
             fontWeight: FontWeight.w600,
           ),
