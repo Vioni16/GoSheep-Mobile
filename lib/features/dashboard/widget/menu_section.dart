@@ -30,7 +30,9 @@ class MenuSection extends StatelessWidget {
       {
         "icon": Icons.bar_chart,
         "label": "Laporan",
-        "onTap": () {},
+        "onTap": () {
+          Navigator.pushNamed(context, '/report');
+        },
       },
       {
         "icon": Icons.medical_services_rounded,
