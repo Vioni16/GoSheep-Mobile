@@ -4,6 +4,7 @@ import 'package:gosheep_mobile/features/breeding_history/screens/breeding_histor
 import 'package:gosheep_mobile/features/cage/screens/cage_screen.dart';
 import 'package:gosheep_mobile/features/main_navigation.dart';
 import 'package:gosheep_mobile/features/livestock_history/screens/livestock_history_screen.dart';
+import 'package:gosheep_mobile/features/report/screens/report_screen.dart';
 
 class AppRoutes {
   static const String home = '/home';
@@ -11,6 +12,7 @@ class AppRoutes {
   static const String cage = '/cage';
   static const String breedingHistory = '/breeding-history';
   static const String livestockHistory = '/livestock-history';
+  static const String report = '/report';
 
   static Map<String, WidgetBuilder> routes = {
     login: (context) => LoginScreen(),
@@ -18,5 +20,6 @@ class AppRoutes {
     cage: (context) => CageScreen(),
     breedingHistory: (context) => BreedingHistoryScreen(),
     livestockHistory: (context) => LivestockHistoryScreen(),
+    report: (context) => ReportScreen(),
   };
 }
