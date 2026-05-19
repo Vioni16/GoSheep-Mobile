@@ -1,13 +1,22 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:gosheep_mobile/data/exceptions/api_exception.dart';
 import 'package:gosheep_mobile/data/exceptions/validation_exception.dart';
 
 class ErrorHandler {
   static Exception handle(DioException e) {
-    if (e.type == DioExceptionType.connectionError ||
-        e.type == DioExceptionType.connectionTimeout ||
-        e.type == DioExceptionType.receiveTimeout) {
+    if (e.error is SocketException) {
       return ApiException('Tidak ada koneksi internet');
+    }
+
+    if (e.type == DioExceptionType.connectionTimeout ||
+        e.type == DioExceptionType.receiveTimeout) {
+      return ApiException('Server terlalu lama merespons');
+    }
+
+    if (e.type == DioExceptionType.connectionError) {
+      return ApiException('Tidak dapat terhubung ke server');
     }
 
     final data = e.response?.data;

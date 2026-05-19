@@ -5,6 +5,7 @@ import 'package:gosheep_mobile/features/breeding/screens/breeding_screen.dart';
 import 'package:gosheep_mobile/features/dashboard/screens/dashboard_screen.dart';
 import 'package:gosheep_mobile/features/profile/screens/profile_screen.dart';
 import 'package:gosheep_mobile/features/sheep/screens/sheep_screen.dart';
+import 'package:gosheep_mobile/features/sheep_scanner/screens/sheep_scanner_screen.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -38,33 +39,33 @@ class _MainNavigationState extends State<MainNavigation> {
           style: TextStyle(
             color: Colors.white,
             fontSize: 24,
-            fontWeight: FontWeight.bold
+            fontWeight: FontWeight.bold,
           ),
         ),
         shape: _navIndex == 0
             ? null
             : const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(25)
-          )
-        ),
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(25),
+                ),
+              ),
         backgroundColor: Theme.of(context).colorScheme.primary,
         automaticallyImplyLeading: false,
-        leading: FloatingLogo(height: 5,),
+        leading: FloatingLogo(height: 5),
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(),));
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LoginScreen()),
+              );
             },
-            icon: const Icon(Icons.notifications_outlined, color: Colors.white,),
+            icon: const Icon(Icons.notifications_outlined, color: Colors.white),
           ),
           const SizedBox(width: 4),
         ],
       ),
-      body: IndexedStack(
-        index: _navIndex,
-        children: _pages,
-      ),
+      body: IndexedStack(index: _navIndex, children: _pages),
       bottomNavigationBar: _buildBottomNav(bottomPadding),
     );
   }
@@ -84,11 +85,31 @@ class _MainNavigationState extends State<MainNavigation> {
             children: [
               Row(
                 children: [
-                  _buildNavItem(0, Icons.grid_view_rounded, Icons.grid_view_outlined, 'Beranda'),
-                  _buildNavItem(1, Icons.pets_rounded, Icons.pets_outlined, 'Domba'),
+                  _buildNavItem(
+                    0,
+                    Icons.grid_view_rounded,
+                    Icons.grid_view_outlined,
+                    'Beranda',
+                  ),
+                  _buildNavItem(
+                    1,
+                    Icons.pets_rounded,
+                    Icons.pets_outlined,
+                    'Domba',
+                  ),
                   const Expanded(child: SizedBox()),
-                  _buildNavItem(2, Icons.favorite_rounded, Icons.favorite_border_rounded, 'Breeding'),
-                  _buildNavItem(3, Icons.person_rounded, Icons.person_outlined, 'Profil'),
+                  _buildNavItem(
+                    2,
+                    Icons.favorite_rounded,
+                    Icons.favorite_border_rounded,
+                    'Breeding',
+                  ),
+                  _buildNavItem(
+                    3,
+                    Icons.person_rounded,
+                    Icons.person_outlined,
+                    'Profil',
+                  ),
                 ],
               ),
 
@@ -125,14 +146,26 @@ class _MainNavigationState extends State<MainNavigation> {
         shape: const CircleBorder(),
         child: InkWell(
           customBorder: const CircleBorder(),
-          onTap: () {},
-          child: const Icon(Icons.document_scanner_outlined, color: Colors.white, size: 30),
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SheepScannerScreen()),
+          ),
+          child: const Icon(
+            Icons.document_scanner_outlined,
+            color: Colors.white,
+            size: 30,
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildNavItem(int index, IconData activeIcon, IconData inactiveIcon, String label) {
+  Widget _buildNavItem(
+    int index,
+    IconData activeIcon,
+    IconData inactiveIcon,
+    String label,
+  ) {
     final isActive = _navIndex == index;
 
     return Expanded(
