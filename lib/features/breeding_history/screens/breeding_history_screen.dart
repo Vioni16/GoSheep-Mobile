@@ -13,37 +13,29 @@ class BreedingHistoryScreen extends StatefulWidget {
 class _BreedingHistoryScreenState extends State<BreedingHistoryScreen> {
   String selectedFilter = "Semua";
 
-  final List<Map<String, dynamic>> data = [
+  final breedingData = [
     {
-      "male": "Domba ET020",
-      "female": "Domba ET017",
-      "date": "10 Mei 2026",
+      "male": "ET020",
+      "male_id": 2,
+
+      "female": "ET017",
+      "female_id": 1,
+
+      "date": "20 Mei 2026",
       "status": "Berhasil",
-    },
-    {
-      "male": "Domba ET021",
-      "female": "Domba ET018",
-      "date": "8 Mei 2026",
-      "status": "Proses",
-    },
-    {
-      "male": "Domba ET022",
-      "female": "Domba ET019",
-      "date": "5 Mei 2026",
-      "status": "Gagal",
     },
   ];
 
   List<Map<String, dynamic>> get filteredData {
-    if (selectedFilter == "Semua") return data;
-    return data.where((e) => e["status"] == selectedFilter).toList();
+    if (selectedFilter == "Semua") return breedingData;
+    return breedingData.where((e) => e["status"] == selectedFilter).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    final success = data.where((e) => e["status"] == "Berhasil").length;
-    final proses = data.where((e) => e["status"] == "Proses").length;
-    final gagal = data.where((e) => e["status"] == "Gagal").length;
+    final success = breedingData.where((e) => e["status"] == "Berhasil").length;
+    final proses = breedingData.where((e) => e["status"] == "Proses").length;
+    final gagal = breedingData.where((e) => e["status"] == "Gagal").length;
 
     return Scaffold(
       appBar: AppBar(
