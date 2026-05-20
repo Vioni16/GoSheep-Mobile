@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/core/theme/theme.dart';
+import 'package:gosheep_mobile/core/widgets/gender_badge.dart';
 import 'package:gosheep_mobile/core/widgets/sheep_chip.dart';
 import 'package:gosheep_mobile/features/sheep/screens/sheep_detail_screen.dart';
 
@@ -72,45 +73,6 @@ class BreedingCard extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "Jantan",
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-
-                          SheepChip(
-                            label: female,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      SheepDetailScreen(id: item["female_id"]),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(width: 10),
-
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Betina",
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
                           SheepChip(
                             label: male,
                             onTap: () {
@@ -123,6 +85,36 @@ class BreedingCard extends StatelessWidget {
                               );
                             },
                           ),
+
+                          const SizedBox(height: 5),
+
+                          const GenderBadge(gender: "Jantan"),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(width: 10),
+
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SheepChip(
+                            label: female,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      SheepDetailScreen(id: item["female_id"]),
+                                ),
+                              );
+                            },
+                          ),
+
+                          const SizedBox(height: 5),
+
+                          const GenderBadge(gender: "Betina"),
                         ],
                       ),
                     ),

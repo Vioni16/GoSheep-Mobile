@@ -37,7 +37,16 @@ class MenuSection extends StatelessWidget {
       {
         "icon": Icons.medical_services_rounded,
         "label": "Catatan\nKesehatan",
-        "onTap": () {},
+        "onTap": () {
+          Navigator.pushNamed(context, '/health-history');
+        },
+      },
+      {
+        "icon": Icons.monitor_weight_outlined,
+        "label": "Riwayat\nBerat Badan",
+        "onTap": () {
+          Navigator.pushNamed(context, '/weight-history');
+        },
       },
     ];
 
@@ -73,14 +82,10 @@ class MenuSection extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 stops: [0.8, 0.6],
-                colors: [
-                  Color(0xFF0F5132),
-                  Color(0xFF8D6E63),
-                ],
+                colors: [Color(0xFF0F5132), Color(0xFF8D6E63)],
               ),
               onTap: () {
-                final onTap =
-                menus[index]["onTap"] as VoidCallback;
+                final onTap = menus[index]["onTap"] as VoidCallback;
 
                 onTap();
               },
@@ -123,11 +128,7 @@ class _MenuItemWidget extends StatelessWidget {
               onTap: onTap,
               splashColor: Colors.black.withValues(alpha: 0.2),
               highlightColor: Colors.black.withValues(alpha: 0.1),
-              child: Icon(
-                icon,
-                color: Colors.white,
-                size: 26,
-              ),
+              child: Icon(icon, color: Colors.white, size: 26),
             ),
           ),
         ),
@@ -137,10 +138,7 @@ class _MenuItemWidget extends StatelessWidget {
         Text(
           label,
           textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 10.5,
-            height: 1.2,
-          ),
+          style: const TextStyle(fontSize: 10.5, height: 1.2),
         ),
       ],
     );

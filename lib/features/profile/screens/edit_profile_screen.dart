@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/core/widgets/custom_textfield.dart';
 
 class EditProfileScreen extends StatelessWidget {
   const EditProfileScreen({super.key});
@@ -36,13 +37,47 @@ class EditProfileScreen extends StatelessWidget {
             const SizedBox(height: 10),
 
             const SizedBox(height: 30),
-            _inputField("Nama Lengkap", "Dhominica Riskana"),
-            _inputField("Email", "dhominica@farm.id"),
-            _inputField("Nomor Telepon", "+62 812 3456 7890"),
-            _inputField("Nama Peternakan", "Mandiri Jaya Farm"),
-            _inputField("Lokasi Peternakan", "Batam, Kepulauan Riau"),
 
-            const SizedBox(height: 20),
+            const CustomTextFormField(
+              icon: Icons.person_outline,
+              label: "Nama Lengkap",
+              hint: "Dhominica Riskana",
+            ),
+
+            const SizedBox(height: 16),
+
+            const CustomTextFormField(
+              icon: Icons.email_outlined,
+              label: "Email",
+              hint: "dhominica@farm.id",
+            ),
+
+            const SizedBox(height: 16),
+
+            const CustomTextFormField(
+              icon: Icons.phone_outlined,
+              label: "Nomor Telepon",
+              hint: "+62 812 3456 7890",
+            ),
+
+            const SizedBox(height: 16),
+
+            const CustomTextFormField(
+              icon: Icons.home_work_outlined,
+              label: "Nama Peternakan",
+              hint: "Mandiri Jaya Farm",
+            ),
+
+            const SizedBox(height: 16),
+
+            const CustomTextFormField(
+              icon: Icons.location_on_outlined,
+              label: "Lokasi Peternakan",
+              hint: "Batam, Kepulauan Riau",
+            ),
+
+            const SizedBox(height: 50),
+
             SizedBox(
               width: double.infinity,
               height: 55,
@@ -75,7 +110,7 @@ class EditProfileScreen extends StatelessWidget {
             label,
             style: const TextStyle(
               fontSize: 13,
-              color: Color.fromARGB(255, 134, 134, 134),
+              color: Color.fromARGB(255, 97, 97, 97),
             ),
           ),
           const SizedBox(height: 8),

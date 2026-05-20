@@ -66,27 +66,15 @@ class _BreedingHistoryScreenState extends State<BreedingHistoryScreen> {
           Row(
             children: [
               Expanded(
-                child: SummaryCard(
-                  label: "Bunting",
-                  count: success,
-                  color: Colors.green,
-                ),
+                child: SummaryCard(label: "Bunting", count: success),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: SummaryCard(
-                  label: "Proses",
-                  count: proses,
-                  color: Colors.orange,
-                ),
+                child: SummaryCard(label: "Proses", count: proses),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: SummaryCard(
-                  label: "Gagal",
-                  count: gagal,
-                  color: Colors.red,
-                ),
+                child: SummaryCard(label: "Gagal", count: gagal),
               ),
             ],
           ),
