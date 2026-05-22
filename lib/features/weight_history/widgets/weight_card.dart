@@ -32,7 +32,6 @@ class WeightCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              // EarTag dan Gender Berdampingan
               Wrap(
                 spacing: 8,
                 crossAxisAlignment: WrapCrossAlignment.center,
@@ -52,7 +51,6 @@ class WeightCard extends StatelessWidget {
                 ],
               ),
               const Spacer(),
-              // Weight Badge
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,

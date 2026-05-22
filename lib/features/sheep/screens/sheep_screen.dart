@@ -231,19 +231,16 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
                         StatCard(
                           label: 'Sehat',
                           value: isLoading ? '-' : '$healthy',
-                          valueColor: const Color(0xFF3B6D11),
                         ),
                         const SizedBox(width: 10),
                         StatCard(
                           label: 'Berisiko',
                           value: isLoading ? '-' : '$atRisk',
-                          valueColor: const Color(0xFFF5D48A),
                         ),
                         const SizedBox(width: 10),
                         StatCard(
                           label: 'Sakit',
                           value: isLoading ? '-' : '$sick',
-                          valueColor: const Color(0xFFA32D2D),
                         ),
                       ],
                     );

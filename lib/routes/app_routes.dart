@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/features/authentication/screens/login_screen.dart';
 import 'package:gosheep_mobile/features/breeding_history/screens/breeding_history_screen.dart';
 import 'package:gosheep_mobile/features/cage/screens/cage_screen.dart';
-import 'package:gosheep_mobile/features/healt_history/screena/medical_history_screen.dart';
+import 'package:gosheep_mobile/features/healt_history/screens/healt_history_screen.dart';
 import 'package:gosheep_mobile/features/main_navigation.dart';
 import 'package:gosheep_mobile/features/livestock_history/screens/livestock_history_screen.dart';
 import 'package:gosheep_mobile/features/report/screens/report_screen.dart';

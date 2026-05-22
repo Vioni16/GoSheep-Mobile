@@ -12,7 +12,6 @@ class BreedingScreen extends StatefulWidget {
 class _BreedingScreenState extends State<BreedingScreen> {
   final TextEditingController _searchController = TextEditingController();
 
-  // Data dummy domba
   final List<Map<String, dynamic>> _dummyData = [
     {'eartag': 'M001', 'gender': 'Jantan', 'breed': 'Domba Garut'},
     {'eartag': 'M002', 'gender': 'Jantan', 'breed': 'Domba Texel'},
@@ -222,7 +221,6 @@ class _BreedingScreenState extends State<BreedingScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Domba yang dicari
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -303,7 +301,6 @@ class _BreedingScreenState extends State<BreedingScreen> {
         ),
         const SizedBox(height: 16),
 
-        // List rekomendasi
         for (int i = 0; i < _recommendations.length; i++)
           SheepCardRecommendation(
             eartag: _recommendations[i]['eartag'] as String,

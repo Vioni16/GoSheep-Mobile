@@ -13,7 +13,6 @@ class WeightHistorySkeleton extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
 
-          // ================= CHART SKELETON =================
           Shimmer.fromColors(
             baseColor: Colors.grey.shade300,
             highlightColor: Colors.grey.shade100,
@@ -30,7 +29,6 @@ class WeightHistorySkeleton extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
 
-                  // title
                   Container(
                     width: 180,
                     height: 14,
@@ -42,7 +40,6 @@ class WeightHistorySkeleton extends StatelessWidget {
 
                   const SizedBox(height: 24),
 
-                  // fake chart
                   Container(
                     height: 220,
                     width: double.infinity,
@@ -59,7 +56,6 @@ class WeightHistorySkeleton extends StatelessWidget {
 
           const SizedBox(height: 24),
 
-          // ================= SECTION TITLE =================
           Shimmer.fromColors(
             baseColor: Colors.grey.shade300,
             highlightColor: Colors.grey.shade100,
@@ -77,7 +73,6 @@ class WeightHistorySkeleton extends StatelessWidget {
 
           const SizedBox(height: 14),
 
-          // ================= CARD LIST =================
           ...List.generate(
             4,
             (index) => const _WeightCardSkeleton(),
@@ -110,7 +105,6 @@ class _WeightCardSkeleton extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
 
-            // ================= TOP =================
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -120,7 +114,6 @@ class _WeightCardSkeleton extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
 
-                      // chip
                       Container(
                         width: 80,
                         height: 30,
@@ -133,7 +126,6 @@ class _WeightCardSkeleton extends StatelessWidget {
 
                       const SizedBox(height: 8),
 
-                      // gender
                       Container(
                         width: 50,
                         height: 10,
@@ -147,7 +139,6 @@ class _WeightCardSkeleton extends StatelessWidget {
                   ),
                 ),
 
-                // weight badge
                 Container(
                   width: 70,
                   height: 30,
@@ -169,7 +160,6 @@ class _WeightCardSkeleton extends StatelessWidget {
 
             const SizedBox(height: 12),
 
-            // ================= BOTTOM =================
             Row(
               children: [
 
