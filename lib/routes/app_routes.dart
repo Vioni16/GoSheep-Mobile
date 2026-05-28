@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/features/authentication/screens/login_screen.dart';
-import 'package:gosheep_mobile/features/breeding_history/screens/breeding_history_screen.dart';
+import 'package:gosheep_mobile/features/mating_record/screens/mating_record_screen.dart';
 import 'package:gosheep_mobile/features/cage/screens/cage_screen.dart';
 import 'package:gosheep_mobile/features/healt_history/screens/healt_history_screen.dart';
 import 'package:gosheep_mobile/features/main_navigation.dart';
@@ -22,7 +22,7 @@ class AppRoutes {
     login: (context) => LoginScreen(),
     home: (context) => MainNavigation(),
     cage: (context) => CageScreen(),
-    breedingHistory: (context) => BreedingHistoryScreen(),
+    breedingHistory: (context) => MatingRecordScreen(),
     livestockHistory: (context) => LivestockHistoryScreen(),
     report: (context) => ReportScreen(),
     weightHistory: (context) => WeightHistoryScreen(),

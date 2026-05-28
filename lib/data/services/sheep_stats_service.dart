@@ -3,6 +3,7 @@ import 'package:gosheep_mobile/data/api_client.dart';
 import 'package:gosheep_mobile/data/exceptions/api_exception.dart';
 import 'package:gosheep_mobile/data/exceptions/error_handler.dart';
 import 'package:gosheep_mobile/data/models/api_response.dart';
+import 'package:gosheep_mobile/data/models/mating_record_stats.dart';
 import 'package:gosheep_mobile/data/models/sheep_health_stats.dart';
 
 class SheepStatsService {
@@ -14,7 +15,26 @@ class SheepStatsService {
 
       final apiResponse = ApiResponse<SheepHealthStats>.fromJson(
         response.data,
-            (data) => SheepHealthStats.fromJson(data),
+        (data) => SheepHealthStats.fromJson(data),
+      );
+
+      if (!apiResponse.success) {
+        throw ApiException(apiResponse.message);
+      }
+
+      return apiResponse.data!;
+    } on DioException catch (e) {
+      throw ErrorHandler.handle(e);
+    }
+  }
+
+  Future<MatingRecordStats> getMatingRecStats() async {
+    try {
+      final response = await _dio.get('/mating-records/stats');
+
+      final apiResponse = ApiResponse<MatingRecordStats>.fromJson(
+        response.data,
+        (data) => MatingRecordStats.fromJson(data),
       );
 
       if (!apiResponse.success) {

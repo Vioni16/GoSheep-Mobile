@@ -2,14 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/data/exceptions/api_exception.dart';
 import 'package:gosheep_mobile/data/exceptions/validation_exception.dart';
 import 'package:gosheep_mobile/data/models/sheep.dart';
-import 'package:gosheep_mobile/data/models/sheep_health_stats.dart';
 import '../services/sheep_service.dart';
 
 class SheepProvider with ChangeNotifier {
   final SheepService _service = SheepService();
-
-  SheepHealthStats? _healthStats;
-  SheepHealthStats? get healthStats => _healthStats;
 
   List<Sheep> _sheepList = [];
   List<Sheep> get sheepList => _sheepList;

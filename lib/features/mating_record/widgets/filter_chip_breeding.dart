@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 class FilterChipItem extends StatelessWidget {
   final String label;
-  final bool isActive;
+  final bool active;
   final VoidCallback onTap;
 
   const FilterChipItem({
     super.key,
     required this.label,
-    required this.isActive,
+    required this.active,
     required this.onTap,
   });
 
@@ -18,20 +18,20 @@ class FilterChipItem extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 9,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isActive ? Colors.black : Colors.grey.shade200,
+          color: active ? Colors.black : Colors.white,
           borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: active ? Colors.black : Colors.black.withValues(alpha: 0.1),
+          ),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isActive ? Colors.white : Colors.black87,
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
+            fontSize: 13,
+            fontWeight: active ? FontWeight.w600 : FontWeight.w500,
+            color: active ? Colors.white : Colors.black54,
           ),
         ),
       ),

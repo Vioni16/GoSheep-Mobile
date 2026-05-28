@@ -1,55 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:gosheep_mobile/core/theme/theme.dart';
+import 'package:gosheep_mobile/core/utils/format_helper.dart';
 import 'package:gosheep_mobile/core/widgets/gender_badge.dart';
 import 'package:gosheep_mobile/core/widgets/sheep_chip.dart';
+import 'package:gosheep_mobile/data/models/mating_record.dart';
 import 'package:gosheep_mobile/features/sheep/screens/sheep_detail_screen.dart';
 
-class BreedingCard extends StatelessWidget {
-  final Map<String, dynamic> item;
+class MatingRecordCard extends StatelessWidget {
+  final MatingRecord matingRecord;
 
-  const BreedingCard({super.key, required this.item});
-
-  Color get _statusColor {
-    switch (item["status"]) {
-      case "Berhasil":
-        return AppTheme.primaryGreen;
-      case "Gagal":
-        return Colors.red;
-      default:
-        return Colors.orange;
-    }
-  }
-
-  IconData get _statusIcon {
-    switch (item["status"]) {
-      case "Berhasil":
-        return Icons.check_circle_outline;
-      case "Gagal":
-        return Icons.cancel_outlined;
-      default:
-        return Icons.access_time_outlined;
-    }
-  }
-
-  String get _statusText {
-    switch (item["status"]) {
-      case "Berhasil":
-        return "Bunting";
-      case "Gagal":
-        return "Gagal";
-      default:
-        return "Proses";
-    }
-  }
+  const MatingRecordCard({super.key, required this.matingRecord});
 
   @override
   Widget build(BuildContext context) {
-    final color = _statusColor;
-    final male = item["male"] ?? "-";
-    final female = item["female"] ?? "-";
-    final date = item["date"] ?? "-";
-    final status = item["status"] ?? "-";
-
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
@@ -61,60 +23,54 @@ class BreedingCard extends StatelessWidget {
         ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(
-                      child: Column(
+                      child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          const GenderBadge(gender: "male"),
+                          const SizedBox(width: 3),
                           SheepChip(
-                            label: male,
+                            label: matingRecord.ramEarTag,
                             onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      SheepDetailScreen(id: item["male_id"]),
+                                      SheepDetailScreen(id: matingRecord.ramId),
                                 ),
                               );
                             },
                           ),
-
-                          const SizedBox(height: 5),
-
-                          const GenderBadge(gender: "Jantan"),
                         ],
                       ),
                     ),
 
-                    const SizedBox(width: 10),
-
                     Expanded(
-                      child: Column(
+                      child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SheepChip(
-                            label: female,
+                            label: matingRecord.eweEarTag,
                             onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      SheepDetailScreen(id: item["female_id"]),
+                                      SheepDetailScreen(id: matingRecord.eweId),
                                 ),
                               );
                             },
                           ),
-
-                          const SizedBox(height: 5),
-
-                          const GenderBadge(gender: "Betina"),
+                          const SizedBox(width: 3),
+                          const GenderBadge(gender: "female"),
                         ],
                       ),
                     ),
@@ -124,29 +80,39 @@ class BreedingCard extends StatelessWidget {
 
               const SizedBox(width: 10),
 
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 5,
-                ),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(_statusIcon, size: 13, color: color),
-                    const SizedBox(width: 4),
-                    Text(
-                      _statusText,
-                      style: TextStyle(
-                        color: color,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
+              SizedBox(
+                width: 90,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
+                    color: matingRecord.result.color,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        matingRecord.result.icon,
+                        size: 13,
+                        color: Colors.white,
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 4),
+                      Flexible(
+                        child: Text(
+                          matingRecord.result.label,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -157,24 +123,17 @@ class BreedingCard extends StatelessWidget {
           const SizedBox(height: 10),
 
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: _infoItem(Icons.calendar_today_outlined, "Kawin", date),
+              _infoItem(
+                Icons.calendar_today_outlined,
+                "Kawin",
+                FormatHelper.formatDate(matingRecord.matingDate),
               ),
-              Expanded(
-                child: _infoItem(
-                  Icons.event_available_outlined,
-                  "Selesai",
-                  "25 Mei 2026",
-                ),
-              ),
-              Expanded(
-                child: _infoItem(
-                  _statusIcon,
-                  "Hasil",
-                  status == "Proses" ? "Menunggu" : "Dicatat",
-                  valueColor: color,
-                ),
+              _infoItem(
+                Icons.event_available_outlined,
+                "Selesai",
+                FormatHelper.formatDate(matingRecord.endDate),
               ),
             ],
           ),

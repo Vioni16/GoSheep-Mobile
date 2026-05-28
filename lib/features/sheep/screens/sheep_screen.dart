@@ -14,7 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:gosheep_mobile/features/sheep/widgets/add_sheep_sheet.dart';
 import 'package:gosheep_mobile/features/sheep/widgets/filter_pill.dart';
 import 'package:gosheep_mobile/features/sheep/widgets/sheep_card.dart';
-import 'package:gosheep_mobile/features/sheep/widgets/stat_card.dart';
+import 'package:gosheep_mobile/core/widgets/stat_card.dart';
 
 import '../../../data/models/sheep.dart';
 import '../../../data/providers/sheep_provider.dart';
@@ -228,19 +228,25 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
 
                     return Row(
                       children: [
-                        StatCard(
-                          label: 'Sehat',
-                          value: isLoading ? '-' : '$healthy',
+                        Expanded(
+                          child: StatCard(
+                            label: 'Sehat',
+                            value: isLoading ? '-' : '$healthy',
+                          ),
                         ),
                         const SizedBox(width: 10),
-                        StatCard(
-                          label: 'Berisiko',
-                          value: isLoading ? '-' : '$atRisk',
+                        Expanded(
+                          child: StatCard(
+                            label: 'Berisiko',
+                            value: isLoading ? '-' : '$atRisk',
+                          ),
                         ),
                         const SizedBox(width: 10),
-                        StatCard(
-                          label: 'Sakit',
-                          value: isLoading ? '-' : '$sick',
+                        Expanded(
+                          child: StatCard(
+                            label: 'Sakit',
+                            value: isLoading ? '-' : '$sick',
+                          ),
                         ),
                       ],
                     );
