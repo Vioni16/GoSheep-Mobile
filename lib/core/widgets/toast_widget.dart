@@ -5,6 +5,34 @@ enum ToastType { success, error, warning, info }
 class ToastService {
   static OverlayEntry? _entry;
 
+  static void showWithOverlay(
+    OverlayState overlay,
+    String message, {
+    String? title,
+    ToastType type = ToastType.info,
+    Duration duration = const Duration(seconds: 2),
+  }) {
+    _entry?.remove();
+    _entry = null;
+
+    _entry = OverlayEntry(
+      builder: (ctx) => _ToastOverlay(
+        title: title,
+        message: message,
+        type: type,
+        duration: duration,
+        onRemove: () {
+          try {
+            _entry?.remove();
+          } catch (_) {}
+          _entry = null;
+        },
+      ),
+    );
+
+    overlay.insert(_entry!);
+  }
+
   static void show(
     BuildContext context,
     String message, {
