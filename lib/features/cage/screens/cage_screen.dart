@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/core/utils/format_helper.dart';
 import 'package:gosheep_mobile/core/widgets/empty_data.dart';
 import 'package:gosheep_mobile/core/widgets/no_connection.dart';
+import 'package:gosheep_mobile/core/widgets/summary_card.dart';
 import 'package:gosheep_mobile/data/models/cage.dart';
 import 'package:gosheep_mobile/data/providers/cage_provider.dart';
 import 'package:gosheep_mobile/features/cage/widgets/cage_card.dart';
 import 'package:gosheep_mobile/features/cage/widgets/cage_card_skeleton.dart';
-import 'package:gosheep_mobile/features/cage/widgets/cage_summary_header.dart';
 import 'package:gosheep_mobile/core/widgets/async_state_sliver.dart';
-import 'package:gosheep_mobile/features/cage/widgets/cage_summary_header_skeleton.dart';
+import 'package:gosheep_mobile/core/widgets/summary_card_skeleton.dart';
 import 'package:provider/provider.dart';
 
 class CageScreen extends StatelessWidget {
@@ -76,7 +76,7 @@ class _CageScreenView extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
-                  const CageSummaryHeaderSkeleton(),
+                  const SummaryCardSkeleton(),
 
                   const SizedBox(height: 10),
 
@@ -130,10 +130,31 @@ class _CageScreenView extends StatelessWidget {
                     if (index == 0) {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 10),
-                        child: CageSummaryHeader(
-                          totalCages: data.length,
-                          totalSheep: totalSheep,
-                          avgCapacity: avgCapacity,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: SummaryCard(
+                                label: 'Total Kandang',
+                                value: '${data.length}',
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+
+                            Expanded(
+                              child: SummaryCard(
+                                label: 'Total Domba',
+                                value: '$totalSheep',
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+
+                            Expanded(
+                              child: SummaryCard(
+                                label: 'Rata-rata Kapasitas',
+                                value: '${avgCapacity.round()}%',
+                              ),
+                            ),
+                          ],
                         ),
                       );
                     }

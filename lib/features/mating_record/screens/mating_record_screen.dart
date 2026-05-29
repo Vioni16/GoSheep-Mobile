@@ -5,7 +5,7 @@ import 'package:gosheep_mobile/core/widgets/app_refresh_indicator.dart';
 import 'package:gosheep_mobile/core/widgets/async_state_sliver.dart';
 import 'package:gosheep_mobile/core/widgets/empty_data.dart';
 import 'package:gosheep_mobile/core/widgets/no_connection.dart';
-import 'package:gosheep_mobile/core/widgets/stat_card.dart';
+import 'package:gosheep_mobile/core/widgets/summary_card.dart';
 import 'package:gosheep_mobile/data/models/mating_record.dart';
 import 'package:gosheep_mobile/data/providers/mating_record_provider.dart';
 import 'package:gosheep_mobile/data/providers/sheep_stats_provider.dart';
@@ -71,6 +71,8 @@ class _MatingRecordViewState extends State<_MatingRecordView> {
   void _onScroll() {
     final pos = _scrollController.position;
 
+    if (pos.maxScrollExtent == 0) return;
+
     if (pos.pixels >= pos.maxScrollExtent - 200) {
       context.read<MatingRecordProvider>().fetchMore();
     }
@@ -96,6 +98,7 @@ class _MatingRecordViewState extends State<_MatingRecordView> {
           onRefresh: provider.refresh,
           child: CustomScrollView(
             controller: _scrollController,
+            physics: AlwaysScrollableScrollPhysics(),
             slivers: [
               SliverToBoxAdapter(
                 child: Padding(
@@ -138,22 +141,20 @@ class _MatingRecordViewState extends State<_MatingRecordView> {
                           Row(
                             children: [
                               Expanded(
-                                child: StatCard(
+                                child: SummaryCard(
                                   label: MatingResult.pregnant.label,
-                                  value: isLoading
-                                      ? '-'
-                                      : '${stats?.pregnantTotal ?? '-'}',
+                                  value: '${stats?.pregnantTotal ?? '-'}',
+                                  isLoading: isLoading,
                                 ),
                               ),
 
                               const SizedBox(width: 10),
 
                               Expanded(
-                                child: StatCard(
+                                child: SummaryCard(
                                   label: MatingResult.unknown.label,
-                                  value: isLoading
-                                      ? '-'
-                                      : '${stats?.unknownTotal ?? '-'}',
+                                  value: '${stats?.unknownTotal ?? '-'}',
+                                  isLoading: isLoading,
                                 ),
                               ),
                             ],
@@ -162,22 +163,20 @@ class _MatingRecordViewState extends State<_MatingRecordView> {
                           Row(
                             children: [
                               Expanded(
-                                child: StatCard(
+                                child: SummaryCard(
                                   label: MatingResult.failed.label,
-                                  value: isLoading
-                                      ? '-'
-                                      : '${stats?.failedTotal ?? '-'}',
+                                  value: '${stats?.failedTotal ?? '-'}',
+                                  isLoading: isLoading,
                                 ),
                               ),
 
                               const SizedBox(width: 10),
 
                               Expanded(
-                                child: StatCard(
+                                child: SummaryCard(
                                   label: MatingResult.notPregnant.label,
-                                  value: isLoading
-                                      ? '-'
-                                      : '${stats?.notPregnantTotal ?? '-'}',
+                                  value: '${stats?.notPregnantTotal ?? '-'}',
+                                  isLoading: isLoading,
                                 ),
                               ),
                             ],

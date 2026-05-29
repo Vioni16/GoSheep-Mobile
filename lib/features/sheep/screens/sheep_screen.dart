@@ -16,7 +16,7 @@ import 'package:provider/provider.dart';
 import 'package:gosheep_mobile/features/sheep/widgets/add_sheep_sheet.dart';
 import 'package:gosheep_mobile/features/sheep/widgets/filter_pill.dart';
 import 'package:gosheep_mobile/features/sheep/widgets/sheep_card.dart';
-import 'package:gosheep_mobile/core/widgets/stat_card.dart';
+import 'package:gosheep_mobile/core/widgets/summary_card.dart';
 
 import '../../../data/models/sheep.dart';
 import '../../../data/providers/sheep_provider.dart';
@@ -98,6 +98,8 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
   void _onScroll() {
     final pos = _scrollController.position;
 
+    if (pos.maxScrollExtent == 0) return;
+
     if (pos.pixels >= pos.maxScrollExtent - 200) {
       context.read<SheepProvider>().fetchMore();
     }
@@ -161,6 +163,7 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
         onRefresh: provider.refresh,
         child: CustomScrollView(
           controller: _scrollController,
+          physics: AlwaysScrollableScrollPhysics(),
           slivers: [
             SliverToBoxAdapter(
               child: Padding(
@@ -231,27 +234,20 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
                     final isLoading = statsProvider.isLoading;
 
                     final healthy = stats?.healthyTotal ?? 0;
-                    final atRisk = stats?.atRiskTotal ?? 0;
                     final sick = stats?.sickTotal ?? 0;
 
                     return Row(
                       children: [
                         Expanded(
-                          child: StatCard(
+                          child: SummaryCard(
                             label: 'Sehat',
                             value: isLoading ? '-' : '$healthy',
                           ),
                         ),
                         const SizedBox(width: 10),
-                        Expanded(
-                          child: StatCard(
-                            label: 'Berisiko',
-                            value: isLoading ? '-' : '$atRisk',
-                          ),
-                        ),
                         const SizedBox(width: 10),
                         Expanded(
-                          child: StatCard(
+                          child: SummaryCard(
                             label: 'Sakit',
                             value: isLoading ? '-' : '$sick',
                           ),
