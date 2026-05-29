@@ -8,12 +8,14 @@ class SheepCard extends StatelessWidget {
   final Sheep sheep;
   final Function(BuildContext)? onConfirmDelete;
   final VoidCallback onTap;
+  final bool showEnvironmentStatus;
 
   const SheepCard({
     super.key,
     required this.sheep,
     this.onConfirmDelete,
     required this.onTap,
+    this.showEnvironmentStatus = false,
   });
 
   @override
@@ -127,23 +129,54 @@ class SheepCard extends StatelessWidget {
 
                   const SizedBox(width: 12),
 
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Color(0xFFFAEEDA),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      statusLabel,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: bg
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFAEEDA),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          statusLabel,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: bg,
+                          ),
+                        ),
                       ),
-                    ),
+
+                      if (showEnvironmentStatus &&
+                          sheep.currentEnvironmentCond != null) ...[
+                        const SizedBox(height: 6),
+
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFAEEDA),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            SheepStatusUtil.getHealthLabel(
+                              sheep.currentEnvironmentCond!,
+                            ),
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.deepOrangeAccent,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ],
               ),

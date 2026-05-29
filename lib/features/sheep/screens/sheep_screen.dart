@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/core/theme/theme.dart';
 import 'package:gosheep_mobile/core/utils/format_helper.dart';
 import 'package:gosheep_mobile/core/widgets/app_refresh_indicator.dart';
 import 'package:gosheep_mobile/core/widgets/async_state_sliver.dart';
@@ -9,6 +10,7 @@ import 'package:gosheep_mobile/core/widgets/no_connection.dart';
 import 'package:gosheep_mobile/core/widgets/toast_widget.dart';
 import 'package:gosheep_mobile/data/providers/sheep_form_option_provider.dart';
 import 'package:gosheep_mobile/data/providers/sheep_stats_provider.dart';
+import 'package:gosheep_mobile/features/healt_history/screens/healt_history_screen.dart';
 import 'package:gosheep_mobile/features/sheep/screens/sheep_detail_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:gosheep_mobile/features/sheep/widgets/add_sheep_sheet.dart';
@@ -48,6 +50,12 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
   List<Sheep> _filteredByStatus(List<Sheep> list) {
     if (_filter == 'all') {
       return list;
+    }
+
+    if (_filter == 'stress_monitor') {
+      return list
+          .where((sheep) => sheep.currentEnvironmentCond != null)
+          .toList();
     }
 
     return list.where((sheep) => sheep.statusUi == _filter).toList();
@@ -284,7 +292,7 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
                         ('Semua', 'all'),
                         ('Sehat', 'sehat'),
                         ('Sakit', 'sakit'),
-                        ('Berisiko', 'at_risk'),
+                        ('Stress Monitor', 'stress_monitor'),
                       ]) ...[
                         FilterPill(
                           label: label,
@@ -314,6 +322,115 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
               ),
             ),
 
+            if (_filter == 'sakit')
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+                  child: Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: AppTheme.cream,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: AppTheme.primaryGreen.withValues(alpha: 0.12),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 42,
+                          height: 42,
+                          decoration: BoxDecoration(
+                            color: AppTheme.primaryGreen,
+                            borderRadius: BorderRadius.circular(11),
+                            border: Border.all(
+                              color: AppTheme.primaryGreen.withValues(
+                                alpha: 0.15,
+                              ),
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.medical_services_rounded,
+                            color: AppTheme.cream,
+                            size: 20,
+                          ),
+                        ),
+
+                        const SizedBox(width: 12),
+
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Butuh Pemeriksaan Lanjutan',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppTheme.primaryGreen,
+                                ),
+                              ),
+                              SizedBox(height: 2),
+                              Text(
+                                'Lihat kondisi & riwayat kesehatan domba',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: AppTheme.brown,
+                                  height: 1.4,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(width: 10),
+
+                        FilledButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const HealthHistoryScreen(),
+                              ),
+                            );
+                          },
+                          style:
+                              FilledButton.styleFrom(
+                                backgroundColor: Colors.black,
+                                foregroundColor: AppTheme.cream,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                  vertical: 10,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                textStyle: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ).copyWith(
+                                backgroundColor:
+                                    WidgetStateProperty.resolveWith((states) {
+                                      if (states.contains(
+                                        WidgetState.pressed,
+                                      )) {
+                                        return Colors.black;
+                                      }
+                                      return Colors.white;
+                                    }),
+                              ),
+                          icon: const Icon(
+                            Icons.arrow_forward_rounded,
+                            size: 16,
+                          ),
+                          label: const Text('Lihat'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             AsyncStateSliver<Sheep>(
               isLoading: provider.isLoading,
               error: provider.error,
@@ -358,6 +475,7 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
                       ),
                     ),
                     sheep: data[index],
+                    showEnvironmentStatus: _filter == 'stress_monitor',
                     onConfirmDelete: (context) => _handleConfirmDelete(
                       context,
                       data[index].id,

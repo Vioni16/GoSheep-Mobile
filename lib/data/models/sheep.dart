@@ -4,6 +4,7 @@ class Sheep {
   final String earTagColor;
   final String gender;
   final String? breed;
+  final String? currentEnvironmentCond;
   final double weight;
   final String statusUi;
 
@@ -13,19 +14,21 @@ class Sheep {
     required this.earTagColor,
     required this.gender,
     required this.breed,
+    required this.currentEnvironmentCond,
     required this.weight,
     required this.statusUi,
   });
 
   factory Sheep.fromJson(Map<String, dynamic> json) {
     return Sheep(
-        id: json['id'],
-        earTag: json['ear_tag'],
-        earTagColor: json['ear_tag_color'],
-        gender: json['gender'],
-        breed: json['breed'] ?? 'Tidak Diketahui',
-        weight: (json['weight'] as num).toDouble(),
-        statusUi: json['status_ui'],
+      id: json['id'],
+      earTag: json['ear_tag'],
+      earTagColor: json['ear_tag_color'],
+      gender: json['gender'],
+      breed: json['breed'] ?? 'Tidak Diketahui',
+      currentEnvironmentCond: json['current_environment_condition'],
+      weight: (json['weight'] as num).toDouble(),
+      statusUi: json['status_ui'],
     );
   }
 }
