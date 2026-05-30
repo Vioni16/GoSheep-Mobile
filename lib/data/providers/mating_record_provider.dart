@@ -68,7 +68,7 @@ class MatingRecordProvider with ChangeNotifier {
     }
   }
 
-  Future<void> searchSheep(String value) async {
+  Future<void> searchMatingRec(String value) async {
     _search = value;
 
     _matingRecords = [];

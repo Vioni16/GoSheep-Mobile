@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/core/enums/mating_result_enum.dart';
 import 'package:gosheep_mobile/core/utils/format_helper.dart';
@@ -54,15 +56,32 @@ class _MatingRecordViewState extends State<_MatingRecordView> {
   final _scrollController = ScrollController();
   MatingResult? _filter;
 
+  final _search = TextEditingController();
+  Timer? _debounce;
+
   @override
   void initState() {
     super.initState();
 
     _scrollController.addListener(_onScroll);
+
+    _search.addListener(() {
+      if (_debounce?.isActive ?? false) {
+        _debounce!.cancel();
+      }
+
+      _debounce = Timer(const Duration(milliseconds: 300), () {
+        context.read<MatingRecordProvider>().searchMatingRec(_search.text);
+      });
+    });
   }
 
   @override
   void dispose() {
+    _debounce?.cancel();
+
+    _search.dispose();
+
     _scrollController
       ..removeListener(_onScroll)
       ..dispose();
@@ -84,6 +103,7 @@ class _MatingRecordViewState extends State<_MatingRecordView> {
   Widget build(BuildContext context) {
     final provider = context.watch<MatingRecordProvider>();
     final recordList = _filteredByResult(provider.matingRecords);
+    final isSearching = provider.isSearching;
 
     return Scaffold(
       appBar: AppBar(
@@ -186,6 +206,33 @@ class _MatingRecordViewState extends State<_MatingRecordView> {
                         ],
                       );
                     },
+                  ),
+                ),
+              ),
+
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                  child: SearchBar(
+                    controller: _search,
+                    hintText: 'Cari Eartag domba...',
+                    leading: const Icon(Icons.search_rounded),
+                    elevation: WidgetStateProperty.all(0),
+                    backgroundColor: WidgetStateProperty.all(Colors.white),
+                    shape: WidgetStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    trailing: [
+                      if (_search.text.isNotEmpty)
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () {
+                            _search.clear();
+                          },
+                        ),
+                    ],
                   ),
                 ),
               ),
@@ -328,8 +375,12 @@ class _MatingRecordViewState extends State<_MatingRecordView> {
                 ),
                 onEmpty: () => SliverToBoxAdapter(
                   child: EmptyData(
-                    title: 'Belum Ada Data',
-                    description: 'Belum ada perkawinan domba',
+                    title: isSearching
+                        ? 'Riwayat Tidak Ditemukan'
+                        : 'Belum Ada Data',
+                    description: isSearching
+                        ? 'Tidak ada domba dengan Eartag tersebut'
+                        : 'Belum ada perkawinan domba',
                   ),
                 ),
                 onSuccess: (data) => SliverPadding(

@@ -87,6 +87,8 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
 
   @override
   void dispose() {
+    _debounce?.cancel();
+
     _search.dispose();
 
     _scrollController
@@ -274,6 +276,15 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
+                  trailing: [
+                    if (_search.text.isNotEmpty)
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () {
+                          _search.clear();
+                        },
+                      ),
+                  ],
                 ),
               ),
             ),
