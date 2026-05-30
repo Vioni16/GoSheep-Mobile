@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/core/theme/theme.dart';
 import 'package:gosheep_mobile/core/utils/format_helper.dart';
 import 'package:gosheep_mobile/core/widgets/gender_badge.dart';
 import 'package:gosheep_mobile/core/widgets/sheep_chip.dart';
@@ -39,6 +40,8 @@ class MatingRecordCard extends StatelessWidget {
                           const SizedBox(width: 3),
                           SheepChip(
                             label: matingRecord.ramEarTag,
+                            backgroundColor: Colors.white,
+                            borderColor: Colors.blue,
                             onTap: () {
                               Navigator.push(
                                 context,
@@ -59,6 +62,8 @@ class MatingRecordCard extends StatelessWidget {
                         children: [
                           SheepChip(
                             label: matingRecord.eweEarTag,
+                            backgroundColor: Colors.white,
+                            borderColor: Colors.pink,
                             onTap: () {
                               Navigator.push(
                                 context,
@@ -88,7 +93,7 @@ class MatingRecordCard extends StatelessWidget {
                     vertical: 5,
                   ),
                   decoration: BoxDecoration(
-                    color: matingRecord.result.color,
+                    color: AppTheme.cream,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
@@ -97,14 +102,14 @@ class MatingRecordCard extends StatelessWidget {
                       Icon(
                         matingRecord.result.icon,
                         size: 13,
-                        color: Colors.white,
+                        color: matingRecord.result.color,
                       ),
                       const SizedBox(width: 4),
                       Flexible(
                         child: Text(
                           matingRecord.result.label,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: matingRecord.result.color,
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/core/utils/format_helper.dart';
+import 'package:gosheep_mobile/core/widgets/app_banner.dart';
 import 'package:gosheep_mobile/core/widgets/empty_data.dart';
 import 'package:gosheep_mobile/core/widgets/no_connection.dart';
 import 'package:gosheep_mobile/core/widgets/summary_card.dart';
@@ -63,6 +64,19 @@ class _CageScreenView extends StatelessWidget {
                     style: TextStyle(color: Colors.grey, fontSize: 13),
                   ),
                 ],
+              ),
+            ),
+          ),
+
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+              child: AppBanner(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                pillLabel: 'Info Kandang',
+                title: 'Semua Kandang\nBeroperasi',
+                subtitle: 'Tidak ada kandang yang melebihi batas kapasitas',
+                decorIcon: Icons.home_work_rounded,
               ),
             ),
           ),

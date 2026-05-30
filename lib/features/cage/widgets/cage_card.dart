@@ -31,7 +31,7 @@ class CageCard extends StatelessWidget {
   Color _badgeFg(String status) {
     switch (status.toLowerCase()) {
       case 'penuh':
-        return const Color(0xFF633806);
+        return const Color(0xFFA32D2D);
       case 'hampir penuh':
         return const Color(0xFF501313);
       default:
@@ -92,8 +92,8 @@ class CageCard extends StatelessWidget {
                           child: Text(
                             cage.statusLabel,
                             style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w500,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
                               color: _badgeFg(cage.statusLabel),
                             ),
                           ),

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/core/theme/theme.dart';
 import 'package:gosheep_mobile/core/utils/format_helper.dart';
+import 'package:gosheep_mobile/core/widgets/app_banner.dart';
 import 'package:gosheep_mobile/core/widgets/app_refresh_indicator.dart';
 import 'package:gosheep_mobile/core/widgets/async_state_sliver.dart';
 import 'package:gosheep_mobile/core/widgets/empty_data.dart';
@@ -14,7 +15,7 @@ import 'package:gosheep_mobile/features/healt_history/screens/healt_history_scre
 import 'package:gosheep_mobile/features/sheep/screens/sheep_detail_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:gosheep_mobile/features/sheep/widgets/add_sheep_sheet.dart';
-import 'package:gosheep_mobile/features/sheep/widgets/filter_pill.dart';
+import 'package:gosheep_mobile/core/widgets/filter_pill.dart';
 import 'package:gosheep_mobile/features/sheep/widgets/sheep_card.dart';
 import 'package:gosheep_mobile/core/widgets/summary_card.dart';
 
@@ -163,7 +164,7 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
         onRefresh: provider.refresh,
         child: CustomScrollView(
           controller: _scrollController,
-          physics: AlwaysScrollableScrollPhysics(),
+          physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
             SliverToBoxAdapter(
               child: Padding(
@@ -318,115 +319,49 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
               ),
             ),
 
-            if (_filter == 'sakit')
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
-                  child: Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: AppTheme.cream,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(
-                        color: AppTheme.primaryGreen.withValues(alpha: 0.12),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+                child: switch (_filter) {
+                  'all' => const AppBanner(
+                    backgroundColor: Colors.black,
+                    pillLabel: 'Semua Data',
+                    title: 'Seluruh Ternak',
+                    subtitle: 'Menampilkan semua domba\nyang terdaftar',
+                    decorIcon: Icons.format_list_bulleted_rounded,
+                  ),
+                  'sehat' => const AppBanner(
+                    backgroundColor: Color(0xFF2E7D52),
+                    pillLabel: 'Kondisi Baik',
+                    title: 'Domba Sehat',
+                    subtitle: 'Tidak ada keluhan,\nkondisi prima',
+                    decorIcon: Icons.favorite_rounded,
+                  ),
+                  'sakit' => AppBanner(
+                    backgroundColor: AppTheme.primaryGreen,
+                    pillLabel: 'Perlu Tindakan',
+                    title: 'Butuh Pemeriksaan\nLanjutan',
+                    subtitle: 'Lihat kondisi & riwayat kesehatan domba',
+                    decorIcon: Icons.medical_services_rounded,
+                    buttonLabel: 'Lihat Detail',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const HealthHistoryScreen(),
                       ),
                     ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 42,
-                          height: 42,
-                          decoration: BoxDecoration(
-                            color: AppTheme.primaryGreen,
-                            borderRadius: BorderRadius.circular(11),
-                            border: Border.all(
-                              color: AppTheme.primaryGreen.withValues(
-                                alpha: 0.15,
-                              ),
-                            ),
-                          ),
-                          child: Icon(
-                            Icons.medical_services_rounded,
-                            color: AppTheme.cream,
-                            size: 20,
-                          ),
-                        ),
-
-                        const SizedBox(width: 12),
-
-                        const Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Butuh Pemeriksaan Lanjutan',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppTheme.primaryGreen,
-                                ),
-                              ),
-                              SizedBox(height: 2),
-                              Text(
-                                'Lihat kondisi & riwayat kesehatan domba',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: AppTheme.brown,
-                                  height: 1.4,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        const SizedBox(width: 10),
-
-                        FilledButton.icon(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const HealthHistoryScreen(),
-                              ),
-                            );
-                          },
-                          style:
-                              FilledButton.styleFrom(
-                                backgroundColor: Colors.black,
-                                foregroundColor: AppTheme.cream,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 14,
-                                  vertical: 10,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                textStyle: const TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ).copyWith(
-                                backgroundColor:
-                                    WidgetStateProperty.resolveWith((states) {
-                                      if (states.contains(
-                                        WidgetState.pressed,
-                                      )) {
-                                        return Colors.black;
-                                      }
-                                      return Colors.white;
-                                    }),
-                              ),
-                          icon: const Icon(
-                            Icons.arrow_forward_rounded,
-                            size: 16,
-                          ),
-                          label: const Text('Lihat'),
-                        ),
-                      ],
-                    ),
                   ),
-                ),
+                  'stress_monitor' => const AppBanner(
+                    backgroundColor: Color(0xFFB8860B),
+                    pillLabel: 'Monitoring Aktif',
+                    title: 'Pemantauan\nStres Domba',
+                    subtitle: 'Domba dengan data kondisi lingkungan aktif',
+                    decorIcon: Icons.sensors_rounded,
+                  ),
+                  _ => const SizedBox.shrink(),
+                },
               ),
+            ),
             AsyncStateSliver<Sheep>(
               isLoading: provider.isLoading,
               error: provider.error,

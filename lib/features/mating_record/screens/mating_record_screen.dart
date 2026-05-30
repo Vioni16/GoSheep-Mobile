@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/core/enums/mating_result_enum.dart';
 import 'package:gosheep_mobile/core/utils/format_helper.dart';
+import 'package:gosheep_mobile/core/widgets/app_banner.dart';
 import 'package:gosheep_mobile/core/widgets/app_refresh_indicator.dart';
 import 'package:gosheep_mobile/core/widgets/async_state_sliver.dart';
 import 'package:gosheep_mobile/core/widgets/empty_data.dart';
+import 'package:gosheep_mobile/core/widgets/gender_badge.dart';
 import 'package:gosheep_mobile/core/widgets/no_connection.dart';
 import 'package:gosheep_mobile/core/widgets/summary_card.dart';
 import 'package:gosheep_mobile/data/models/mating_record.dart';
@@ -11,7 +13,7 @@ import 'package:gosheep_mobile/data/providers/mating_record_provider.dart';
 import 'package:gosheep_mobile/data/providers/sheep_stats_provider.dart';
 import 'package:gosheep_mobile/features/mating_record/widgets/mating_record_card.dart';
 import 'package:gosheep_mobile/features/mating_record/widgets/mating_record_card_skeleton.dart';
-import 'package:gosheep_mobile/features/sheep/widgets/filter_pill.dart';
+import 'package:gosheep_mobile/core/widgets/filter_pill.dart';
 import 'package:provider/provider.dart';
 
 class MatingRecordScreen extends StatelessWidget {
@@ -98,7 +100,7 @@ class _MatingRecordViewState extends State<_MatingRecordView> {
           onRefresh: provider.refresh,
           child: CustomScrollView(
             controller: _scrollController,
-            physics: AlwaysScrollableScrollPhysics(),
+            physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
               SliverToBoxAdapter(
                 child: Padding(
@@ -226,17 +228,80 @@ class _MatingRecordViewState extends State<_MatingRecordView> {
                 ),
               ),
 
-              const SliverToBoxAdapter(
+              SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
-                  child: Text(
-                    'RIWAYAT BREEDING TERNAK',
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black54,
-                      letterSpacing: 1.2,
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+                  child: switch (_filter) {
+                    null => const AppBanner(
+                      backgroundColor: Colors.black,
+                      pillLabel: 'Semua Data',
+                      title: 'Seluruh Riwayat\nPerkawinan',
+                      subtitle: 'Menampilkan semua catatan breeding domba',
+                      decorIcon: Icons.list_alt_rounded,
                     ),
+                    MatingResult.pregnant => const AppBanner(
+                      backgroundColor: Color(0xFF2E7D52),
+                      pillLabel: 'Hasil Positif',
+                      title: 'Domba\nBerhasil Bunting',
+                      subtitle:
+                          'Proses perkawinan berhasil dan domba sedang bunting',
+                      decorIcon: Icons.favorite_rounded,
+                    ),
+                    MatingResult.notPregnant => const AppBanner(
+                      backgroundColor: Color(0xFFB8860B),
+                      pillLabel: 'Tidak Bunting',
+                      title: 'Perkawinan\nTidak Berhasil',
+                      subtitle: 'Domba tidak menunjukkan tanda kebuntingan',
+                      decorIcon: Icons.close_rounded,
+                    ),
+                    MatingResult.failed => AppBanner(
+                      backgroundColor: Colors.red.shade700,
+                      pillLabel: 'Gagal',
+                      title: 'Perkawinan\nGagal Dilakukan',
+                      subtitle: 'Proses perkawinan tidak dapat diselesaikan',
+                      decorIcon: Icons.warning_rounded,
+                    ),
+                    MatingResult.unknown => const AppBanner(
+                      backgroundColor: Color(0xFF546E7A),
+                      pillLabel: 'Belum Diketahui',
+                      title: 'Hasil Masih\nDalam Pemantauan',
+                      subtitle: 'Hasil perkawinan belum dapat dipastikan',
+                      decorIcon: Icons.hourglass_empty_rounded,
+                    ),
+                  },
+                ),
+              ),
+
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                  child: Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          'RIWAYAT BREEDING TERNAK',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black54,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ),
+                      GenderBadge(gender: 'male'),
+                      const SizedBox(width: 4),
+                      const Text(
+                        'Jantan',
+                        style: TextStyle(fontSize: 11, color: Colors.black54),
+                      ),
+                      const SizedBox(width: 10),
+                      GenderBadge(gender: 'female'),
+                      const SizedBox(width: 4),
+                      const Text(
+                        'Betina',
+                        style: TextStyle(fontSize: 11, color: Colors.black54),
+                      ),
+                    ],
                   ),
                 ),
               ),

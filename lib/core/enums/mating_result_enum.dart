@@ -61,16 +61,16 @@ enum MatingResult {
   Color get color {
     switch (this) {
       case MatingResult.unknown:
-        return Colors.orange;
+        return Color(0xFF546E7A);
 
       case MatingResult.pregnant:
-        return AppTheme.primaryGreen;
+        return Color(0xFF2E7D52);
 
       case MatingResult.notPregnant:
-        return const Color.fromARGB(255, 31, 124, 200);
+        return const Color(0xFFB8860B);
 
       case MatingResult.failed:
-        return const Color.fromARGB(255, 156, 40, 31);
+        return Colors.red.shade700;
     }
   }
 
