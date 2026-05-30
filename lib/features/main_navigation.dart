@@ -42,7 +42,7 @@ class _MainNavigationState extends State<MainNavigation> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        shape: _navIndex == 0
+        shape: (_navIndex == 0 || _navIndex == 3)
             ? null
             : const RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(

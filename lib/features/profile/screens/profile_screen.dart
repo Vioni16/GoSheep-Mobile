@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/core/widgets/confirmation_dialog.dart';
+import 'package:gosheep_mobile/core/widgets/custom_textfield.dart';
+import 'package:gosheep_mobile/data/providers/user_provider.dart';
 import 'package:gosheep_mobile/features/profile/screens/change_password.dart';
-import 'package:gosheep_mobile/core/theme/theme.dart';
+import 'package:gosheep_mobile/routes/app_routes.dart';
+import 'package:provider/provider.dart';
 import '../widgets/profile_menu_item.dart';
 import 'edit_profile_screen.dart';
 
@@ -8,42 +12,21 @@ class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   void _showLogoutDialog(BuildContext context) {
+    final userProvider = context.read<UserProvider>();
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        content: const Text(
-          "Apakah Anda yakin ingin keluar dari akun ini?",
-          textAlign: TextAlign.left,
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-        ),
-        actions: [
-          Row(
-            children: [
-              Expanded(
-                child: TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text(
-                    "Batal",
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text(
-                    "Keluar",
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+      builder: (context) => ConfirmationDialog(
+        'Apakah kamu yakin ingin keluar dari akun ini?',
+        subtitle: 'Kamu perlu login kembali untuk mengakses aplikasi.',
+        icon: Icons.logout_rounded,
+        onTap: () {
+          Navigator.pop(context);
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            AppRoutes.login,
+            (route) => false,
+          );
+        },
       ),
     );
   }
@@ -55,27 +38,26 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              margin: const EdgeInsets.fromLTRB(24, 40, 24, 10),
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [scheme.primary, scheme.primaryFixedDim],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(24),
-              ),
+              width: double.infinity,
+              color: scheme.primary,
+              padding: const EdgeInsets.fromLTRB(24, 40, 24, 28),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const CircleAvatar(
-                    radius: 35,
-                    backgroundImage: AssetImage(
-                      'assets/images/Gosheep_profile_photo.png',
+                  CircleAvatar(
+                    radius: 38,
+                    backgroundColor: Colors.white.withValues(alpha: 0.2),
+                    child: const CircleAvatar(
+                      radius: 35,
+                      backgroundImage: AssetImage(
+                        'assets/images/Gosheep_profile_photo.png',
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 14),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,16 +66,46 @@ class ProfileScreen extends StatelessWidget {
                           "Dhominica Riskana",
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.2,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           "Mandiri Jaya Farm",
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.8),
-                            fontSize: 14,
+                            color: Colors.white.withValues(alpha: 0.75),
+                            fontSize: 13,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.location_on_outlined,
+                                size: 13,
+                                color: Colors.white.withValues(alpha: 0.85),
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                "Batam, Kepulauan Riau",
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.85),
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -104,65 +116,42 @@ class ProfileScreen extends StatelessWidget {
             ),
 
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: const [
-                        _InfoRow(
-                          icon: Icons.email_outlined,
-                          label: "Email",
-                          value: "dhominica@farm.id",
-                        ),
-                        Divider(height: 1),
-                        _InfoRow(
-                          icon: Icons.phone_outlined,
-                          label: "Nomor Telepon",
-                          value: "+62 812 3456 7890",
-                        ),
-                        Divider(height: 1),
-                        _InfoRow(
-                          icon: Icons.location_on_outlined,
-                          label: "Lokasi Peternakan",
-                          value: "Batam, Kepulauan Riau",
-                        ),
-                      ],
-                    ),
+                  const _SectionLabel('INFORMASI AKUN'),
+                  const SizedBox(height: 12),
+                  CustomTextFormField(
+                    icon: Icons.email_outlined,
+                    label: 'Email',
+                    hint: 'dhominica@farm.id',
+                    enabled: false,
                   ),
-                  const SizedBox(height: 30),
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "PENGATURAN",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey,
-                        fontSize: 12,
-                      ),
-                    ),
+                  const SizedBox(height: 12),
+                  CustomTextFormField(
+                    icon: Icons.app_registration,
+                    label: 'Tanggal Bergabung',
+                    hint: '30 Mei 2026',
+                    enabled: false,
                   ),
+
+                  const SizedBox(height: 28),
+
+                  const _SectionLabel('PENGATURAN'),
                   const SizedBox(height: 12),
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Colors.black.withValues(alpha: 0.06),
+                      ),
                     ),
                     child: Column(
                       children: [
                         ProfileMenuItem(
-                          icon: Icons.edit,
+                          icon: Icons.edit_outlined,
                           title: "Edit Profil",
                           onTap: () => Navigator.push(
                             context,
@@ -171,6 +160,7 @@ class ProfileScreen extends StatelessWidget {
                             ),
                           ),
                         ),
+                        _Divider(),
                         ProfileMenuItem(
                           icon: Icons.lock_reset_rounded,
                           title: "Ubah Kata Sandi",
@@ -182,25 +172,40 @@ class ProfileScreen extends StatelessWidget {
                             ),
                           ),
                         ),
+                        _Divider(),
                         ProfileMenuItem(
                           icon: Icons.help_outline,
                           title: "Bantuan",
                           onTap: () {},
                         ),
+                        _Divider(),
                         ProfileMenuItem(
                           icon: Icons.info_outline,
                           title: "Tentang Aplikasi",
                           onTap: () {},
                         ),
-                        ProfileMenuItem(
-                          icon: Icons.logout,
-                          title: "Keluar Akun",
-                          textColor: Colors.red,
-                          onTap: () => _showLogoutDialog(context),
-                        ),
                       ],
                     ),
                   ),
+
+                  const SizedBox(height: 12),
+
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Colors.red.withValues(alpha: 0.15),
+                      ),
+                    ),
+                    child: ProfileMenuItem(
+                      icon: Icons.logout,
+                      title: "Keluar Akun",
+                      textColor: Colors.red,
+                      onTap: () => _showLogoutDialog(context),
+                    ),
+                  ),
+
                   const SizedBox(height: 40),
                 ],
               ),
@@ -212,44 +217,32 @@ class ProfileScreen extends StatelessWidget {
   }
 }
 
-class _InfoRow extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-  const _InfoRow({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
+class _SectionLabel extends StatelessWidget {
+  final String text;
+  const _SectionLabel(this.text);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          Icon(icon, color: AppTheme.primaryGreen, size: 26),
-          const SizedBox(width: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF2D3132),
-                ),
-              ),
-            ],
-          ),
-        ],
+    return Text(
+      text,
+      style: const TextStyle(
+        fontWeight: FontWeight.w700,
+        color: Colors.black38,
+        fontSize: 11,
+        letterSpacing: 1.2,
       ),
+    );
+  }
+}
+
+class _Divider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Divider(
+      height: 1,
+      indent: 16,
+      endIndent: 16,
+      color: Colors.black.withValues(alpha: 0.06),
     );
   }
 }

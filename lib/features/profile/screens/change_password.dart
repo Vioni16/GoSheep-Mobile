@@ -13,11 +13,13 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         foregroundColor: Colors.white,
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: scheme.primary,
         centerTitle: true,
         title: const Text(
           'Ubah Kata Sandi',
@@ -25,57 +27,171 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 24),
-
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                child: CustomTextFormField(
-                  icon: Icons.lock_outline,
-                  label: "Kata Sandi Lama",
-                  hint: "Masukkan kata sandi lama",
-                  isPassword: true,
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                child: CustomTextFormField(
-                  icon: Icons.lock_outline,
-                  label: "Kata Sandi Baru",
-                  hint: "Masukkan kata sandi baru",
-                  isPassword: true,
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                child: CustomTextFormField(
-                  icon: Icons.lock_outline,
-                  label: "Konfirmasi Kata Sandi Baru",
-                  hint: "Ulangi kata sandi baru",
-                  isPassword: true,
-                ),
-              ),
-
-              const SizedBox(height: 32),
-
-              SizedBox(
+              Container(
                 width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      // Logika simpan di sini
-                    }
-                  },
-                  child: const Text(
-                    "Simpan Kata Sandi",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
+                color: scheme.primary,
+                padding: const EdgeInsets.fromLTRB(24, 4, 24, 24),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: const Icon(
+                        Icons.lock_reset_rounded,
+                        color: Colors.white,
+                        size: 28,
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Buat kata sandi baru',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 3),
+                          Text(
+                            'Pastikan kata sandi minimal 8 karakter',
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.7),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const _SectionLabel('KATA SANDI'),
+                    const SizedBox(height: 12),
+
+                    const CustomTextFormField(
+                      icon: Icons.lock_outline,
+                      label: "Kata Sandi Lama",
+                      hint: "Masukkan kata sandi lama",
+                      isPassword: true,
+                    ),
+                    const SizedBox(height: 12),
+                    const CustomTextFormField(
+                      icon: Icons.lock_outline,
+                      label: "Kata Sandi Baru",
+                      hint: "Masukkan kata sandi baru",
+                      isPassword: true,
+                    ),
+                    const SizedBox(height: 12),
+                    const CustomTextFormField(
+                      icon: Icons.lock_outline,
+                      label: "Konfirmasi Kata Sandi Baru",
+                      hint: "Ulangi kata sandi baru",
+                      isPassword: true,
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.blue.withValues(alpha: 0.2),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.tips_and_updates_outlined,
+                                size: 15,
+                                color: Colors.blue.shade700,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                'Tips keamanan kata sandi',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.blue.shade700,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          for (final tip in [
+                            'Minimal 8 karakter',
+                            'Kombinasi huruf besar, kecil, dan angka',
+                            'Hindari menggunakan tanggal lahir atau nama',
+                          ])
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 6),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.check_circle_outline,
+                                    size: 13,
+                                    color: Colors.blue.shade400,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    tip,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.blue.shade700,
+                                      height: 1.4,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 32),
+
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {}
+                        },
+                        child: const Text(
+                          "Simpan Kata Sandi",
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 40),
+                  ],
                 ),
               ),
             ],
@@ -84,21 +200,22 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       ),
     );
   }
+}
 
-  Widget _buildInputCard(List<Widget> children) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+class _SectionLabel extends StatelessWidget {
+  final String text;
+  const _SectionLabel(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: const TextStyle(
+        fontWeight: FontWeight.w700,
+        color: Colors.black38,
+        fontSize: 11,
+        letterSpacing: 1.2,
       ),
-      child: Column(children: children),
     );
   }
 }

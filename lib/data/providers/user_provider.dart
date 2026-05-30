@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/data/models/user.dart';
+import 'package:gosheep_mobile/data/services/secure_storage_service.dart';
 import 'package:gosheep_mobile/data/services/user_service.dart';
 
 class UserProvider with ChangeNotifier {
@@ -37,10 +38,11 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  void logout() {
+  void logout() async {
+    await SecureStorageService.deleteToken();
     _user = null;
     _errorMessage = null;
-
+    _isLoading = false;
     notifyListeners();
   }
 }
