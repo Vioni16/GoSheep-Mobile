@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gosheep_mobile/core/theme/theme.dart';
 
 enum MatingResult {
   unknown,

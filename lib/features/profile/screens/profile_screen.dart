@@ -20,6 +20,7 @@ class ProfileScreen extends StatelessWidget {
         subtitle: 'Kamu perlu login kembali untuk mengakses aplikasi.',
         icon: Icons.logout_rounded,
         onTap: () {
+          userProvider.logout();
           Navigator.pop(context);
           Navigator.pushNamedAndRemoveUntil(
             context,

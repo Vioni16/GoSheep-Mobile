@@ -11,8 +11,6 @@ class WeightCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isFemale = item["gender"] == "Betina";
-
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),

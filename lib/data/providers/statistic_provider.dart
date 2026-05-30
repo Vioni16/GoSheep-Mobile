@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/data/models/statistics/mating_record_stats.dart';
 import 'package:gosheep_mobile/data/models/statistics/overview_stats.dart';
 import 'package:gosheep_mobile/data/models/statistics/sheep_health_stats.dart';
-import 'package:gosheep_mobile/data/models/statistics/overview_stats.dart';
 import 'package:gosheep_mobile/data/services/statistic_service.dart';
 
 class StatisticProvider with ChangeNotifier {
