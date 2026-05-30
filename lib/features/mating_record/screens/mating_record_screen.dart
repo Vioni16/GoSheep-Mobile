@@ -12,7 +12,7 @@ import 'package:gosheep_mobile/core/widgets/no_connection.dart';
 import 'package:gosheep_mobile/core/widgets/summary_card.dart';
 import 'package:gosheep_mobile/data/models/mating_record.dart';
 import 'package:gosheep_mobile/data/providers/mating_record_provider.dart';
-import 'package:gosheep_mobile/data/providers/sheep_stats_provider.dart';
+import 'package:gosheep_mobile/data/providers/statistic_provider.dart';
 import 'package:gosheep_mobile/features/mating_record/widgets/mating_record_card.dart';
 import 'package:gosheep_mobile/features/mating_record/widgets/mating_record_card_skeleton.dart';
 import 'package:gosheep_mobile/core/widgets/filter_pill.dart';
@@ -29,7 +29,7 @@ class MatingRecordScreen extends StatelessWidget {
           create: (_) => MatingRecordProvider()..fetchInitial(),
         ),
         ChangeNotifierProvider(
-          create: (_) => SheepStatsProvider()..fetchMatingRecStats(),
+          create: (_) => StatisticProvider()..fetchMatingRecStats(),
         ),
       ],
       child: const _MatingRecordView(),
@@ -151,7 +151,7 @@ class _MatingRecordViewState extends State<_MatingRecordView> {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
-                  child: Consumer<SheepStatsProvider>(
+                  child: Consumer<StatisticProvider>(
                     builder: (context, statsProvider, _) {
                       final stats = statsProvider.matingRecordStats;
                       final isLoading = statsProvider.isLoading;

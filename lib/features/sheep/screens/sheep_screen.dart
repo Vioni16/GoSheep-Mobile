@@ -10,7 +10,7 @@ import 'package:gosheep_mobile/core/widgets/empty_data.dart';
 import 'package:gosheep_mobile/core/widgets/no_connection.dart';
 import 'package:gosheep_mobile/core/widgets/toast_widget.dart';
 import 'package:gosheep_mobile/data/providers/sheep_form_option_provider.dart';
-import 'package:gosheep_mobile/data/providers/sheep_stats_provider.dart';
+import 'package:gosheep_mobile/data/providers/statistic_provider.dart';
 import 'package:gosheep_mobile/features/healt_history/screens/healt_history_screen.dart';
 import 'package:gosheep_mobile/features/sheep/screens/sheep_detail_screen.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +32,7 @@ class SheepScreen extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => SheepProvider()..fetchInitial()),
         ChangeNotifierProvider(
-          create: (_) => SheepStatsProvider()..fetchHealthStats(),
+          create: (_) => StatisticProvider()..fetchHealthStats(),
         ),
       ],
       child: const _SheepScreenView(),
@@ -137,7 +137,7 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
     if (!context.mounted) return;
 
     if (success) {
-      await context.read<SheepStatsProvider>().fetchHealthStats();
+      await context.read<StatisticProvider>().fetchHealthStats();
 
       ToastService.show(
         context,
@@ -231,7 +231,7 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
-                child: Consumer<SheepStatsProvider>(
+                child: Consumer<StatisticProvider>(
                   builder: (context, statsProvider, _) {
                     final stats = statsProvider.healthStats;
                     final isLoading = statsProvider.isLoading;

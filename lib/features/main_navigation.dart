@@ -18,7 +18,7 @@ class _MainNavigationState extends State<MainNavigation> {
   int _navIndex = 0;
 
   static const List<Widget> _pages = [
-    DashboardPage(),
+    DashboardScreen(),
     SheepScreen(),
     BreedingScreen(),
     ProfileScreen(),

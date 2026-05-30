@@ -1,17 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/data/models/statistics/overview_stats.dart';
 
 class StatsSection extends StatelessWidget {
-  const StatsSection({super.key});
+  final OverviewStats? statistics;
+
+  const StatsSection({super.key, required this.statistics});
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
-    const stats = [
-      _StatItem(title: 'Total Domba', value: '120', icon: Icons.pets_rounded),
-      _StatItem(title: 'Siap Breeding', value: '98', icon: Icons.favorite_rounded),
-      _StatItem(title: 'Sedang Bunting', value: '15', icon: Icons.access_time_rounded),
-      _StatItem(title: 'Perlu Diperhatikan', value: '7', icon: Icons.warning_amber_rounded),
+    final stats = [
+      _StatItem(
+        title: 'Total Domba',
+        value: '${statistics?.totalSheep ?? '-'}',
+        icon: Icons.pets_rounded,
+      ),
+      _StatItem(
+        title: 'Akan Melahirkan',
+        value: '${statistics?.upcomingBirths ?? '-'}',
+        icon: Icons.favorite_rounded,
+      ),
+      _StatItem(
+        title: 'Sedang Bunting',
+        value: '${statistics?.pregnantSheep ?? '-'}',
+        icon: Icons.access_time_rounded,
+      ),
+      _StatItem(
+        title: 'Tingkat Kehamilan',
+        value: statistics != null ? '${statistics!.pregnancyRate}%' : '-',
+        icon: Icons.warning_amber_rounded,
+      ),
     ];
 
     return Column(
@@ -30,10 +49,7 @@ class StatsSection extends StatelessWidget {
             ),
             Text(
               'Hari ini',
-              style: TextStyle(
-                fontSize: 12,
-                color: scheme.onSurfaceVariant,
-              ),
+              style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant),
             ),
           ],
         ),
@@ -50,9 +66,7 @@ class StatsSection extends StatelessWidget {
             mainAxisSpacing: 10,
             childAspectRatio: 2.2,
           ),
-          itemBuilder: (context, index) => _StatCard(
-            item: stats[index],
-          ),
+          itemBuilder: (context, index) => _StatCard(item: stats[index]),
         ),
       ],
     );
@@ -84,11 +98,7 @@ class _StatCard extends StatelessWidget {
               color: scheme.primaryContainer,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(
-              item.icon,
-              color: scheme.onPrimaryContainer,
-              size: 20,
-            ),
+            child: Icon(item.icon, color: scheme.onPrimaryContainer, size: 20),
           ),
 
           const SizedBox(width: 12),
