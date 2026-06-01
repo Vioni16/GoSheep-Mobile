@@ -38,6 +38,40 @@ class SheepStatusUtil {
     }
   }
 
+  static Color severityColor(String severity) {
+    switch (severity) {
+      case 'normal':
+        return const Color(0xFF1B5E20);
+
+      case 'ringan':
+        return Color.fromARGB(255, 31, 50, 175);
+
+      case 'sedang':
+        return const Color(0xFFB8860B);
+
+      case 'berat':
+        return Colors.red.shade700;
+
+      default:
+        return Colors.grey;
+    }
+  }
+
+  static String healthCategoryLabel(String category) {
+    switch (category) {
+      case 'health':
+        return 'Kesehatan';
+      case 'environment':
+        return 'Lingkungan';
+      case 'nutrition':
+        return 'Nutrisi';
+      case 'maintenance':
+        return 'Perawatan';
+      default:
+        return 'Tidak Diketahui';
+    }
+  }
+
   static String getGenderLabel(String gender) {
     switch (gender) {
       case 'male':

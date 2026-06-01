@@ -63,7 +63,7 @@ enum MatingResult {
         return Color(0xFF546E7A);
 
       case MatingResult.pregnant:
-        return Color(0xFF2E7D52);
+        return const Color(0xFF1B5E20);
 
       case MatingResult.notPregnant:
         return const Color(0xFFB8860B);

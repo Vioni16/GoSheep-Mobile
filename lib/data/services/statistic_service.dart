@@ -3,6 +3,7 @@ import 'package:gosheep_mobile/data/api_client.dart';
 import 'package:gosheep_mobile/data/exceptions/api_exception.dart';
 import 'package:gosheep_mobile/data/exceptions/error_handler.dart';
 import 'package:gosheep_mobile/data/models/api_response.dart';
+import 'package:gosheep_mobile/data/models/health_record_statistic.dart';
 import 'package:gosheep_mobile/data/models/statistics/mating_record_stats.dart';
 import 'package:gosheep_mobile/data/models/statistics/overview_stats.dart';
 import 'package:gosheep_mobile/data/models/statistics/sheep_health_stats.dart';
@@ -55,6 +56,25 @@ class StatisticService {
       final apiResponse = ApiResponse<OverviewStats>.fromJson(
         response.data,
         (data) => OverviewStats.fromJson(data),
+      );
+
+      if (!apiResponse.success) {
+        throw ApiException(apiResponse.message);
+      }
+
+      return apiResponse.data!;
+    } on DioException catch (e) {
+      throw ErrorHandler.handle(e);
+    }
+  }
+
+  Future<HealthRecordStatistic> getHealthRecordStatistics() async {
+    try {
+      final response = await _dio.get('/health-records/statistics');
+
+      final apiResponse = ApiResponse.fromJson(
+        response.data,
+        (data) => HealthRecordStatistic.fromJson(data),
       );
 
       if (!apiResponse.success) {

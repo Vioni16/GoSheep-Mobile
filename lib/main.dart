@@ -12,6 +12,10 @@ void main() async {
 
   await initializeDateFormatting('id_ID', null);
 
+  FlutterError.onError = (details) {
+    FlutterError.dumpErrorToConsole(details);
+  };
+
   runApp(const GoSheepApp());
 }
 

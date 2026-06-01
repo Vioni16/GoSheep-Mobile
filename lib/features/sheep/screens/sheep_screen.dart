@@ -11,7 +11,7 @@ import 'package:gosheep_mobile/core/widgets/no_connection.dart';
 import 'package:gosheep_mobile/core/widgets/toast_widget.dart';
 import 'package:gosheep_mobile/data/providers/sheep_form_option_provider.dart';
 import 'package:gosheep_mobile/data/providers/statistic_provider.dart';
-import 'package:gosheep_mobile/features/healt_history/screens/healt_history_screen.dart';
+import 'package:gosheep_mobile/features/health_record/screens/health_record_screen.dart';
 import 'package:gosheep_mobile/features/sheep/screens/sheep_detail_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:gosheep_mobile/features/sheep/widgets/add_sheep_sheet.dart';
@@ -248,7 +248,6 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
                           ),
                         ),
                         const SizedBox(width: 10),
-                        const SizedBox(width: 10),
                         Expanded(
                           child: SummaryCard(
                             label: 'Sakit',
@@ -358,7 +357,7 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const HealthHistoryScreen(),
+                        builder: (_) => const HealthRecordScreen(),
                       ),
                     ),
                   ),

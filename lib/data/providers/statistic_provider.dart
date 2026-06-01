@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/data/models/health_record_statistic.dart';
 import 'package:gosheep_mobile/data/models/statistics/mating_record_stats.dart';
 import 'package:gosheep_mobile/data/models/statistics/overview_stats.dart';
 import 'package:gosheep_mobile/data/models/statistics/sheep_health_stats.dart';
@@ -15,6 +16,9 @@ class StatisticProvider with ChangeNotifier {
 
   OverviewStats? _overviewStats;
   OverviewStats? get overviewStats => _overviewStats;
+
+  HealthRecordStatistic? _healthRecordStatistic;
+  HealthRecordStatistic? get healthRecordStatistic => _healthRecordStatistic;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -67,6 +71,24 @@ class StatisticProvider with ChangeNotifier {
     try {
       final stats = await _service.getOverviewStats();
       _overviewStats = stats;
+      _error = null;
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchHealthRecordStatistics() async {
+    if (_isLoading) return;
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final stats = await _service.getHealthRecordStatistics();
+      _healthRecordStatistic = stats;
       _error = null;
     } catch (e) {
       _error = e.toString();

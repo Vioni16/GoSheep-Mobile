@@ -3,13 +3,17 @@ import 'package:gosheep_mobile/core/widgets/summary_card_skeleton.dart';
 
 class SummaryCard extends StatelessWidget {
   final String label, value;
+  final String? description;
   final Color? valueColor;
+  final double? fontSize;
   final bool isLoading;
   const SummaryCard({
     super.key,
     required this.label,
     required this.value,
+    this.description,
     this.valueColor,
+    this.fontSize,
     this.isLoading = false,
   });
 
@@ -29,12 +33,23 @@ class SummaryCard extends StatelessWidget {
           Text(
             value,
             style: TextStyle(
-              fontSize: 24,
+              fontSize: fontSize ?? 24,
               fontWeight: FontWeight.w700,
               color: valueColor ?? Colors.black87,
             ),
           ),
           const SizedBox(height: 4),
+          if (description?.isNotEmpty ?? false) ...[
+            Text(
+              description!,
+              style: const TextStyle(
+                fontSize: 8,
+                color: Colors.black54,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 4),
+          ],
           Text(
             label,
             style: const TextStyle(

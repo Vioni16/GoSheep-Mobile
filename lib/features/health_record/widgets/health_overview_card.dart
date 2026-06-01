@@ -1,30 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/core/extensions/string_extension.dart';
 import 'package:gosheep_mobile/core/theme/theme.dart';
+import 'package:gosheep_mobile/core/utils/format_helper.dart';
+import 'package:gosheep_mobile/core/utils/sheep_status_util.dart';
 import 'package:gosheep_mobile/core/widgets/gender_badge.dart';
 import 'package:gosheep_mobile/core/widgets/sheep_chip.dart';
+import 'package:gosheep_mobile/data/models/sheep_health_overview.dart';
 import 'package:gosheep_mobile/features/sheep/screens/sheep_detail_screen.dart';
 
-class HealthCard extends StatelessWidget {
-  final Map<String, dynamic> item;
+class HealthOverviewCard extends StatelessWidget {
+  final SheepHealthOverview healthOverview;
 
-  const HealthCard({super.key, required this.item});
-
-  Color getSeverityColor(String severity) {
-    switch (severity) {
-      case "Ringan":
-        return AppTheme.primaryGreen; 
-      case "Sedang":
-        return Colors.orange;
-      case "Berat":
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
-  }
+  const HealthOverviewCard({super.key, required this.healthOverview});
 
   @override
   Widget build(BuildContext context) {
-    final severityColor = getSeverityColor(item["severity"]);
+    final health = healthOverview.latestHealth;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -50,18 +41,19 @@ class HealthCard extends StatelessWidget {
                 child: Row(
                   children: [
                     SheepChip(
-                      label: item["earTag"],
+                      label: healthOverview.earTag,
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => SheepDetailScreen(id: item["id"]),
+                            builder: (_) =>
+                                SheepDetailScreen(id: healthOverview.id),
                           ),
                         );
                       },
                     ),
                     const SizedBox(width: 8),
-                    GenderBadge(gender: item["gender"]),
+                    GenderBadge(gender: healthOverview.gender),
                   ],
                 ),
               ),
@@ -71,13 +63,13 @@ class HealthCard extends StatelessWidget {
                   vertical: 7,
                 ),
                 decoration: BoxDecoration(
-                  color: severityColor.withValues(alpha: 0.1),
+                  color: AppTheme.cream,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  item["severity"],
+                  health.severity.capitalizeFirst,
                   style: TextStyle(
-                    color: severityColor,
+                    color: SheepStatusUtil.severityColor(health.severity),
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                   ),
@@ -85,7 +77,7 @@ class HealthCard extends StatelessWidget {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 12),
           Divider(color: Colors.grey.shade100, height: 1),
           const SizedBox(height: 12),
@@ -100,7 +92,7 @@ class HealthCard extends StatelessWidget {
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  item["condition"],
+                  health.condition,
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -110,7 +102,7 @@ class HealthCard extends StatelessWidget {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 8),
 
           Row(
@@ -122,7 +114,9 @@ class HealthCard extends StatelessWidget {
               ),
               const SizedBox(width: 6),
               Text(
-                item["category"],
+                SheepStatusUtil.healthCategoryLabel(
+                  health.category,
+                ).capitalizeFirst,
                 style: const TextStyle(fontSize: 12, color: Colors.black54),
               ),
               const Spacer(),
@@ -133,7 +127,7 @@ class HealthCard extends StatelessWidget {
               ),
               const SizedBox(width: 4),
               Text(
-                item["date"],
+                FormatHelper.formatDateTime(health.recordedAt),
                 style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
@@ -147,25 +141,21 @@ class HealthCard extends StatelessWidget {
 
           Row(
             children: [
-              Icon(
-                Icons.person_outline,
-                size: 16,
-                color: Colors.grey.shade400,
-              ),
+              Icon(Icons.person_outline, size: 16, color: Colors.grey.shade400),
               const SizedBox(width: 6),
               Text(
-                item["recordedBy"] ?? "-",
+                health.recordedBy?.name ?? ('User Tidak diketahui/Dihapus'),
                 style: const TextStyle(fontSize: 11, color: Colors.black45),
               ),
               const Spacer(),
               Icon(
-                item["source"] == "Sensor IoT" ? Icons.sensors : Icons.fact_check_outlined,
+                Icons.fact_check_outlined,
                 size: 14,
                 color: Colors.grey.shade400,
               ),
               const SizedBox(width: 4),
               Text(
-                item["source"] ?? "-",
+                'Pencatatan Manual',
                 style: const TextStyle(fontSize: 11, color: Colors.black45),
               ),
             ],

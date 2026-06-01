@@ -1,8 +1,5 @@
 class FormOptions {
-  static const genders = {
-    'Jantan': 'male',
-    'Betina': 'female',
-  };
+  static const genders = {'Jantan': 'male', 'Betina': 'female'};
 
   static const severities = {
     'Normal': 'normal',
