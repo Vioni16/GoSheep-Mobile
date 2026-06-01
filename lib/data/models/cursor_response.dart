@@ -17,10 +17,14 @@ class CursorResponse<T> {
     Map<String, dynamic> json,
     T Function(dynamic json) fromJsonT,
   ) {
+    final rawData = json['data'];
+
     return CursorResponse<T>(
       success: json['success'] ?? false,
       message: json['message'] ?? '',
-      data: (json['data'] as List).map((e) => fromJsonT(e)).toList(),
+      data: rawData is List
+          ? rawData.map((e) => fromJsonT(e)).toList()
+          : [fromJsonT(rawData)],
       hasMore: json['has_more'] ?? false,
       nextCursor: json['next_cursor'],
     );

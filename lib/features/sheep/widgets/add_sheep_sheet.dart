@@ -3,6 +3,7 @@ import 'package:gosheep_mobile/core/constants/form_options.dart';
 import 'package:gosheep_mobile/core/utils/validators.dart';
 import 'package:gosheep_mobile/core/widgets/custom_dropdown_search.dart';
 import 'package:gosheep_mobile/core/widgets/custom_textfield.dart';
+import 'package:gosheep_mobile/core/widgets/gender_badge.dart';
 import 'package:gosheep_mobile/core/widgets/sheep_picker_field.dart';
 import 'package:gosheep_mobile/core/widgets/toast_widget.dart';
 import 'package:gosheep_mobile/data/models/cage_option.dart';
@@ -126,6 +127,87 @@ class _AddSheepSheetState extends State<AddSheepSheet> {
     FocusManager.instance.primaryFocus?.unfocus();
 
     FocusScope.of(context).requestFocus(FocusNode());
+  }
+
+  Widget _genderField(String? serverError) {
+    final genderOptions = FormOptions.genders.keys.toList();
+    final genderValues = FormOptions.genders.values.toList();
+
+    return FormField<String>(
+      validator: (_) {
+        if (_gender == null) {
+          return 'Gender wajib dipilih';
+        }
+        return serverError;
+      },
+      builder: (field) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Gender',
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List.generate(genderOptions.length, (index) {
+                final option = genderOptions[index];
+                final value = genderValues[index];
+                final isSelected = _gender == option;
+
+                return GestureDetector(
+                  onTap: () {
+                    context.read<SheepProvider>().clearValidationError(
+                      'gender',
+                    );
+                    setState(() => _gender = option);
+                    field.didChange(option);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: isSelected ? Colors.green : Colors.grey.shade400,
+                        width: isSelected ? 2 : 1,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      color: isSelected
+                          ? Colors.green.withValues(alpha: 0.1)
+                          : Colors.transparent,
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        GenderBadge(gender: value),
+                        const SizedBox(height: 8),
+                        Text(
+                          option,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.normal,
+                            color: isSelected ? Colors.green : Colors.black87,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+            ),
+            if (field.hasError) ...[
+              const SizedBox(height: 8),
+              Text(
+                field.errorText!,
+                style: const TextStyle(color: Colors.red, fontSize: 12),
+              ),
+            ],
+          ],
+        );
+      },
+    );
   }
 
   Widget _dateField(String? serverError) {
@@ -330,35 +412,11 @@ class _AddSheepSheetState extends State<AddSheepSheet> {
 
                       const SizedBox(height: 14),
 
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CustomDropdownSearch<String>(
-                              icon: Icons.wc,
-                              label: 'Gender',
-                              hint: 'Pilih gender',
-                              items: (_) => FormOptions.genders.keys.toList(),
-                              selectedItem: _gender,
-                              serverError: sheepProvider.fieldError('gender'),
-                              validator: (v) =>
-                                  Validators.requiredDropdown(v, 'Gender'),
-                              onSelected: (v) {
-                                sheepProvider.clearValidationError('gender');
-                                _dismissKeyboard();
-                                setState(() => _gender = v);
-                              },
-                            ),
-                          ),
+                      _genderField(sheepProvider.fieldError('gender')),
 
-                          const SizedBox(width: 12),
+                      const SizedBox(height: 14),
 
-                          Expanded(
-                            child: _dateField(
-                              sheepProvider.fieldError('birth_date'),
-                            ),
-                          ),
-                        ],
-                      ),
+                      _dateField(sheepProvider.fieldError('birth_date')),
 
                       const SizedBox(height: 14),
 

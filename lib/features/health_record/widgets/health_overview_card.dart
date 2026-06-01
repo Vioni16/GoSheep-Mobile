@@ -6,6 +6,7 @@ import 'package:gosheep_mobile/core/utils/sheep_status_util.dart';
 import 'package:gosheep_mobile/core/widgets/gender_badge.dart';
 import 'package:gosheep_mobile/core/widgets/sheep_chip.dart';
 import 'package:gosheep_mobile/data/models/sheep_health_overview.dart';
+import 'package:gosheep_mobile/features/health_record/screens/health_record_screen.dart';
 import 'package:gosheep_mobile/features/sheep/screens/sheep_detail_screen.dart';
 
 class HealthOverviewCard extends StatelessWidget {
@@ -17,150 +18,168 @@ class HealthOverviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final health = healthOverview.latestHealth;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => HealthRecordScreen(
+              id: healthOverview.id,
+              earTag: healthOverview.earTag,
+              gender: healthOverview.gender,
+            ),
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    SheepChip(
-                      label: healthOverview.earTag,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                SheepDetailScreen(id: healthOverview.id),
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(width: 8),
-                    GenderBadge(gender: healthOverview.gender),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 7,
-                ),
-                decoration: BoxDecoration(
-                  color: AppTheme.cream,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  health.severity.capitalizeFirst,
-                  style: TextStyle(
-                    color: SheepStatusUtil.severityColor(health.severity),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      SheepChip(
+                        label: healthOverview.earTag,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  SheepDetailScreen(id: healthOverview.id),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(width: 8),
+                      GenderBadge(gender: healthOverview.gender),
+                    ],
                   ),
                 ),
-              ),
-            ],
-          ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 7,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppTheme.cream,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    health.severity.capitalizeFirst,
+                    style: TextStyle(
+                      color: SheepStatusUtil.severityColor(health.severity),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
 
-          const SizedBox(height: 12),
-          Divider(color: Colors.grey.shade100, height: 1),
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
+            Divider(color: Colors.grey.shade100, height: 1),
+            const SizedBox(height: 12),
 
-          Row(
-            children: [
-              Icon(
-                Icons.medical_services_outlined,
-                size: 16,
-                color: Colors.grey.shade500,
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  health.condition,
+            Row(
+              children: [
+                Icon(
+                  Icons.medical_services_outlined,
+                  size: 16,
+                  color: Colors.grey.shade500,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    health.condition,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF2D3132),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 8),
+
+            Row(
+              children: [
+                Icon(
+                  Icons.category_outlined,
+                  size: 16,
+                  color: Colors.grey.shade500,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  SheepStatusUtil.healthCategoryLabel(
+                    health.category,
+                  ).capitalizeFirst,
+                  style: const TextStyle(fontSize: 12, color: Colors.black54),
+                ),
+                const Spacer(),
+                Icon(
+                  Icons.calendar_today_outlined,
+                  size: 14,
+                  color: Colors.grey.shade500,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  FormatHelper.formatDateTime(health.recordedAt),
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF2D3132),
                   ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
 
-          const SizedBox(height: 8),
+            const SizedBox(height: 8),
 
-          Row(
-            children: [
-              Icon(
-                Icons.category_outlined,
-                size: 16,
-                color: Colors.grey.shade500,
-              ),
-              const SizedBox(width: 6),
-              Text(
-                SheepStatusUtil.healthCategoryLabel(
-                  health.category,
-                ).capitalizeFirst,
-                style: const TextStyle(fontSize: 12, color: Colors.black54),
-              ),
-              const Spacer(),
-              Icon(
-                Icons.calendar_today_outlined,
-                size: 14,
-                color: Colors.grey.shade500,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                FormatHelper.formatDateTime(health.recordedAt),
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF2D3132),
+            Row(
+              children: [
+                Icon(
+                  Icons.person_outline,
+                  size: 16,
+                  color: Colors.grey.shade400,
                 ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 8),
-
-          Row(
-            children: [
-              Icon(Icons.person_outline, size: 16, color: Colors.grey.shade400),
-              const SizedBox(width: 6),
-              Text(
-                health.recordedBy?.name ?? ('User Tidak diketahui/Dihapus'),
-                style: const TextStyle(fontSize: 11, color: Colors.black45),
-              ),
-              const Spacer(),
-              Icon(
-                Icons.fact_check_outlined,
-                size: 14,
-                color: Colors.grey.shade400,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                'Pencatatan Manual',
-                style: const TextStyle(fontSize: 11, color: Colors.black45),
-              ),
-            ],
-          ),
-        ],
+                const SizedBox(width: 6),
+                Text(
+                  health.recordedBy?.name ?? ('User Tidak diketahui/Dihapus'),
+                  style: const TextStyle(fontSize: 11, color: Colors.black45),
+                ),
+                const Spacer(),
+                Icon(
+                  Icons.fact_check_outlined,
+                  size: 14,
+                  color: Colors.grey.shade400,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  'Pencatatan Manual',
+                  style: const TextStyle(fontSize: 11, color: Colors.black45),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

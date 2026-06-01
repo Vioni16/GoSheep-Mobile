@@ -1,42 +1,45 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/core/utils/format_helper.dart';
 import 'package:gosheep_mobile/core/widgets/app_banner.dart';
 import 'package:gosheep_mobile/core/widgets/app_refresh_indicator.dart';
 import 'package:gosheep_mobile/core/widgets/async_state_sliver.dart';
 import 'package:gosheep_mobile/core/widgets/empty_data.dart';
 import 'package:gosheep_mobile/core/widgets/filter_pill.dart';
+import 'package:gosheep_mobile/core/widgets/gender_badge.dart';
 import 'package:gosheep_mobile/core/widgets/no_connection.dart';
-import 'package:gosheep_mobile/core/widgets/summary_card.dart';
-import 'package:gosheep_mobile/core/utils/format_helper.dart';
+import 'package:gosheep_mobile/data/models/health.dart';
 import 'package:gosheep_mobile/data/providers/health_record_provider.dart';
-import 'package:gosheep_mobile/data/providers/statistic_provider.dart';
-import 'package:gosheep_mobile/features/health_record/widgets/health_chart_card.dart';
-import 'package:gosheep_mobile/features/health_record/widgets/health_overview_card.dart';
+import 'package:gosheep_mobile/features/health_record/widgets/add_health_sheet.dart';
+import 'package:gosheep_mobile/features/health_record/widgets/health_record_card.dart';
 import 'package:gosheep_mobile/features/health_record/widgets/health_overview_card_skeleton.dart';
 import 'package:provider/provider.dart';
 
 class HealthRecordScreen extends StatelessWidget {
-  const HealthRecordScreen({super.key});
+  final int id;
+  final String earTag;
+  final String gender;
+
+  const HealthRecordScreen({
+    super.key,
+    required this.id,
+    required this.earTag,
+    required this.gender,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (_) => StatisticProvider()..fetchHealthRecordStatistics(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => HealthRecordProvider()..fetchInitial(),
-        ),
-      ],
-      child: const _HealthRecordScreenView(),
+    return ChangeNotifierProvider(
+      create: (_) => HealthRecordProvider(id)..fetchInitial(),
+      child: _HealthRecordScreenView(earTag: earTag, gender: gender),
     );
   }
 }
 
 class _HealthRecordScreenView extends StatefulWidget {
-  const _HealthRecordScreenView();
+  final String earTag;
+  final String gender;
+
+  const _HealthRecordScreenView({required this.earTag, required this.gender});
 
   @override
   State<_HealthRecordScreenView> createState() =>
@@ -45,9 +48,6 @@ class _HealthRecordScreenView extends StatefulWidget {
 
 class _HealthRecordScreenViewState extends State<_HealthRecordScreenView> {
   final _scrollController = ScrollController();
-  final _search = TextEditingController();
-
-  Timer? _debounce;
 
   String _filter = 'all';
 
@@ -57,19 +57,16 @@ class _HealthRecordScreenViewState extends State<_HealthRecordScreenView> {
     'critical': ['berat'],
   };
 
+  List<Health> _filtered(List<Health> list) {
+    if (_filter == 'all') return list;
+    final allowed = severityGroup[_filter] ?? [];
+    return list.where((e) => allowed.contains(e.severity)).toList();
+  }
+
   @override
   void initState() {
     super.initState();
-
     _scrollController.addListener(_onScroll);
-
-    _search.addListener(() {
-      if (_debounce?.isActive ?? false) _debounce!.cancel();
-
-      _debounce = Timer(const Duration(milliseconds: 300), () {
-        context.read<HealthRecordProvider>().search(_search.text);
-      });
-    });
   }
 
   void _onScroll() {
@@ -83,31 +80,32 @@ class _HealthRecordScreenViewState extends State<_HealthRecordScreenView> {
     }
   }
 
+  void _openAdd() => showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (_) {
+      return MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(
+            value: context.read<HealthRecordProvider>(),
+          ),
+        ],
+        child: const AddHealthSheet(),
+      );
+    },
+  );
+
   @override
   void dispose() {
-    _debounce?.cancel();
-    _search.dispose();
     _scrollController.dispose();
     super.dispose();
-  }
-
-  List filtered(List list) {
-    if (_filter == 'all') return list;
-
-    final allowed = severityGroup[_filter] ?? [];
-
-    return list
-        .where((e) => allowed.contains(e.latestHealth.severity))
-        .toList();
   }
 
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<HealthRecordProvider>();
-    final statsProvider = context.watch<StatisticProvider>();
-    final isSearching = provider.isSearching;
-
-    final data = filtered(provider.healthRecords);
+    final data = _filtered(provider.healthRecords);
 
     return Scaffold(
       body: AppRefreshIndicator(
@@ -123,94 +121,71 @@ class _HealthRecordScreenViewState extends State<_HealthRecordScreenView> {
               backgroundColor: Theme.of(context).colorScheme.primary,
               foregroundColor: Colors.white,
               title: const Text(
-                "Riwayat Kesehatan",
+                'Riwayat Kesehatan',
                 style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
               ),
             ),
 
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                child: Row(
                   children: [
-                    const Text(
-                      'Pantau Kesehatan',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                widget.earTag,
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              GenderBadge(gender: widget.gender),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Seluruh riwayat kondisi kesehatan',
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'Kelola kondisi kesehatan domba',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    Consumer<StatisticProvider>(
-                      builder: (context, provider, child) {
-                        final bool isLoading = provider.isLoading;
-                        return Column(
+                    GestureDetector(
+                      onTap: _openAdd,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: SizedBox(
-                                    height: 100,
-                                    child: SummaryCard(
-                                      label: 'Total Catatan',
-                                      value:
-                                          '${provider.healthRecordStatistic?.totalRecords ?? 0}',
-                                      description: 'Seluruh Riwayat',
-                                      fontSize: 18,
-                                      isLoading: isLoading,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: SizedBox(
-                                    height: 100,
-                                    child: SummaryCard(
-                                      label: 'Kategori Terbanyak',
-                                      value:
-                                          provider
-                                              .healthRecordStatistic
-                                              ?.topCategoryName ??
-                                          '-',
-                                      description:
-                                          '${provider.healthRecordStatistic?.topCategoryTotal ?? 0} Catatan (30 Hari)',
-                                      fontSize: 18,
-                                      isLoading: isLoading,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: SizedBox(
-                                    height: 100,
-                                    child: SummaryCard(
-                                      label: 'Catatan Baru',
-                                      value:
-                                          '${provider.healthRecordStatistic?.recordsThisWeek ?? 0}',
-                                      description: 'Minggu ini',
-                                      fontSize: 18,
-                                      isLoading: isLoading,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                            HealthChartCard(
-                              statistic: provider.healthRecordStatistic,
-                              isLoading: isLoading,
+                            Icon(Icons.add, color: Colors.white, size: 16),
+                            SizedBox(width: 6),
+                            Text(
+                              'Rekam Medis',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ],
-                        );
-                      },
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -221,7 +196,7 @@ class _HealthRecordScreenViewState extends State<_HealthRecordScreenView> {
               child: Padding(
                 padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
                 child: Text(
-                  'KESEHATAN TERNAK',
+                  'RIWAYAT KESEHATAN',
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
@@ -295,33 +270,6 @@ class _HealthRecordScreenViewState extends State<_HealthRecordScreenView> {
               ),
             ),
 
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                child: SearchBar(
-                  controller: _search,
-                  hintText: 'Cari Eartag domba...',
-                  leading: const Icon(Icons.search_rounded),
-                  elevation: WidgetStateProperty.all(0),
-                  backgroundColor: WidgetStateProperty.all(Colors.white),
-                  shape: WidgetStateProperty.all(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  trailing: [
-                    if (_search.text.isNotEmpty)
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          _search.clear();
-                        },
-                      ),
-                  ],
-                ),
-              ),
-            ),
-
             AsyncStateSliver(
               isLoading: provider.isLoading,
               error: provider.error,
@@ -344,20 +292,19 @@ class _HealthRecordScreenViewState extends State<_HealthRecordScreenView> {
               ),
               onEmpty: () => SliverToBoxAdapter(
                 child: EmptyData(
-                  title: isSearching
-                      ? 'Domba Tidak Ditemukan'
-                      : 'Belum Ada Data',
-                  description: isSearching
-                      ? 'Tidak ada domba dengan Eartag tersebut'
-                      : 'Belum ada domba yang terdaftar',
+                  title: _filter == 'all'
+                      ? 'Belum Ada Riwayat'
+                      : 'Tidak Ada Data',
+                  description: _filter == 'all'
+                      ? 'Belum ada catatan kesehatan untuk domba ini'
+                      : 'Tidak ada catatan dengan kondisi ini',
                 ),
               ),
               onSuccess: (data) => SliverPadding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                 sliver: SliverList.builder(
                   itemCount: data.length,
-                  itemBuilder: (_, i) =>
-                      HealthOverviewCard(healthOverview: data[i]),
+                  itemBuilder: (_, i) => HealthRecordCard(health: data[i]),
                 ),
               ),
             ),

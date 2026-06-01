@@ -1,17 +1,22 @@
 import 'package:flutter/foundation.dart';
-import 'package:gosheep_mobile/data/models/sheep_health_overview.dart';
+import 'package:gosheep_mobile/data/exceptions/api_exception.dart';
+import 'package:gosheep_mobile/data/models/health.dart';
 import 'package:gosheep_mobile/data/services/health_record_service.dart';
 
 class HealthRecordProvider with ChangeNotifier {
   final HealthRecordService _service = HealthRecordService();
+  final int _sheepId;
 
-  List<SheepHealthOverview> _healthRecords = [];
-  List<SheepHealthOverview> get healthRecords => _healthRecords;
+  HealthRecordProvider(this._sheepId);
+
+  List<Health> _healthRecords = [];
+  List<Health> get healthRecords => _healthRecords;
 
   String _message = '';
   String get message => _message;
 
-  bool _isInitialized = false;
+  bool _isCreating = false;
+  bool get isCreating => _isCreating;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -22,17 +27,10 @@ class HealthRecordProvider with ChangeNotifier {
   int? _lastId;
   final int _limit = 10;
 
-  String _search = '';
-  bool get isSearching => _search.isNotEmpty;
-
   String? _error;
   String? get error => _error;
 
-  Future<void> fetchInitial({bool forceRefresh = false}) async {
-    if (_isInitialized && !forceRefresh) return;
-
-    _isInitialized = true;
-
+  Future<void> fetchInitial() async {
     _healthRecords = [];
     _lastId = null;
     _hasMore = true;
@@ -49,13 +47,13 @@ class HealthRecordProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await _service.getHealthRecords(
+      final response = await _service.getHealthRecord(
+        sheepId: _sheepId,
         lastId: _lastId,
         limit: _limit,
-        search: _search,
       );
 
-      _healthRecords.addAll(response.data);
+      _healthRecords.addAll(response.data.first.healthRecords);
       _lastId = response.nextCursor;
       _hasMore = response.hasMore;
 
@@ -68,21 +66,46 @@ class HealthRecordProvider with ChangeNotifier {
     }
   }
 
-  Future<void> search(String value) async {
-    _search = value;
+  Future<bool> createHealthRecord({
+    required String condition,
+    required String category,
+    required String severity,
+    String? notes,
+  }) async {
+    if (_isCreating) return false;
 
-    _healthRecords = [];
-    _lastId = null;
-    _hasMore = true;
+    _isCreating = true;
 
     _error = null;
 
     notifyListeners();
 
-    await fetchMore();
+    try {
+      final response = await _service.createHealthRecord(
+        sheepId: _sheepId,
+        condition: condition,
+        category: category,
+        severity: severity,
+        notes: notes,
+      );
+
+      _healthRecords.insert(0, response.data!);
+      _message = response.message;
+
+      return true;
+    } on ApiException catch (e) {
+      _error = e.message;
+      return false;
+    } catch (e) {
+      _error = e.toString();
+      return false;
+    } finally {
+      _isCreating = false;
+      notifyListeners();
+    }
   }
 
   Future<void> refresh() async {
-    await fetchInitial(forceRefresh: true);
+    await fetchInitial();
   }
 }

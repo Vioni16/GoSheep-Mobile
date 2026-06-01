@@ -2,7 +2,6 @@ import 'package:gosheep_mobile/data/models/recorded_by.dart';
 
 class Health {
   final int id;
-  final int sheepId;
   final RecordedBy? recordedBy;
   final DateTime recordedAt;
   final String category;
@@ -13,7 +12,6 @@ class Health {
 
   Health({
     required this.id,
-    required this.sheepId,
     required this.recordedBy,
     required this.recordedAt,
     required this.category,
@@ -26,8 +24,9 @@ class Health {
   factory Health.fromJson(Map<String, dynamic> json) {
     return Health(
       id: json['id'],
-      sheepId: json['sheep_id'],
-      recordedBy: RecordedBy.fromJson(json['recorded_by']),
+      recordedBy: json['recorded_by'] != null
+          ? RecordedBy.fromJson(json['recorded_by'])
+          : null,
       recordedAt: DateTime.parse(json['recorded_at']),
       category: json['category'],
       condition: json['condition'],

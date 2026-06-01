@@ -11,7 +11,7 @@ import 'package:gosheep_mobile/core/widgets/no_connection.dart';
 import 'package:gosheep_mobile/core/widgets/toast_widget.dart';
 import 'package:gosheep_mobile/data/providers/sheep_form_option_provider.dart';
 import 'package:gosheep_mobile/data/providers/statistic_provider.dart';
-import 'package:gosheep_mobile/features/health_record/screens/health_record_screen.dart';
+import 'package:gosheep_mobile/features/health_record/screens/health_screen.dart';
 import 'package:gosheep_mobile/features/sheep/screens/sheep_detail_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:gosheep_mobile/features/sheep/widgets/add_sheep_sheet.dart';
@@ -356,9 +356,7 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
                     buttonLabel: 'Lihat Detail',
                     onTap: () => Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => const HealthRecordScreen(),
-                      ),
+                      MaterialPageRoute(builder: (_) => const HealthScreen()),
                     ),
                   ),
                   'stress_monitor' => const AppBanner(
