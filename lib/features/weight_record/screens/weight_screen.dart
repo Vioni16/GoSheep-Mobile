@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/core/widgets/app_banner.dart';
+import 'package:gosheep_mobile/core/widgets/app_refresh_indicator.dart';
 import 'package:gosheep_mobile/core/widgets/async_state_sliver.dart';
 import 'package:gosheep_mobile/core/widgets/empty_data.dart';
 import 'package:gosheep_mobile/core/widgets/no_connection.dart';
@@ -96,114 +97,151 @@ class _WeightScreenViewState extends State<_WeightScreenView> {
           style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
         ),
       ),
-      body: CustomScrollView(
-        controller: _scrollController,
-        physics: const AlwaysScrollableScrollPhysics(),
-        slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Pantau Berat Badan Dombamu',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'Catat dan pantau berat badan dombamu secara rutin untuk memastikan kesehatannya tetap optimal.',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-
-                  const SizedBox(height: 16),
-                  Consumer<StatisticProvider>(
-                    builder: (context, statProvider, _) => WeightChart(
-                      statistic: statProvider.weightStatistic,
-                      selectedYear: _selectedYear,
-                      isLoading: provider.isLoading,
-                      onYearChanged: (year) {
-                        setState(() => _selectedYear = year);
-                        context
-                            .read<StatisticProvider>()
-                            .fetchAllWeightStatistics(year: year);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
+      body: AppRefreshIndicator(
+        onRefresh: () =>
+            Future.wait([context.read<WeightProvider>().refresh()]),
+        child: CustomScrollView(
+          controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
           ),
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Pantau Berat Badan Dombamu',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Catat dan pantau berat badan dombamu secara rutin untuk memastikan kesehatannya tetap optimal.',
+                      style: TextStyle(color: Colors.grey),
+                    ),
 
-          const SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
-              child: Text(
-                'BERAT BADAN DOMBA',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black54,
-                  letterSpacing: 1.2,
+                    const SizedBox(height: 16),
+                    Consumer<StatisticProvider>(
+                      builder: (context, statProvider, _) => WeightChart(
+                        statistic: statProvider.weightStatistic,
+                        selectedYear: _selectedYear,
+                        isLoading: statProvider.isLoading,
+                        onYearChanged: (year) {
+                          setState(() => _selectedYear = year);
+                          context
+                              .read<StatisticProvider>()
+                              .fetchAllWeightStatistics(year: year);
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ),
 
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-              child: AppBanner(
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                pillLabel: 'Semua Data',
-                title: 'Semua Data Berat Badan Domba Tersedia di Sini',
-                subtitle: 'Menampilkan seluruh catatan berat badan domba',
-                decorIcon: Icons.list_alt_rounded,
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
+                child: Text(
+                  'BERAT BADAN DOMBA',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black54,
+                    letterSpacing: 1.2,
+                  ),
+                ),
               ),
             ),
-          ),
 
-          AsyncStateSliver(
-            isLoading: provider.isLoading,
-            error: provider.error,
-            data: data,
-            onError: (err) => SliverToBoxAdapter(
-              child: NoConnection(
-                description: err,
-                onRetry: [
-                  provider.refresh,
-                  () => context
-                      .read<StatisticProvider>()
-                      .refreshAllWeightStatistics(year: _selectedYear),
-                ],
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                child: AppBanner(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  pillLabel: 'Semua Data',
+                  title: 'Semua Data Berat Badan Domba Tersedia di Sini',
+                  subtitle: 'Menampilkan seluruh catatan berat badan domba',
+                  decorIcon: Icons.list_alt_rounded,
+                ),
               ),
             ),
-            onLoading: () => SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-              sliver: SliverList.builder(
-                itemBuilder: (_, __) => const HealthOverviewCardSkeleton(),
-                itemCount: 6,
+
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                child: SearchBar(
+                  controller: _search,
+                  hintText: 'Cari Eartag domba...',
+                  leading: const Icon(Icons.search_rounded),
+                  elevation: WidgetStateProperty.all(0),
+                  backgroundColor: WidgetStateProperty.all(Colors.white),
+                  shape: WidgetStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  trailing: [
+                    if (_search.text.isNotEmpty)
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () {
+                          _search.clear();
+                        },
+                      ),
+                  ],
+                ),
               ),
             ),
-            onEmpty: () => SliverToBoxAdapter(
-              child: EmptyData(
-                title: isSearching
-                    ? 'Domba Tidak Ditemukan'
-                    : 'Catatan Berat Badan Belum Tersedia',
-                description: isSearching
-                    ? 'Tidak ada domba dengan Eartag tersebut'
-                    : 'Tambahkan domba dan pantau berat badan secara rutin',
+
+            AsyncStateSliver(
+              isLoading: provider.isLoading,
+              error: provider.error,
+              data: data,
+              onError: (err) => SliverToBoxAdapter(
+                child: NoConnection(
+                  description: err,
+                  onRetry: [
+                    provider.refresh,
+                    () => context
+                        .read<StatisticProvider>()
+                        .refreshAllWeightStatistics(year: _selectedYear),
+                  ],
+                ),
+              ),
+              onLoading: () => SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                sliver: SliverList.builder(
+                  itemBuilder: (_, __) => const HealthOverviewCardSkeleton(),
+                  itemCount: 6,
+                ),
+              ),
+              onEmpty: () => SliverToBoxAdapter(
+                child: EmptyData(
+                  title: isSearching
+                      ? 'Domba Tidak Ditemukan'
+                      : 'Catatan Berat Badan Belum Tersedia',
+                  description: isSearching
+                      ? 'Tidak ada domba dengan Eartag tersebut'
+                      : 'Tambahkan domba dan pantau berat badan secara rutin',
+                ),
+              ),
+              onSuccess: (data) => SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                sliver: SliverList.builder(
+                  itemCount: data.length,
+                  itemBuilder: (_, i) =>
+                      WeightCard(sheepWeightOverview: data[i]),
+                ),
               ),
             ),
-            onSuccess: (data) => SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-              sliver: SliverList.builder(
-                itemCount: data.length,
-                itemBuilder: (_, i) => WeightCard(sheepWeightOverview: data[i]),
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

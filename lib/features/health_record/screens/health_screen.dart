@@ -112,7 +112,9 @@ class _HealthScreenViewState extends State<_HealthScreenView> {
         onRefresh: provider.refresh,
         child: CustomScrollView(
           controller: _scrollController,
-          physics: const AlwaysScrollableScrollPhysics(),
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
           slivers: [
             SliverAppBar(
               pinned: true,

@@ -122,7 +122,9 @@ class _MatingRecordViewState extends State<_MatingRecordView> {
           onRefresh: provider.refresh,
           child: CustomScrollView(
             controller: _scrollController,
-            physics: const AlwaysScrollableScrollPhysics(),
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
+            ),
             slivers: [
               SliverToBoxAdapter(
                 child: Padding(

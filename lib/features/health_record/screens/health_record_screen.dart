@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gosheep_mobile/core/utils/format_helper.dart';
 import 'package:gosheep_mobile/core/widgets/app_banner.dart';
 import 'package:gosheep_mobile/core/widgets/app_refresh_indicator.dart';
 import 'package:gosheep_mobile/core/widgets/async_state_sliver.dart';
@@ -114,7 +113,9 @@ class _HealthRecordScreenViewState extends State<_HealthRecordScreenView> {
         onRefresh: provider.refresh,
         child: CustomScrollView(
           controller: _scrollController,
-          physics: const AlwaysScrollableScrollPhysics(),
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
           slivers: [
             SliverAppBar(
               pinned: true,

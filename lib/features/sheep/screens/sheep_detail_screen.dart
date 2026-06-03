@@ -41,6 +41,7 @@ class _SheepDetailView extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FA),
       body: CustomScrollView(
+        physics: BouncingScrollPhysics(),
         slivers: [
           SliverAppBar(
             expandedHeight: 0,

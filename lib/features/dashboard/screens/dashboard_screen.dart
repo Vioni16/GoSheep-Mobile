@@ -36,6 +36,7 @@ class _DashboardViewState extends State<_DashboardView> {
     return Consumer<StatisticProvider>(
       builder: (context, provider, child) {
         return SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.only(bottom: 50),
           child: Stack(
             children: [
