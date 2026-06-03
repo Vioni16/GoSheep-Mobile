@@ -162,7 +162,7 @@ class HealthOverviewCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  health.recordedBy?.name ?? ('User Tidak diketahui/Dihapus'),
+                  health.recordedBy?.name ?? ('User tidak diketahui/dihapus'),
                   style: const TextStyle(fontSize: 11, color: Colors.black45),
                 ),
                 const Spacer(),

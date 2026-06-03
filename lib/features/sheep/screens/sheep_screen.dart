@@ -99,12 +99,15 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
   }
 
   void _onScroll() {
+    final provider = context.read<SheepProvider>();
     final pos = _scrollController.position;
 
     if (pos.maxScrollExtent == 0) return;
+    if (provider.error?.isNotEmpty == true) return;
+    if (provider.sheepList.isEmpty) return;
 
     if (pos.pixels >= pos.maxScrollExtent - 200) {
-      context.read<SheepProvider>().fetchMore();
+      provider.fetchMore();
     }
   }
 
@@ -382,22 +385,22 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
                 ),
               ),
               onError: (err) => SliverToBoxAdapter(
-                child: FormatHelper.isNoConnection(err)
-                    ? NoConnection(onRetry: provider.refresh)
-                    : EmptyData(
-                        title: 'Terjadi Kesalahan!',
-                        description: err,
-                        onRetry: provider.refresh,
-                      ),
+                child: NoConnection(
+                  onRetry: [
+                    provider.refresh,
+                    () => context.read<StatisticProvider>().fetchHealthStats(),
+                  ],
+                  description: err,
+                ),
               ),
               onEmpty: () => SliverToBoxAdapter(
                 child: EmptyData(
                   title: isSearching
                       ? 'Domba Tidak Ditemukan'
-                      : 'Belum Ada Data',
+                      : 'Masih Belum Ada Domba',
                   description: isSearching
                       ? 'Tidak ada domba dengan Eartag tersebut'
-                      : 'Belum ada domba yang terdaftar',
+                      : 'Mari tambahkan domba pertamamu!',
                 ),
               ),
               onSuccess: (data) => SliverPadding(

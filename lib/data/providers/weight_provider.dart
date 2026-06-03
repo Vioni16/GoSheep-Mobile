@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:gosheep_mobile/data/models/sheep_health_overview.dart';
-import 'package:gosheep_mobile/data/services/health_record_service.dart';
+import 'package:gosheep_mobile/data/models/sheep_weight_overview.dart';
+import 'package:gosheep_mobile/data/services/weight_record_service.dart';
 
-class HealthProvider with ChangeNotifier {
-  final HealthRecordService _service = HealthRecordService();
+class WeightProvider with ChangeNotifier {
+  final WeightRecordService _service = WeightRecordService();
 
-  List<SheepHealthOverview> _healths = [];
-  List<SheepHealthOverview> get healths => _healths;
+  List<SheepWeightOverview> _weights = [];
+  List<SheepWeightOverview> get weights => _weights;
 
   bool _isInitialized = false;
 
@@ -30,7 +30,7 @@ class HealthProvider with ChangeNotifier {
 
     _isInitialized = true;
 
-    _healths = [];
+    _weights = [];
     _lastId = null;
     _hasMore = true;
     _error = null;
@@ -46,13 +46,13 @@ class HealthProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await _service.getSheepHealth(
+      final response = await _service.getSheepWeight(
         lastId: _lastId,
         limit: _limit,
         search: _search,
       );
 
-      _healths.addAll(response.data);
+      _weights.addAll(response.data);
       _lastId = response.nextCursor;
       _hasMore = response.hasMore;
 
@@ -68,7 +68,7 @@ class HealthProvider with ChangeNotifier {
   Future<void> search(String value) async {
     _search = value;
 
-    _healths = [];
+    _weights = [];
     _lastId = null;
     _hasMore = true;
 

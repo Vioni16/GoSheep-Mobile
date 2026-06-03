@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 class EmptyData extends StatelessWidget {
   final String? title;
   final String? description;
-  final VoidCallback? onRetry;
 
-  const EmptyData({super.key, this.title, this.description, this.onRetry});
+  const EmptyData({super.key, this.title, this.description});
 
   @override
   Widget build(BuildContext context) {
@@ -47,30 +46,6 @@ class EmptyData extends StatelessWidget {
                 height: 1.5,
               ),
             ),
-            if (onRetry != null) ...[
-              const SizedBox(height: 20),
-              GestureDetector(
-                onTap: onRetry,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF000000),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Text(
-                    'Coba lagi',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ],
           ],
         ),
       ),

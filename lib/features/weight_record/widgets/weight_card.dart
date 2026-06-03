@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/core/theme/theme.dart';
+import 'package:gosheep_mobile/core/utils/format_helper.dart';
 import 'package:gosheep_mobile/core/widgets/gender_badge.dart';
 import 'package:gosheep_mobile/core/widgets/sheep_chip.dart';
+import 'package:gosheep_mobile/data/models/sheep_weight_overview.dart';
 import 'package:gosheep_mobile/features/sheep/screens/sheep_detail_screen.dart';
 
 class WeightCard extends StatelessWidget {
-  final Map<String, dynamic> item;
+  final SheepWeightOverview sheepWeightOverview;
 
-  const WeightCard({super.key, required this.item});
+  const WeightCard({super.key, required this.sheepWeightOverview});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,7 @@ class WeightCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -35,17 +37,18 @@ class WeightCard extends StatelessWidget {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   SheepChip(
-                    label: item["earTag"],
+                    label: sheepWeightOverview.earTag,
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => SheepDetailScreen(id: item["id"]),
+                          builder: (_) =>
+                              SheepDetailScreen(id: sheepWeightOverview.id),
                         ),
                       );
                     },
                   ),
-                  GenderBadge(gender: item["gender"]),
+                  GenderBadge(gender: sheepWeightOverview.gender),
                 ],
               ),
               const Spacer(),
@@ -55,13 +58,13 @@ class WeightCard extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryGreen.withOpacity(0.1),
+                  color: AppTheme.cream,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  "${item["weight"]} Kg",
-                  style: const TextStyle(
-                    color: AppTheme.primaryGreen,
+                  "${sheepWeightOverview.latestWeight.weight} Kg",
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.w700,
                     fontSize: 12,
                   ),
@@ -81,12 +84,34 @@ class WeightCard extends StatelessWidget {
               ),
               const SizedBox(width: 6),
               const Text(
-                "Tanggal terakhir ditimbang",
+                "Terakhir ditimbang",
                 style: TextStyle(fontSize: 12, color: Color(0xFF727272)),
               ),
               const Spacer(),
               Text(
-                item["date"],
+                FormatHelper.formatDate(
+                  sheepWeightOverview.latestWeight.recordedAt,
+                ),
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(Icons.person_outline, size: 16, color: Color(0xFF727272)),
+              const SizedBox(width: 6),
+              const Text(
+                "Dicatat oleh",
+                style: TextStyle(fontSize: 12, color: Color(0xFF727272)),
+              ),
+              const Spacer(),
+              Text(
+                sheepWeightOverview.latestWeight.recordedBy?.name ??
+                    ('User tidak diketahui/dihapus'),
                 style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,

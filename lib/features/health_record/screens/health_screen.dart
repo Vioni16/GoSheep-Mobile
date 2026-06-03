@@ -9,7 +9,6 @@ import 'package:gosheep_mobile/core/widgets/empty_data.dart';
 import 'package:gosheep_mobile/core/widgets/filter_pill.dart';
 import 'package:gosheep_mobile/core/widgets/no_connection.dart';
 import 'package:gosheep_mobile/core/widgets/summary_card.dart';
-import 'package:gosheep_mobile/core/utils/format_helper.dart';
 import 'package:gosheep_mobile/data/providers/health_provider.dart';
 import 'package:gosheep_mobile/data/providers/statistic_provider.dart';
 import 'package:gosheep_mobile/features/health_record/widgets/health_chart_card.dart';
@@ -75,6 +74,8 @@ class _HealthScreenViewState extends State<_HealthScreenView> {
     final pos = _scrollController.position;
 
     if (pos.maxScrollExtent == 0) return;
+    if (provider.error?.isNotEmpty == true) return;
+    if (provider.healths.isEmpty) return;
 
     if (pos.pixels >= pos.maxScrollExtent - 200) {
       provider.fetchMore();
@@ -333,22 +334,22 @@ class _HealthScreenViewState extends State<_HealthScreenView> {
                 ),
               ),
               onError: (err) => SliverToBoxAdapter(
-                child: FormatHelper.isNoConnection(err)
-                    ? NoConnection(onRetry: provider.refresh)
-                    : EmptyData(
-                        title: 'Terjadi Kesalahan',
-                        description: err,
-                        onRetry: provider.refresh,
-                      ),
+                child: NoConnection(
+                  description: err,
+                  onRetry: [
+                    provider.refresh,
+                    () => context.read<StatisticProvider>().fetchHealthStats(),
+                  ],
+                ),
               ),
               onEmpty: () => SliverToBoxAdapter(
                 child: EmptyData(
                   title: isSearching
                       ? 'Domba Tidak Ditemukan'
-                      : 'Belum Ada Data',
+                      : 'Catatan Kesehatan Belum Tersedia',
                   description: isSearching
                       ? 'Tidak ada domba dengan Eartag tersebut'
-                      : 'Belum ada domba yang terdaftar',
+                      : 'Tambahkan domba dan pantau kesehatannya secara rutin',
                 ),
               ),
               onSuccess: (data) => SliverPadding(

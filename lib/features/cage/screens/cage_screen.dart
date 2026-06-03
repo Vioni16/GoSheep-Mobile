@@ -107,18 +107,18 @@ class _CageScreenView extends StatelessWidget {
 
             onError: (err) => SliverFillRemaining(
               hasScrollBody: false,
-              child: FormatHelper.isNoConnection(err)
-                  ? NoConnection(onRetry: provider.refresh)
-                  : EmptyData(
-                      title: 'Terjadi Kesalahan!',
-                      description: err,
-                      onRetry: provider.refresh,
-                    ),
+              child: NoConnection(
+                onRetry: [provider.refresh],
+                description: err,
+              ),
             ),
 
             onEmpty: () => const SliverFillRemaining(
               hasScrollBody: false,
-              child: EmptyData(description: 'Belum ada kandang yang terdaftar'),
+              child: EmptyData(
+                description: 'Kandang belum ditambahkan.',
+                title: 'Tidak Ada Kandang',
+              ),
             ),
 
             onSuccess: (data) {

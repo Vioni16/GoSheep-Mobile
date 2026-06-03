@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 
 class NoConnection extends StatelessWidget {
-  final VoidCallback? onRetry;
+  final List<VoidCallback>? onRetry;
+  final String description;
 
-  const NoConnection({super.key, this.onRetry});
+  const NoConnection({
+    super.key,
+    this.onRetry,
+    this.description = 'Periksa koneksi internet kamu\nlalu coba lagi.',
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +33,8 @@ class NoConnection extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 6),
-            const Text(
-              'Periksa koneksi internet kamu\nlalu coba lagi.',
+            Text(
+              description,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13,
@@ -40,7 +45,11 @@ class NoConnection extends StatelessWidget {
             if (onRetry != null) ...[
               const SizedBox(height: 20),
               GestureDetector(
-                onTap: onRetry,
+                onTap: () {
+                  for (final callback in onRetry!) {
+                    callback();
+                  }
+                },
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 20,

@@ -6,7 +6,7 @@ import 'package:gosheep_mobile/features/health_record/screens/health_screen.dart
 import 'package:gosheep_mobile/features/main_navigation.dart';
 import 'package:gosheep_mobile/features/livestock_history/screens/livestock_history_screen.dart';
 import 'package:gosheep_mobile/features/report/screens/report_screen.dart';
-import 'package:gosheep_mobile/features/weight_history/screens/weight_history_screen.dart';
+import 'package:gosheep_mobile/features/weight_record/screens/weight_screen.dart';
 
 class AppRoutes {
   static const String home = '/home';
@@ -25,7 +25,7 @@ class AppRoutes {
     breedingHistory: (context) => MatingRecordScreen(),
     livestockHistory: (context) => LivestockHistoryScreen(),
     report: (context) => ReportScreen(),
-    weightHistory: (context) => WeightHistoryScreen(),
+    weightHistory: (context) => WeightScreen(),
     healthHistory: (context) => HealthScreen(),
   };
 }

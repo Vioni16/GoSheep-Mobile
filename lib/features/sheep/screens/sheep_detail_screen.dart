@@ -74,9 +74,7 @@ class _SheepDetailView extends StatelessWidget {
                 const SliverToBoxAdapter(child: SheepDetailSkeleton()),
             onError: (err) => SliverFillRemaining(
               hasScrollBody: false,
-              child: FormatHelper.isNoConnection(err)
-                  ? NoConnection(onRetry: () => provider.refresh(id))
-                  : EmptyData(description: err),
+              child: NoConnection(onRetry: [() => provider.refresh(id)]),
             ),
             showErrorWhenHasData: true,
             onEmpty: () => const SliverFillRemaining(

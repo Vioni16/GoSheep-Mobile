@@ -74,6 +74,8 @@ class _HealthRecordScreenViewState extends State<_HealthRecordScreenView> {
     final pos = _scrollController.position;
 
     if (pos.maxScrollExtent == 0) return;
+    if (provider.error?.isNotEmpty == true) return;
+    if (provider.healthRecords.isEmpty) return;
 
     if (pos.pixels >= pos.maxScrollExtent - 200) {
       provider.fetchMore();
@@ -281,15 +283,8 @@ class _HealthRecordScreenViewState extends State<_HealthRecordScreenView> {
                   itemCount: 6,
                 ),
               ),
-              onError: (err) => SliverToBoxAdapter(
-                child: FormatHelper.isNoConnection(err)
-                    ? NoConnection(onRetry: provider.refresh)
-                    : EmptyData(
-                        title: 'Terjadi Kesalahan',
-                        description: err,
-                        onRetry: provider.refresh,
-                      ),
-              ),
+              onError: (err) =>
+                  SliverToBoxAdapter(child: NoConnection(description: err)),
               onEmpty: () => SliverToBoxAdapter(
                 child: EmptyData(
                   title: _filter == 'all'

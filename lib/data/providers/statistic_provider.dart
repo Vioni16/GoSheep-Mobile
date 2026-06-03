@@ -3,6 +3,7 @@ import 'package:gosheep_mobile/data/models/health_record_statistic.dart';
 import 'package:gosheep_mobile/data/models/statistics/mating_record_stats.dart';
 import 'package:gosheep_mobile/data/models/statistics/overview_stats.dart';
 import 'package:gosheep_mobile/data/models/statistics/sheep_health_stats.dart';
+import 'package:gosheep_mobile/data/models/statistics/weight_statistic.dart';
 import 'package:gosheep_mobile/data/services/statistic_service.dart';
 
 class StatisticProvider with ChangeNotifier {
@@ -19,6 +20,9 @@ class StatisticProvider with ChangeNotifier {
 
   HealthRecordStatistic? _healthRecordStatistic;
   HealthRecordStatistic? get healthRecordStatistic => _healthRecordStatistic;
+
+  WeightStatistic? _weightStatistic;
+  WeightStatistic? get weightStatistic => _weightStatistic;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -96,5 +100,29 @@ class StatisticProvider with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  Future<void> fetchAllWeightStatistics({int? year}) async {
+    if (_isLoading) return;
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final stats = await _service.getAllWeightStatistics(year: year);
+      _weightStatistic = stats;
+      _error = null;
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> refreshAllWeightStatistics({int? year}) async {
+    _error = null;
+    notifyListeners();
+    await fetchAllWeightStatistics(year: year);
   }
 }

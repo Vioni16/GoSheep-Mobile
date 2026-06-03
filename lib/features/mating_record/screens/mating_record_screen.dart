@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/core/enums/mating_result_enum.dart';
-import 'package:gosheep_mobile/core/utils/format_helper.dart';
 import 'package:gosheep_mobile/core/widgets/app_banner.dart';
 import 'package:gosheep_mobile/core/widgets/app_refresh_indicator.dart';
 import 'package:gosheep_mobile/core/widgets/async_state_sliver.dart';
@@ -90,12 +89,15 @@ class _MatingRecordViewState extends State<_MatingRecordView> {
   }
 
   void _onScroll() {
+    final provider = context.read<MatingRecordProvider>();
     final pos = _scrollController.position;
 
     if (pos.maxScrollExtent == 0) return;
+    if (provider.error?.isNotEmpty == true) return;
+    if (provider.message.isEmpty) return;
 
     if (pos.pixels >= pos.maxScrollExtent - 200) {
-      context.read<MatingRecordProvider>().fetchMore();
+      provider.fetchMore();
     }
   }
 
@@ -365,22 +367,24 @@ class _MatingRecordViewState extends State<_MatingRecordView> {
                   ),
                 ),
                 onError: (err) => SliverToBoxAdapter(
-                  child: FormatHelper.isNoConnection(err)
-                      ? NoConnection(onRetry: provider.refresh)
-                      : EmptyData(
-                          title: 'Terjadi Kesalahan!',
-                          description: err,
-                          onRetry: provider.refresh,
-                        ),
+                  child: NoConnection(
+                    onRetry: [
+                      provider.refresh,
+                      () => context
+                          .read<StatisticProvider>()
+                          .fetchMatingRecStats(),
+                    ],
+                    description: err,
+                  ),
                 ),
                 onEmpty: () => SliverToBoxAdapter(
                   child: EmptyData(
                     title: isSearching
                         ? 'Riwayat Tidak Ditemukan'
-                        : 'Belum Ada Data',
+                        : 'Riwayat Perkawinan Kosong',
                     description: isSearching
                         ? 'Tidak ada domba dengan Eartag tersebut'
-                        : 'Belum ada perkawinan domba',
+                        : ' Yuk, tambahkan catatan perkawinan pertamamu!',
                   ),
                 ),
                 onSuccess: (data) => SliverPadding(

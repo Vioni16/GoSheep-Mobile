@@ -68,7 +68,7 @@ class SheepStatusUtil {
       case 'maintenance':
         return 'Perawatan';
       default:
-        return 'Tidak Diketahui';
+        return '-';
     }
   }
 

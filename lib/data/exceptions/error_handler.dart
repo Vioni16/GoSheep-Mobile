@@ -7,16 +7,16 @@ import 'package:gosheep_mobile/data/exceptions/validation_exception.dart';
 class ErrorHandler {
   static Exception handle(DioException e) {
     if (e.error is SocketException) {
-      return ApiException('Tidak ada koneksi internet');
+      return ApiException('Tidak ada koneksi internet!');
     }
 
     if (e.type == DioExceptionType.connectionTimeout ||
         e.type == DioExceptionType.receiveTimeout) {
-      return ApiException('Server terlalu lama merespons');
+      return ApiException('Server terlalu lama merespons.');
     }
 
     if (e.type == DioExceptionType.connectionError) {
-      return ApiException('Tidak dapat terhubung ke server');
+      return ApiException('Tidak dapat terhubung ke server.');
     }
 
     final data = e.response?.data;

@@ -55,6 +55,12 @@ class FormatHelper {
   }
 
   static bool isNoConnection(String err) {
-    return err.contains('Tidak ada koneksi');
+    const connectionErrors = [
+      'Tidak ada koneksi internet',
+      'Tidak dapat terhubung ke server',
+      'Server terlalu lama merespons',
+    ];
+
+    return connectionErrors.any(err.contains);
   }
 }
