@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/features/activity_feed/screens/activity_feed_screen.dart';
 
 class ActivityCard extends StatelessWidget {
   const ActivityCard({super.key});
@@ -16,7 +17,7 @@ class ActivityCard extends StatelessWidget {
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: const [
+          children: [
             Text(
               'Aktivitas Terkini',
               style: TextStyle(
@@ -25,7 +26,18 @@ class ActivityCard extends StatelessWidget {
                 color: Color.fromARGB(255, 115, 115, 115),
               ),
             ),
-            Text('Lihat semua', style: TextStyle(color: Color(0xFF0F5132))),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ActivityFeedScreen()),
+                );
+              },
+              child: Text(
+                'Lihat semua',
+                style: TextStyle(color: Color(0xFF0F5132)),
+              ),
+            ),
           ],
         ),
 

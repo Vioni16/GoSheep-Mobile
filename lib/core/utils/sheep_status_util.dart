@@ -44,7 +44,7 @@ class SheepStatusUtil {
         return const Color(0xFF1B5E20);
 
       case 'ringan':
-        return Color.fromARGB(255, 31, 50, 175);
+        return Color(0xFF185FA5);
 
       case 'sedang':
         return const Color(0xFFB8860B);

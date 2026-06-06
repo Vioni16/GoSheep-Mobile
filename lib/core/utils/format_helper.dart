@@ -11,6 +11,10 @@ class FormatHelper {
     return DateFormat('dd MMM yyyy HH:mm', 'id_ID').format(date);
   }
 
+  static String formatTime(DateTime dt) {
+    return '${dt.hour.toString().padLeft(2, '0')}.${dt.minute.toString().padLeft(2, '0')}';
+  }
+
   static String formatWeight(double? weight) {
     if (weight == null) return '-';
     return '${weight.toStringAsFixed(2)} kg';
@@ -62,5 +66,42 @@ class FormatHelper {
     ];
 
     return connectionErrors.any(err.contains);
+  }
+
+  static String timeAgo(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inSeconds < 60) {
+      return 'Baru saja';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}m';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours}j';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays}h';
+    } else if (difference.inDays < 30) {
+      return '${(difference.inDays / 7).floor()}mgg';
+    } else {
+      return formatDateTime(dateTime);
+    }
+  }
+
+  static String formatDateShort(DateTime date) {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'Mei',
+      'Jun',
+      'Jul',
+      'Ags',
+      'Sep',
+      'Okt',
+      'Nov',
+      'Des',
+    ];
+    return '${date.day} ${months[date.month - 1]} ${date.year}';
   }
 }
