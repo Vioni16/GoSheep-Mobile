@@ -142,69 +142,77 @@ class ProfileScreen extends StatelessWidget {
 
                   const _SectionLabel('PENGATURAN'),
                   const SizedBox(height: 12),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: Colors.black.withValues(alpha: 0.06),
+                  Material(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    clipBehavior: Clip.antiAlias,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: Colors.black.withValues(alpha: 0.06),
+                        ),
                       ),
-                    ),
-                    child: Column(
-                      children: [
-                        ProfileMenuItem(
-                          icon: Icons.edit_outlined,
-                          title: "Edit Profil",
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const EditProfileScreen(),
+                      child: Column(
+                        children: [
+                          ProfileMenuItem(
+                            icon: Icons.edit_outlined,
+                            title: "Edit Profil",
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const EditProfileScreen(),
+                              ),
                             ),
                           ),
-                        ),
-                        _Divider(),
-                        ProfileMenuItem(
-                          icon: Icons.lock_reset_rounded,
-                          title: "Ubah Kata Sandi",
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const ChangePasswordScreen(),
+                          _Divider(),
+                          ProfileMenuItem(
+                            icon: Icons.lock_reset_rounded,
+                            title: "Ubah Kata Sandi",
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const ChangePasswordScreen(),
+                              ),
                             ),
                           ),
-                        ),
-                        _Divider(),
-                        ProfileMenuItem(
-                          icon: Icons.help_outline,
-                          title: "Bantuan",
-                          onTap: () {},
-                        ),
-                        _Divider(),
-                        ProfileMenuItem(
-                          icon: Icons.info_outline,
-                          title: "Tentang Aplikasi",
-                          onTap: () {},
-                        ),
-                      ],
+                          _Divider(),
+                          ProfileMenuItem(
+                            icon: Icons.help_outline,
+                            title: "Bantuan",
+                            onTap: () {},
+                          ),
+                          _Divider(),
+                          ProfileMenuItem(
+                            icon: Icons.info_outline,
+                            title: "Tentang Aplikasi",
+                            onTap: () {},
+                          ),
+                        ],
+                      ),
                     ),
                   ),
 
                   const SizedBox(height: 12),
 
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: Colors.red.withValues(alpha: 0.15),
+                  Material(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    clipBehavior: Clip.antiAlias,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: Colors.red.withValues(alpha: 0.15),
+                        ),
                       ),
-                    ),
-                    child: ProfileMenuItem(
-                      icon: Icons.logout,
-                      title: "Keluar Akun",
-                      textColor: Colors.red,
-                      onTap: () => _showLogoutDialog(context),
+                      child: ProfileMenuItem(
+                        icon: Icons.logout,
+                        title: "Keluar Akun",
+                        textColor: Colors.red,
+                        onTap: () => _showLogoutDialog(context),
+                      ),
                     ),
                   ),
 

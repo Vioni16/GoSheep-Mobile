@@ -629,31 +629,35 @@ class _SheepScannerScreenState extends State<SheepScannerScreen>
                           Row(
                             children: [
                               Expanded(
-                                child: GestureDetector(
-                                  onTap: _scanAgain,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 13,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withValues(
-                                        alpha: 0.1,
+                                child: Material(
+                                  color: Colors.white.withValues(
+                                    alpha: 0.1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: InkWell(
+                                    onTap: _scanAgain,
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 13,
                                       ),
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color: Colors.white.withValues(
-                                          alpha: 0.2,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: Colors.white.withValues(
+                                            alpha: 0.2,
+                                          ),
+                                          width: 0.5,
                                         ),
-                                        width: 0.5,
                                       ),
-                                    ),
-                                    child: const Center(
-                                      child: Text(
-                                        'Scan Ulang',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
+                                      child: const Center(
+                                        child: Text(
+                                          'Scan Ulang',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -662,24 +666,25 @@ class _SheepScannerScreenState extends State<SheepScannerScreen>
                               ),
                               const SizedBox(width: 12),
                               Expanded(
-                                child: GestureDetector(
-                                  onTap: () =>
-                                      Navigator.pop(context, _detectedText),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 13,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: const Center(
-                                      child: Text(
-                                        'Gunakan',
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
+                                child: Material(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: InkWell(
+                                    onTap: () =>
+                                        Navigator.pop(context, _detectedText),
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: const Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 13,
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          'Gunakan',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
                                       ),
                                     ),

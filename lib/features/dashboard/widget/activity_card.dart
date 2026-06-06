@@ -62,16 +62,20 @@ class _ActivityCardState extends State<ActivityCard> {
                 color: Color.fromARGB(255, 115, 115, 115),
               ),
             ),
-            GestureDetector(
+            InkWell(
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const ActivityFeedScreen()),
                 );
               },
-              child: const Text(
-                'Lihat semua',
-                style: TextStyle(color: Color(0xFF0F5132)),
+              borderRadius: BorderRadius.circular(6),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                child: Text(
+                  'Lihat semua',
+                  style: TextStyle(color: Color(0xFF0F5132)),
+                ),
               ),
             ),
           ],
@@ -185,14 +189,18 @@ class _ActivityCardState extends State<ActivityCard> {
               style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
             ),
             const SizedBox(height: 8),
-            GestureDetector(
+            InkWell(
               onTap: _fetchRecentActivities,
-              child: const Text(
-                'Coba lagi',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFF0F5132),
-                  fontWeight: FontWeight.w600,
+              borderRadius: BorderRadius.circular(6),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                child: Text(
+                  'Coba lagi',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF0F5132),
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),

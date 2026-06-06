@@ -129,9 +129,13 @@ class _SheepPickerSheetState extends State<SheepPickerSheet> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    GestureDetector(
+                    InkWell(
                       onTap: () => Navigator.pop(context),
-                      child: const Icon(Icons.close),
+                      borderRadius: BorderRadius.circular(20),
+                      child: const Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Icon(Icons.close),
+                      ),
                     ),
                   ],
                 ),
