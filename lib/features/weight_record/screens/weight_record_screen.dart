@@ -7,37 +7,57 @@ import 'package:gosheep_mobile/core/widgets/empty_data.dart';
 import 'package:gosheep_mobile/core/widgets/gender_badge.dart';
 import 'package:gosheep_mobile/core/widgets/no_connection.dart';
 import 'package:gosheep_mobile/core/widgets/toast_widget.dart';
+import 'package:gosheep_mobile/data/providers/statistic_provider.dart';
 import 'package:gosheep_mobile/data/providers/weight_record_provider.dart';
 import 'package:gosheep_mobile/features/health_record/widgets/health_overview_card_skeleton.dart';
+import 'package:gosheep_mobile/features/weight_record/widgets/weight_chart_card.dart';
 import 'package:gosheep_mobile/features/weight_record/widgets/weight_record_card.dart';
 import 'package:provider/provider.dart';
 
 class WeightRecordScreen extends StatelessWidget {
-  final int id;
+  final int sheepId;
   final String earTag;
   final String gender;
 
   const WeightRecordScreen({
     super.key,
-    required this.id,
+    required this.sheepId,
     required this.earTag,
     required this.gender,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => WeightRecordProvider(id)..fetchInitial(),
-      child: _WeightRecordScreenView(earTag: earTag, gender: gender),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => WeightRecordProvider(sheepId)..fetchInitial(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) =>
+              StatisticProvider()
+                ..fetchMonthlyWeightStatistics(sheepId: sheepId),
+        ),
+      ],
+      child: _WeightRecordScreenView(
+        sheepId: sheepId,
+        earTag: earTag,
+        gender: gender,
+      ),
     );
   }
 }
 
 class _WeightRecordScreenView extends StatefulWidget {
+  final int sheepId;
   final String earTag;
   final String gender;
 
-  const _WeightRecordScreenView({required this.earTag, required this.gender});
+  const _WeightRecordScreenView({
+    required this.sheepId,
+    required this.earTag,
+    required this.gender,
+  });
 
   @override
   State<_WeightRecordScreenView> createState() =>
@@ -49,9 +69,12 @@ class _WeightRecordScreenViewState extends State<_WeightRecordScreenView> {
   final _formKey = GlobalKey<FormState>();
   final _weightController = TextEditingController();
 
+  late int _selectedYear;
+
   @override
   void initState() {
     super.initState();
+    _selectedYear = DateTime.now().year;
     _scrollController.addListener(_onScroll);
   }
 
@@ -68,7 +91,7 @@ class _WeightRecordScreenViewState extends State<_WeightRecordScreenView> {
     }
   }
 
-  Future<void> _submit() async {
+  Future<void> _submit(BuildContext context) async {
     if (!_formKey.currentState!.validate()) return;
 
     final provider = context.read<WeightRecordProvider>();
@@ -83,6 +106,9 @@ class _WeightRecordScreenViewState extends State<_WeightRecordScreenView> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         _weightController.clear();
+        context.read<StatisticProvider>().refreshMonthlyWeightStatistics(
+          sheepId: widget.sheepId,
+        );
       });
 
       ToastService.show(
@@ -234,7 +260,7 @@ class _WeightRecordScreenViewState extends State<_WeightRecordScreenView> {
                                 child: ElevatedButton(
                                   onPressed: provider.isCreating
                                       ? null
-                                      : _submit,
+                                      : () => _submit(context),
                                   style: ElevatedButton.styleFrom(
                                     padding: EdgeInsets.zero,
                                     shape: RoundedRectangleBorder(
@@ -258,6 +284,22 @@ class _WeightRecordScreenViewState extends State<_WeightRecordScreenView> {
                                 ),
                               ),
                             ],
+                          ),
+                          Consumer<StatisticProvider>(
+                            builder: (context, statProvider, _) => WeightChart(
+                              statistic: statProvider.weightStatisticDetail,
+                              selectedYear: _selectedYear,
+                              isLoading: statProvider.isLoading,
+                              onYearChanged: (year) {
+                                setState(() => _selectedYear = year);
+                                context
+                                    .read<StatisticProvider>()
+                                    .refreshMonthlyWeightStatistics(
+                                      sheepId: widget.sheepId,
+                                      year: year,
+                                    );
+                              },
+                            ),
                           ),
                         ],
                       ),
@@ -293,8 +335,20 @@ class _WeightRecordScreenViewState extends State<_WeightRecordScreenView> {
                   itemCount: 6,
                 ),
               ),
-              onError: (err) =>
-                  SliverToBoxAdapter(child: NoConnection(description: err)),
+              onError: (err) => SliverToBoxAdapter(
+                child: NoConnection(
+                  description: err,
+                  onRetry: [
+                    provider.refresh,
+                    () => context
+                        .read<StatisticProvider>()
+                        .refreshMonthlyWeightStatistics(
+                          sheepId: widget.sheepId,
+                          year: _selectedYear,
+                        ),
+                  ],
+                ),
+              ),
               onEmpty: () => const SliverToBoxAdapter(
                 child: EmptyData(
                   title: 'Belum Ada Riwayat',

@@ -114,4 +114,34 @@ class StatisticService {
       throw ErrorHandler.handle(e);
     }
   }
+
+  Future<WeightStatistic> getMonthlyWeightStatistics({
+    required int sheepId,
+    int? year,
+  }) async {
+    try {
+      final params = <String, dynamic>{};
+      if (year != null) {
+        params['year'] = year;
+      }
+
+      final response = await _dio.get(
+        '/sheep-weight/$sheepId/statistics',
+        queryParameters: params.isNotEmpty ? params : null,
+      );
+
+      final apiResponse = ApiResponse.fromJson(
+        response.data,
+        (data) => WeightStatistic.fromJson(data),
+      );
+
+      if (!apiResponse.success) {
+        throw ApiException(apiResponse.message);
+      }
+
+      return apiResponse.data!;
+    } on DioException catch (e) {
+      throw ErrorHandler.handle(e);
+    }
+  }
 }

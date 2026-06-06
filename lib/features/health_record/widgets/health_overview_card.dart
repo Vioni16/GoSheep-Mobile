@@ -24,7 +24,7 @@ class HealthOverviewCard extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (_) => HealthRecordScreen(
-              id: healthOverview.id,
+              sheepId: healthOverview.sheepId,
               earTag: healthOverview.earTag,
               gender: healthOverview.gender,
             ),
@@ -61,7 +61,7 @@ class HealthOverviewCard extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (_) =>
-                                  SheepDetailScreen(id: healthOverview.id),
+                                  SheepDetailScreen(id: healthOverview.sheepId),
                             ),
                           );
                         },

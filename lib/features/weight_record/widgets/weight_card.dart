@@ -20,7 +20,7 @@ class WeightCard extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => WeightRecordScreen(
-              id: sheepWeightOverview.id,
+              sheepId: sheepWeightOverview.id,
               earTag: sheepWeightOverview.earTag,
               gender: sheepWeightOverview.gender,
             ),

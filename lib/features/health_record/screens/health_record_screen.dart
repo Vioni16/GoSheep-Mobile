@@ -14,13 +14,13 @@ import 'package:gosheep_mobile/features/health_record/widgets/health_overview_ca
 import 'package:provider/provider.dart';
 
 class HealthRecordScreen extends StatelessWidget {
-  final int id;
+  final int sheepId;
   final String earTag;
   final String gender;
 
   const HealthRecordScreen({
     super.key,
-    required this.id,
+    required this.sheepId,
     required this.earTag,
     required this.gender,
   });
@@ -28,7 +28,7 @@ class HealthRecordScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => HealthRecordProvider(id)..fetchInitial(),
+      create: (_) => HealthRecordProvider(sheepId)..fetchInitial(),
       child: _HealthRecordScreenView(earTag: earTag, gender: gender),
     );
   }

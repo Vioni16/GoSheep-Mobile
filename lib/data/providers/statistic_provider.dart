@@ -24,6 +24,9 @@ class StatisticProvider with ChangeNotifier {
   WeightStatistic? _weightStatistic;
   WeightStatistic? get weightStatistic => _weightStatistic;
 
+  WeightStatistic? _weightStatisticDetail;
+  WeightStatistic? get weightStatisticDetail => _weightStatisticDetail;
+
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
@@ -120,9 +123,42 @@ class StatisticProvider with ChangeNotifier {
     }
   }
 
+  Future<void> fetchMonthlyWeightStatistics({
+    required int sheepId,
+    int? year,
+  }) async {
+    if (_isLoading) return;
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final stats = await _service.getMonthlyWeightStatistics(
+        sheepId: sheepId,
+        year: year,
+      );
+      _weightStatisticDetail = stats;
+      _error = null;
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> refreshAllWeightStatistics({int? year}) async {
     _error = null;
     notifyListeners();
     await fetchAllWeightStatistics(year: year);
+  }
+
+  Future<void> refreshMonthlyWeightStatistics({
+    required int sheepId,
+    int? year,
+  }) async {
+    _error = null;
+    notifyListeners();
+    await fetchMonthlyWeightStatistics(sheepId: sheepId, year: year);
   }
 }
