@@ -14,4 +14,11 @@ class FormOptions {
     'Nutrisi': 'nutrition',
     'Perawatan': 'maintenance',
   };
+
+  static const matingCheckResults = {
+    'Bunting': 'pregnant',
+    'Tidak Bunting': 'not_pregnant',
+    'Gagal': 'failed',
+    'Belum Diketahui': 'unknown',
+  };
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/core/enums/mating_result_enum.dart';
 import 'package:gosheep_mobile/data/models/mating_record.dart';
 import 'package:gosheep_mobile/data/services/mating_record_service.dart';
 
@@ -84,5 +85,13 @@ class MatingRecordProvider with ChangeNotifier {
 
   Future<void> refresh() async {
     await fetchInitial(forceRefresh: true);
+  }
+
+  void updateResult(int matingRecordId, MatingResult result) {
+    final index = _matingRecords.indexWhere((r) => r.id == matingRecordId);
+    if (index == -1) return;
+
+    _matingRecords[index] = _matingRecords[index].copyWith(result: result);
+    notifyListeners();
   }
 }

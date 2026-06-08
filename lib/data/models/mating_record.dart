@@ -35,4 +35,17 @@ class MatingRecord {
       result: MatingResult.fromString(json['result']),
     );
   }
+
+  MatingRecord copyWith({MatingResult? result}) {
+    return MatingRecord(
+      id: id,
+      eweId: eweId,
+      ramId: ramId,
+      eweEarTag: eweEarTag,
+      ramEarTag: ramEarTag,
+      matingDate: matingDate,
+      endDate: endDate,
+      result: result ?? this.result,
+    );
+  }
 }
