@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/core/enums/mating_result_enum.dart';
 import 'package:gosheep_mobile/core/extensions/string_extension.dart';
 import 'package:gosheep_mobile/core/utils/format_helper.dart';
 import 'package:gosheep_mobile/core/utils/sheep_status_util.dart';
@@ -147,6 +148,7 @@ class _CardHeader extends StatelessWidget {
     'health_record' => 'rekam kesehatan',
     'weight_record' => 'berat badan',
     'breeding' => 'perkawinan',
+    'mating_check' => 'pemeriksaan perkawinan',
     _ => entity,
   };
 }
@@ -196,6 +198,8 @@ class _PropertiesBlock extends StatelessWidget {
     'severity': 'Tingkat',
     'category': 'Kategori',
     'sheep_eartag': 'Eartag',
+    'result': 'Hasil',
+    'check_date': 'Tanggal Pemeriksaan',
   };
 
   static const Map<String, String> _deletedLabels = {
@@ -247,6 +251,8 @@ class _PropertiesBlock extends StatelessWidget {
       'gender' => SheepStatusUtil.getGenderLabel(value),
       'severity' => value.capitalizeFirst,
       'category' => SheepStatusUtil.healthCategoryLabel(value),
+      'result' => MatingResult.fromString(value).label,
+      'check_date' => FormatHelper.formatDate(DateTime.parse(value)),
       _ => value,
     };
   }
@@ -346,6 +352,7 @@ class _EntityBadge extends StatelessWidget {
     'health_record' => 'Rekam kesehatan',
     'weight_record' => 'Berat badan',
     'breeding' => 'Perkawinan',
+    'mating_check' => 'Pemeriksaan perkawinan',
     _ => activity.entity,
   };
 

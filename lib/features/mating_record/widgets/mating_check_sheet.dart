@@ -152,12 +152,22 @@ class _MatingCheckSheetState extends State<MatingCheckSheet> {
     );
   }
 
+
+
   Widget _buildList() {
     final provider = context.watch<MatingCheckProvider>();
-    final matingRecord = context.watch<MatingRecordProvider>().matingRecords.firstWhere(
-          (r) => r.id == widget.matingRecord.id,
-          orElse: () => widget.matingRecord,
-        );
+
+    MatingRecordProvider? matingRecProvider;
+    try {
+      matingRecProvider = context.watch<MatingRecordProvider>();
+    } catch (_) {}
+
+    final matingRecord = matingRecProvider != null
+        ? matingRecProvider.matingRecords.firstWhere(
+            (r) => r.id == widget.matingRecord.id,
+            orElse: () => widget.matingRecord,
+          )
+        : widget.matingRecord;
 
     return Column(
       mainAxisSize: MainAxisSize.min,

@@ -4,11 +4,15 @@ import 'package:gosheep_mobile/core/widgets/app_refresh_indicator.dart';
 import 'package:gosheep_mobile/core/widgets/async_state_sliver.dart';
 import 'package:gosheep_mobile/core/widgets/empty_data.dart';
 import 'package:gosheep_mobile/core/widgets/no_connection.dart';
+import 'package:gosheep_mobile/core/widgets/toast_widget.dart';
 import 'package:gosheep_mobile/data/models/activity_feed.dart';
 import 'package:gosheep_mobile/data/providers/activity_feed_provider.dart';
 import 'package:gosheep_mobile/features/activity_feed/widgets/activity_feed_card.dart';
 import 'package:gosheep_mobile/features/health_record/screens/health_record_screen.dart';
 import 'package:gosheep_mobile/features/sheep/screens/sheep_detail_screen.dart';
+import 'package:gosheep_mobile/data/providers/mating_check_provider.dart';
+import 'package:gosheep_mobile/data/services/mating_record_service.dart';
+import 'package:gosheep_mobile/features/mating_record/widgets/mating_check_sheet.dart';
 import 'package:provider/provider.dart';
 
 class ActivityFeedScreen extends StatelessWidget {
@@ -61,7 +65,7 @@ class _ActivityFeedScreenViewState extends State<_ActivityFeedScreenView> {
     }
   }
 
-  void _navigateFromActivity(ActivityFeed activity) {
+  Future<void> _navigateFromActivity(ActivityFeed activity) async {
     if (!activity.canNavigate) return;
 
     switch (activity.entity) {
@@ -96,6 +100,47 @@ class _ActivityFeedScreenViewState extends State<_ActivityFeedScreenView> {
             ),
           ),
         );
+
+      case 'mating_check':
+        final props = activity.properties;
+        final matingRecordId = props is CreatedProperties
+            ? int.tryParse(props.get('mating_record_id') ?? '')
+            : null;
+        if (matingRecordId == null) return;
+
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => const Center(child: CircularProgressIndicator()),
+        );
+
+        try {
+          final matingRecord = await MatingRecordService().getMatingRecordById(
+            matingRecordId,
+          );
+          if (!mounted) return;
+          Navigator.pop(context);
+
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (_) => ChangeNotifierProvider(
+              create: (_) =>
+                  MatingCheckProvider(matingRecord.id)..fetchMatingChecks(),
+              child: MatingCheckSheet(matingRecord: matingRecord),
+            ),
+          );
+        } catch (e) {
+          if (mounted) {
+            Navigator.pop(context);
+            ToastService.show(
+              context,
+              'Gagal mengambil data perkawinan.',
+              title: 'Terjadi Kesalahan',
+            );
+          }
+        }
     }
   }
 

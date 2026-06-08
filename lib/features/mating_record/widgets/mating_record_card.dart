@@ -7,7 +7,8 @@ import 'package:gosheep_mobile/data/models/mating_record.dart';
 import 'package:gosheep_mobile/data/providers/mating_check_provider.dart';
 import 'package:gosheep_mobile/data/providers/mating_record_provider.dart';
 import 'package:gosheep_mobile/features/mating_record/widgets/mating_check_sheet.dart';
-import 'package:gosheep_mobile/features/sheep/screens/sheep_detail_screen.dart';
+import 'package:gosheep_mobile/features/mating_record/widgets/mating_partners_sheet.dart';
+
 import 'package:provider/provider.dart';
 
 class MatingRecordCard extends StatelessWidget {
@@ -79,12 +80,14 @@ class MatingRecordCard extends StatelessWidget {
                                   backgroundColor: Colors.white,
                                   borderColor: Colors.blue,
                                   onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => SheepDetailScreen(
-                                          id: matingRecord.ramId,
-                                        ),
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      backgroundColor: Colors.transparent,
+                                      builder: (_) => MatingPartnersSheet(
+                                        sheepId: matingRecord.ramId,
+                                        eartag: matingRecord.ramEarTag,
+                                        gender: "male",
                                       ),
                                     );
                                   },
@@ -102,12 +105,14 @@ class MatingRecordCard extends StatelessWidget {
                                   backgroundColor: Colors.white,
                                   borderColor: Colors.pink,
                                   onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => SheepDetailScreen(
-                                          id: matingRecord.eweId,
-                                        ),
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      backgroundColor: Colors.transparent,
+                                      builder: (_) => MatingPartnersSheet(
+                                        sheepId: matingRecord.eweId,
+                                        eartag: matingRecord.eweEarTag,
+                                        gender: "female",
                                       ),
                                     );
                                   },
