@@ -55,7 +55,7 @@ class ProfileScreen extends StatelessWidget {
                     child: const CircleAvatar(
                       radius: 35,
                       backgroundImage: AssetImage(
-                        'assets/images/Gosheep_profile_photo.png',
+                        'assets/images/frofile_mobile.png',
                       ),
                     ),
                   ),
