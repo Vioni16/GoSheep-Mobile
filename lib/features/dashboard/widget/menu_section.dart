@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/routes/app_routes.dart';
 
 class MenuSection extends StatelessWidget {
   const MenuSection({super.key});
@@ -46,6 +47,13 @@ class MenuSection extends StatelessWidget {
         "label": "Riwayat\nBerat Badan",
         "onTap": () {
           Navigator.pushNamed(context, '/weight-history');
+        },
+      },
+      {
+        "icon": Icons.archive_outlined,
+        "label": "Ternak\nNonaktif",
+        "onTap": () {
+          Navigator.pushNamed(context, '/inactive-sheep');
         },
       },
     ];
