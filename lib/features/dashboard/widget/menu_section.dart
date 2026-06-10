@@ -21,10 +21,10 @@ class MenuSection extends StatelessWidget {
         },
       },
       {
-        "icon": Icons.pets,
-        "label": "Riwayat\nTernak",
+        "icon": Icons.monitor_heart_rounded,
+        "label": "Pemantauan\nKebuntingan",
         "onTap": () {
-          Navigator.pushNamed(context, '/livestock-history');
+          Navigator.pushNamed(context, '/pregnancy-monitoring');
         },
       },
       {

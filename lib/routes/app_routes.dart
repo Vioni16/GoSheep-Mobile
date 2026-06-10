@@ -4,7 +4,7 @@ import 'package:gosheep_mobile/features/mating_record/screens/mating_record_scre
 import 'package:gosheep_mobile/features/cage/screens/cage_screen.dart';
 import 'package:gosheep_mobile/features/health_record/screens/health_screen.dart';
 import 'package:gosheep_mobile/features/main_navigation.dart';
-import 'package:gosheep_mobile/features/livestock_history/screens/livestock_history_screen.dart';
+import 'package:gosheep_mobile/features/pregnancy_monitoring/screens/pregnancy_monitoring_screen.dart';
 import 'package:gosheep_mobile/features/report/screens/report_screen.dart';
 import 'package:gosheep_mobile/features/weight_record/screens/weight_screen.dart';
 
@@ -13,7 +13,7 @@ class AppRoutes {
   static const String login = '/login';
   static const String cage = '/cage';
   static const String breedingHistory = '/breeding-history';
-  static const String livestockHistory = '/livestock-history';
+  static const String pregnancyMonitoring = '/pregnancy-monitoring';
   static const String report = '/report';
   static const String weightHistory = '/weight-history';
   static const String healthHistory = '/health-history';
@@ -23,7 +23,7 @@ class AppRoutes {
     home: (context) => MainNavigation(),
     cage: (context) => CageScreen(),
     breedingHistory: (context) => MatingRecordScreen(),
-    livestockHistory: (context) => LivestockHistoryScreen(),
+    pregnancyMonitoring: (context) => PregnancyMonitoringScreen(),
     report: (context) => ReportScreen(),
     weightHistory: (context) => WeightScreen(),
     healthHistory: (context) => HealthScreen(),
