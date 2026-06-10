@@ -7,6 +7,7 @@ import 'package:gosheep_mobile/features/main_navigation.dart';
 import 'package:gosheep_mobile/features/pregnancy_monitoring/screens/pregnancy_monitoring_screen.dart';
 import 'package:gosheep_mobile/features/report/screens/report_screen.dart';
 import 'package:gosheep_mobile/features/weight_record/screens/weight_screen.dart';
+import 'package:gosheep_mobile/features/inactive_sheep/screens/inactive_sheep_screen.dart';
 
 class AppRoutes {
   static const String home = '/home';
@@ -17,6 +18,7 @@ class AppRoutes {
   static const String report = '/report';
   static const String weightHistory = '/weight-history';
   static const String healthHistory = '/health-history';
+  static const String inactiveSheep = '/inactive-sheep';
 
   static Map<String, WidgetBuilder> routes = {
     login: (context) => LoginScreen(),
@@ -27,5 +29,6 @@ class AppRoutes {
     report: (context) => ReportScreen(),
     weightHistory: (context) => WeightScreen(),
     healthHistory: (context) => HealthScreen(),
+    inactiveSheep: (context) => const InactiveSheepScreen(),
   };
 }

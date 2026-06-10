@@ -105,6 +105,27 @@ class ReportScreen extends StatelessWidget {
               height: 250,
               child: LineChart(
                 LineChartData(
+                  lineTouchData: LineTouchData(
+                    touchTooltipData: LineTouchTooltipData(
+                      getTooltipColor: (_) => Colors.white,
+                      tooltipBorder: BorderSide(
+                        color: Colors.grey.shade300,
+                        width: 1,
+                      ),
+                      getTooltipItems: (touchedSpots) {
+                        return touchedSpots.map((spot) {
+                          return LineTooltipItem(
+                            '${spot.y.toInt()}',
+                            const TextStyle(
+                              color: Colors.black87,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        }).toList();
+                      },
+                    ),
+                  ),
+
                   gridData: FlGridData(
                     show: true,
                     drawVerticalLine: false,
@@ -191,6 +212,25 @@ class ReportScreen extends StatelessWidget {
               child: BarChart(
                 BarChartData(
                   alignment: BarChartAlignment.spaceAround,
+
+                  barTouchData: BarTouchData(
+                    touchTooltipData: BarTouchTooltipData(
+                      getTooltipColor: (_) => Colors.white,
+                      tooltipBorder: BorderSide(
+                        color: Colors.grey.shade300,
+                        width: 1,
+                      ),
+                      getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                        return BarTooltipItem(
+                          rod.toY.toInt().toString(),
+                          const TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
 
                   gridData: FlGridData(
                     show: true,
