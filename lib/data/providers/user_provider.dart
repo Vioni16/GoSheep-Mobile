@@ -45,4 +45,22 @@ class UserProvider with ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+
+  Future<bool> requestPasswordReset(String email) async {
+    try {
+      _isLoading = true;
+      _errorMessage = null;
+      notifyListeners();
+
+      final message = await _userService.requestPasswordReset(email);
+      _errorMessage = message; // Using errorMessage to store the success message temporarily or we can just return true.
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 }
