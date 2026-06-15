@@ -1,77 +1,100 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/core/widgets/app_banner.dart';
 import 'package:gosheep_mobile/core/widgets/app_refresh_indicator.dart';
+import 'package:gosheep_mobile/core/widgets/async_state_sliver.dart';
+import 'package:gosheep_mobile/core/widgets/empty_data.dart';
 import 'package:gosheep_mobile/core/widgets/filter_pill.dart';
+import 'package:gosheep_mobile/core/widgets/no_connection.dart';
 import 'package:gosheep_mobile/core/widgets/summary_card.dart';
+import 'package:gosheep_mobile/data/models/pregnancy.dart';
+import 'package:gosheep_mobile/data/providers/pregnant_sheep_provider.dart';
 import 'package:gosheep_mobile/features/pregnancy_monitoring/widgets/pregnancy_monitoring_card.dart';
+import 'package:gosheep_mobile/features/pregnancy_monitoring/widgets/pregnancy_monitoring_card_skeleton.dart';
+import 'package:provider/provider.dart';
 
-class PregnancyMonitoringScreen extends StatefulWidget {
+class PregnancyMonitoringScreen extends StatelessWidget {
   const PregnancyMonitoringScreen({super.key});
 
   @override
-  State<PregnancyMonitoringScreen> createState() =>
-      _PregnancyMonitoringScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => PregnantSheepProvider()
+        ..fetchInitial()
+        ..fetchSummary(),
+      child: const _PregnancyMonitoringView(),
+    );
+  }
 }
 
-class _PregnancyMonitoringScreenState extends State<PregnancyMonitoringScreen> {
-  final _searchController = TextEditingController();
+class _PregnancyMonitoringView extends StatefulWidget {
+  const _PregnancyMonitoringView();
+
+  @override
+  State<_PregnancyMonitoringView> createState() =>
+      _PregnancyMonitoringViewState();
+}
+
+class _PregnancyMonitoringViewState extends State<_PregnancyMonitoringView> {
+  final _scrollController = ScrollController();
   String? _filter;
 
-  // Data dummy
-  final List<Map<String, dynamic>> _dummyData = [
-    {
-      "title": "Domba A001",
-      "status": "ongoing",
-      "startDate": "2026-01-10",
-      "expectedDate": "2026-06-10",
-    },
-    {
-      "title": "Domba A002",
-      "status": "birthed",
-      "startDate": "2025-11-02",
-      "expectedDate": "2026-04-02",
-    },
-    {
-      "title": "Domba A003",
-      "status": "miscarried",
-      "startDate": "2025-12-01",
-      "expectedDate": "2026-05-01",
-    },
-  ];
+  final _search = TextEditingController();
+  Timer? _debounce;
 
-  List<Map<String, dynamic>> get _filteredData {
-    return _dummyData.where((item) {
-      if (_filter != null && item['status'] != _filter) return false;
-
-      if (_searchController.text.isNotEmpty) {
-        final query = _searchController.text.toLowerCase();
-        return item['title'].toString().toLowerCase().contains(query);
-      }
-
-      return true;
-    }).toList();
-  }
-
-  Future<void> _refresh() async {
-    await Future.delayed(const Duration(seconds: 1));
-    setState(() {});
+  List<Pregnancy> _filteredByStatus(List<Pregnancy> list) {
+    if (_filter == null) return list;
+    return list.where((p) => p.status == _filter).toList();
   }
 
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(() => setState(() {}));
+
+    _scrollController.addListener(_onScroll);
+
+    _search.addListener(() {
+      if (_debounce?.isActive ?? false) {
+        _debounce!.cancel();
+      }
+
+      _debounce = Timer(const Duration(milliseconds: 300), () {
+        context.read<PregnantSheepProvider>().searchPregnancies(_search.text);
+      });
+    });
   }
 
   @override
   void dispose() {
-    _searchController.dispose();
+    _debounce?.cancel();
+    _search.dispose();
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    final provider = context.read<PregnantSheepProvider>();
+    final pos = _scrollController.position;
+
+    if (pos.maxScrollExtent == 0) return;
+    if (provider.error?.isNotEmpty == true) return;
+    if (provider.pregnancies.isEmpty) return;
+
+    if (pos.pixels >= pos.maxScrollExtent - 200) {
+      provider.fetchMore();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final listData = _filteredData;
+    final provider = context.watch<PregnantSheepProvider>();
+    final listData = _filteredByStatus(provider.pregnancies);
+    final isSearching = provider.isSearching;
+    final stats = provider.stats;
+    final isStatsLoading = provider.isStatsLoading;
 
     return Scaffold(
       appBar: AppBar(
@@ -85,13 +108,13 @@ class _PregnancyMonitoringScreenState extends State<PregnancyMonitoringScreen> {
       ),
       body: SafeArea(
         child: AppRefreshIndicator(
-          onRefresh: _refresh,
+          onRefresh: provider.refresh,
           child: CustomScrollView(
+            controller: _scrollController,
             physics: const AlwaysScrollableScrollPhysics(
               parent: BouncingScrollPhysics(),
             ),
             slivers: [
-              // 1. Header Teks Statistik
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -113,7 +136,6 @@ class _PregnancyMonitoringScreenState extends State<PregnancyMonitoringScreen> {
                 ),
               ),
 
-              // 2. Summary Cards (Minimalis & Hitam Putih memakai core widget)
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
@@ -122,24 +144,24 @@ class _PregnancyMonitoringScreenState extends State<PregnancyMonitoringScreen> {
                       Expanded(
                         child: SummaryCard(
                           label: "Bunting",
-                          value: "12",
-                          isLoading: false,
+                          value: '${stats?.pregnantSheep ?? '-'}',
+                          isLoading: isStatsLoading,
                         ),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: SummaryCard(
                           label: "Melahirkan",
-                          value: "5",
-                          isLoading: false,
+                          value: '${stats?.gaveBirth ?? '-'}',
+                          isLoading: isStatsLoading,
                         ),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: SummaryCard(
                           label: "Keguguran",
-                          value: "2",
-                          isLoading: false,
+                          value: '${stats?.miscarriages ?? '-'}',
+                          isLoading: isStatsLoading,
                         ),
                       ),
                     ],
@@ -147,12 +169,11 @@ class _PregnancyMonitoringScreenState extends State<PregnancyMonitoringScreen> {
                 ),
               ),
 
-              // 3. Search Bar
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
                   child: SearchBar(
-                    controller: _searchController,
+                    controller: _search,
                     hintText: 'Cari Eartag domba...',
                     leading: const Icon(Icons.search_rounded),
                     elevation: WidgetStateProperty.all(0),
@@ -163,17 +184,16 @@ class _PregnancyMonitoringScreenState extends State<PregnancyMonitoringScreen> {
                       ),
                     ),
                     trailing: [
-                      if (_searchController.text.isNotEmpty)
+                      if (_search.text.isNotEmpty)
                         IconButton(
                           icon: const Icon(Icons.close),
-                          onPressed: () => _searchController.clear(),
+                          onPressed: () => _search.clear(),
                         ),
                     ],
                   ),
                 ),
               ),
 
-              // 4. Filter Pills
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 18),
@@ -210,7 +230,6 @@ class _PregnancyMonitoringScreenState extends State<PregnancyMonitoringScreen> {
                 ),
               ),
 
-              // 5. Dynamic AppBanner (Sudah fix dengan default wildcard _)
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
@@ -247,11 +266,10 @@ class _PregnancyMonitoringScreenState extends State<PregnancyMonitoringScreen> {
                 ),
               ),
 
-              // 6. Title Section List
-              SliverToBoxAdapter(
+              const SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                  child: const Text(
+                  padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
+                  child: Text(
                     'DATA MONITORING KEBUNTINGAN',
                     style: TextStyle(
                       fontSize: 11,
@@ -263,23 +281,41 @@ class _PregnancyMonitoringScreenState extends State<PregnancyMonitoringScreen> {
                 ),
               ),
 
-              // 7. List Data
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-                sliver: SliverList.builder(
-                  itemCount: listData.length,
-                  itemBuilder: (context, index) {
-                    final item = listData[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: PregnancyMonitoringCard(
-                        title: item['title'],
-                        status: item['status'],
-                        startDate: item['startDate'],
-                        expectedDate: item['expectedDate'],
-                      ),
-                    );
-                  },
+              AsyncStateSliver<Pregnancy>(
+                isLoading: provider.isLoading,
+                error: provider.error,
+                data: listData,
+                onLoading: () => SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                  sliver: SliverList.builder(
+                    itemBuilder: (_, __) =>
+                        const PregnancyMonitoringCardSkeleton(),
+                    itemCount: 6,
+                  ),
+                ),
+                onError: (err) => SliverToBoxAdapter(
+                  child: NoConnection(
+                    onRetry: [provider.refresh],
+                    description: err,
+                  ),
+                ),
+                onEmpty: () => SliverToBoxAdapter(
+                  child: EmptyData(
+                    title: isSearching
+                        ? 'Data Tidak Ditemukan'
+                        : 'Data Kebuntingan Kosong',
+                    description: isSearching
+                        ? 'Tidak ada domba dengan Eartag tersebut'
+                        : 'Belum ada data kebuntingan tercatat',
+                  ),
+                ),
+                onSuccess: (data) => SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                  sliver: SliverList.builder(
+                    itemCount: data.length,
+                    itemBuilder: (_, index) =>
+                        PregnancyMonitoringCard(pregnancy: data[index]),
+                  ),
                 ),
               ),
             ],

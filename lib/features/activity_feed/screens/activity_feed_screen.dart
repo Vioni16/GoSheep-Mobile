@@ -10,9 +10,8 @@ import 'package:gosheep_mobile/data/providers/activity_feed_provider.dart';
 import 'package:gosheep_mobile/features/activity_feed/widgets/activity_feed_card.dart';
 import 'package:gosheep_mobile/features/health_record/screens/health_record_screen.dart';
 import 'package:gosheep_mobile/features/sheep/screens/sheep_detail_screen.dart';
-import 'package:gosheep_mobile/data/providers/mating_check_provider.dart';
 import 'package:gosheep_mobile/data/services/mating_record_service.dart';
-import 'package:gosheep_mobile/features/mating_record/widgets/mating_check_sheet.dart';
+import 'package:gosheep_mobile/features/mating_record/screens/mating_check_screen.dart';
 import 'package:provider/provider.dart';
 
 class ActivityFeedScreen extends StatelessWidget {
@@ -121,14 +120,15 @@ class _ActivityFeedScreenViewState extends State<_ActivityFeedScreenView> {
           if (!mounted) return;
           Navigator.pop(context);
 
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            backgroundColor: Colors.transparent,
-            builder: (_) => ChangeNotifierProvider(
-              create: (_) =>
-                  MatingCheckProvider(matingRecord.id)..fetchMatingChecks(),
-              child: MatingCheckSheet(matingRecord: matingRecord),
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => MatingCheckScreen(
+                matingRecordId: matingRecord.id,
+                ramEarTag: matingRecord.ramEarTag,
+                eweEarTag: matingRecord.eweEarTag,
+                result: matingRecord.result,
+              ),
             ),
           );
         } catch (e) {

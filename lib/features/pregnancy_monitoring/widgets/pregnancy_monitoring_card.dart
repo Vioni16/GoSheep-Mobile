@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/core/utils/format_helper.dart';
+import 'package:gosheep_mobile/core/widgets/sheep_chip.dart';
+import 'package:gosheep_mobile/data/models/pregnancy.dart';
 import 'package:gosheep_mobile/features/pregnancy_monitoring/widgets/pregnancy_status_badge.dart';
 
 class PregnancyMonitoringCard extends StatelessWidget {
-  final String title;
-  final String status;
-  final String startDate;
-  final String expectedDate;
+  final Pregnancy pregnancy;
 
-  const PregnancyMonitoringCard({
-    super.key,
-    required this.title,
-    required this.status,
-    required this.startDate,
-    required this.expectedDate,
-  });
+  const PregnancyMonitoringCard({super.key, required this.pregnancy});
 
   @override
   Widget build(BuildContext context) {
@@ -39,14 +33,8 @@ class PregnancyMonitoringCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                    ),
-                  ),
-                  PregnancyStatusBadge(status: status),
+                  SheepChip(label: pregnancy.eweEartag, onTap: () {}),
+                  PregnancyStatusBadge(status: pregnancy.status),
                 ],
               ),
 
@@ -60,12 +48,12 @@ class PregnancyMonitoringCard extends StatelessWidget {
                   _infoItem(
                     Icons.calendar_today_outlined,
                     "Mulai",
-                    startDate,
+                    FormatHelper.formatDate(pregnancy.startDate),
                   ),
                   _infoItem(
                     Icons.event_available_outlined,
                     "Estimasi",
-                    expectedDate,
+                    FormatHelper.formatDate(pregnancy.expectedBirthDate),
                   ),
                 ],
               ),
