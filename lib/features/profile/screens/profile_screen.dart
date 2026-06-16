@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/core/widgets/confirmation_dialog.dart';
 import 'package:gosheep_mobile/core/widgets/custom_textfield.dart';
 import 'package:gosheep_mobile/data/providers/user_provider.dart';
+import 'package:gosheep_mobile/features/profile/screens/about_application.dart';
 import 'package:gosheep_mobile/features/profile/screens/change_password.dart';
 import 'package:gosheep_mobile/routes/app_routes.dart';
+import 'package:gosheep_mobile/features/profile/screens/help.dart';
 import 'package:provider/provider.dart';
 import '../widgets/profile_menu_item.dart';
 import 'edit_profile_screen.dart';
@@ -179,15 +181,25 @@ class ProfileScreen extends StatelessWidget {
                           ),
                           _Divider(),
                           ProfileMenuItem(
-                            icon: Icons.help_outline,
+                            icon: Icons.help_outline_rounded,
                             title: "Bantuan",
-                            onTap: () {},
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const HelpScreen(),
+                              ),
+                            ),
                           ),
                           _Divider(),
                           ProfileMenuItem(
                             icon: Icons.info_outline,
                             title: "Tentang Aplikasi",
-                            onTap: () {},
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const AboutScreen(),
+                              ),
+                            ),
                           ),
                         ],
                       ),

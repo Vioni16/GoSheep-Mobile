@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/core/utils/validators.dart';
-import 'package:gosheep_mobile/core/widgets/animated_gradient_text.dart';
 import 'package:gosheep_mobile/core/widgets/toast_widget.dart';
 import 'package:gosheep_mobile/data/providers/user_provider.dart';
 import 'package:provider/provider.dart';
