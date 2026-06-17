@@ -15,10 +15,10 @@ class AboutScreen extends StatelessWidget {
           'Menghitung nilai Estimated Breeding Value (EBV) untuk bobot badan dan kesehatan berdasarkan data fenotip serta silsilah keluarga domba secara otomatis.',
     ),
     _FeatureItem(
-      icon: Icons.bolt_rounded,
-      title: 'Integrasi Timbangan IoT',
+      icon: Icons.account_tree_rounded,
+      title: 'Manajemen Silsilah',
       description:
-          'Pencatatan berat badan domba secara otomatis dan real-time langsung dari timbangan digital yang terhubung tanpa perlu input manual.',
+          'Menyimpan hubungan induk, pejantan, dan keturunan secara terstruktur untuk mendukung analisis genetik, perhitungan EBV, dan pengendalian inbreeding.',
     ),
     _FeatureItem(
       icon: Icons.favorite_rounded,
@@ -60,16 +60,12 @@ class AboutScreen extends StatelessWidget {
               child: Column(
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(
-                      20,
-                    ), 
+                    borderRadius: BorderRadius.circular(20),
                     child: Image.asset(
                       'assets/images/goSheep_logo.png',
-                      width:
-                          76, 
+                      width: 76,
                       height: 76,
-                      fit: BoxFit
-                          .cover, 
+                      fit: BoxFit.cover,
                     ),
                   ),
                   const SizedBox(height: 16),
