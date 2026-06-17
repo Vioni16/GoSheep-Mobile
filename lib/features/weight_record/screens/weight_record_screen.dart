@@ -364,7 +364,10 @@ class _WeightRecordScreenViewState extends State<_WeightRecordScreenView> {
                     if (i == data.length) {
                       return PaginationLoadingFooter(hasMore: provider.hasMore);
                     }
-                    return WeightRecordCard(weight: data[i]);
+                    return WeightRecordCard(
+                      weight: data[i],
+                      sheepId: widget.sheepId,
+                    );
                   },
                 ),
               ),

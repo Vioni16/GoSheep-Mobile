@@ -103,4 +103,29 @@ class WeightRecordService {
       throw ErrorHandler.handle(e);
     }
   }
+
+  Future<ApiResponse<Weight>> updateWeightRecord({
+    required int recordId,
+    required double weight,
+  }) async {
+    try {
+      final response = await _dio.put(
+        '/sheep-weight/$recordId',
+        data: {'weight': weight},
+      );
+
+      final result = ApiResponse.fromJson(
+        response.data,
+        (data) => Weight.fromJson(data),
+      );
+
+      if (!result.success) {
+        throw ApiException(result.message);
+      }
+
+      return result;
+    } on DioException catch (e) {
+      throw ErrorHandler.handle(e);
+    }
+  }
 }
