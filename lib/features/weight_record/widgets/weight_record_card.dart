@@ -3,6 +3,7 @@ import 'package:gosheep_mobile/core/theme/theme.dart';
 import 'package:gosheep_mobile/core/utils/format_helper.dart';
 import 'package:gosheep_mobile/data/models/weight.dart';
 import 'package:gosheep_mobile/data/providers/weight_record_provider.dart';
+import 'package:gosheep_mobile/data/providers/statistic_provider.dart';
 import 'package:gosheep_mobile/features/weight_record/widgets/edit_weight_sheet.dart';
 import 'package:provider/provider.dart';
 
@@ -18,13 +19,17 @@ class WeightRecordCard extends StatelessWidget {
 
   void _showEditSheet(BuildContext context) {
     final provider = context.read<WeightRecordProvider>();
+    final statisticProvider = context.read<StatisticProvider>();
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => ChangeNotifierProvider.value(
-        value: provider,
+      builder: (_) => MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: provider),
+          ChangeNotifierProvider.value(value: statisticProvider),
+        ],
         child: EditWeightSheet(
           weight: weight,
           sheepId: sheepId,

@@ -101,6 +101,9 @@ class WeightRecordProvider with ChangeNotifier {
     required int recordId,
     required double weight,
   }) async {
+    if (_isCreating) return false;
+
+    _isCreating = true;
     _error = null;
     notifyListeners();
 
@@ -116,17 +119,16 @@ class WeightRecordProvider with ChangeNotifier {
       }
 
       _message = response.message;
-      notifyListeners();
-
       return true;
     } on ApiException catch (e) {
       _error = e.message;
-      notifyListeners();
       return false;
     } catch (e) {
       _error = e.toString();
-      notifyListeners();
       return false;
+    } finally {
+      _isCreating = false;
+      notifyListeners();
     }
   }
 

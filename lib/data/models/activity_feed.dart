@@ -35,7 +35,7 @@ class UpdatedProperties extends ActivityProperties {
 
   static String label(String key) {
     const labels = {
-      'weight': 'Berat',
+      'weight': 'Berat (Kg)',
       'breed': 'Ras',
       'cage': 'Kandang',
       'gender': 'Jenis Kelamin',

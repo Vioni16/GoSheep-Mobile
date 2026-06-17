@@ -116,6 +116,12 @@ class HealthRecordProvider with ChangeNotifier {
     String? severity,
     String? notes,
   }) async {
+    if (_isCreating) return false;
+
+    _isCreating = true;
+    _error = null;
+    notifyListeners();
+
     try {
       final response = await _service.updateHealthRecord(
         recordId: recordId,
@@ -131,17 +137,16 @@ class HealthRecordProvider with ChangeNotifier {
       }
 
       _message = response.message;
-      notifyListeners();
-
       return true;
     } on ApiException catch (e) {
       _error = e.message;
-      notifyListeners();
       return false;
     } catch (e) {
       _error = e.toString();
-      notifyListeners();
       return false;
+    } finally {
+      _isCreating = false;
+      notifyListeners();
     }
   }
 }

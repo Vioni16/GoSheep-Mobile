@@ -190,7 +190,7 @@ class _PropertiesBlock extends StatelessWidget {
   }
 
   static const Map<String, String> _createdLabels = {
-    'weight': 'Berat',
+    'weight': 'Berat (Kg)',
     'breed': 'Ras',
     'gender': 'Jenis kelamin',
     'cage': 'Kandang',
