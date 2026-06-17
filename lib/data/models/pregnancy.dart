@@ -20,8 +20,8 @@ class Pregnancy {
 
     return Pregnancy(
       id: json['id'],
-      startDate: DateTime.parse(json['start_date']),
-      expectedBirthDate: DateTime.parse(json['expected_birth_date']),
+      startDate: DateTime.parse(json['start_date']).toLocal(),
+      expectedBirthDate: DateTime.parse(json['expected_birth_date']).toLocal(),
       status: json['status'] ?? 'ongoing',
       eweId: ewe['id'] ?? 0,
       eweEartag: ewe['eartag'] ?? '-',

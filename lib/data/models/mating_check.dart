@@ -19,12 +19,12 @@ class MatingCheck {
     return MatingCheck(
       id: json['id'],
       matingRecordId: json['mating_record_id'],
-      checkDate: DateTime.parse(json['check_date']),
+      checkDate: DateTime.parse(json['check_date']).toLocal(),
       notes: json['notes'],
       expectedBirthDate: json['expected_birth_date'] != null
-          ? DateTime.parse(json['expected_birth_date'])
+          ? DateTime.parse(json['expected_birth_date']).toLocal()
           : null,
-      createdAt: DateTime.parse(json['created_at']),
+      createdAt: DateTime.parse(json['created_at']).toLocal(),
     );
   }
 }
