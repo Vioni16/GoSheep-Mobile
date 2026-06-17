@@ -3,6 +3,7 @@ class MatingCheck {
   final int matingRecordId;
   final DateTime checkDate;
   final String? notes;
+  final DateTime? expectedBirthDate;
   final DateTime createdAt;
 
   MatingCheck({
@@ -10,6 +11,7 @@ class MatingCheck {
     required this.matingRecordId,
     required this.checkDate,
     this.notes,
+    this.expectedBirthDate,
     required this.createdAt,
   });
 
@@ -17,9 +19,12 @@ class MatingCheck {
     return MatingCheck(
       id: json['id'],
       matingRecordId: json['mating_record_id'],
-      checkDate: DateTime.parse(json['check_date']),
+      checkDate: DateTime.parse(json['check_date']).toLocal(),
       notes: json['notes'],
-      createdAt: DateTime.parse(json['created_at']),
+      expectedBirthDate: json['expected_birth_date'] != null
+          ? DateTime.parse(json['expected_birth_date']).toLocal()
+          : null,
+      createdAt: DateTime.parse(json['created_at']).toLocal(),
     );
   }
 }

@@ -119,7 +119,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, AppRoutes.forgotPassword);
+                      },
                       child: const Text(
                         'Lupa password?',
                         style: TextStyle(color: Color(0xFF2E7D32)),

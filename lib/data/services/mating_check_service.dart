@@ -32,6 +32,7 @@ class MatingCheckService {
     required String checkDate,
     required String result,
     String? notes,
+    String? expectedBirthDate,
   }) async {
     try {
       final response = await _dio.post(
@@ -40,6 +41,40 @@ class MatingCheckService {
           'check_date': checkDate,
           'result': result,
           if (notes != null) 'notes': notes,
+          if (expectedBirthDate != null) 'expected_birth_date': expectedBirthDate,
+        },
+      );
+
+      final apiResult = ApiResponse<MatingCheck>.fromJson(
+        response.data,
+        (data) => MatingCheck.fromJson(data),
+      );
+
+      if (!apiResult.success) {
+        throw ApiException(apiResult.message);
+      }
+
+      return apiResult;
+    } on DioException catch (e) {
+      throw ErrorHandler.handle(e);
+    }
+  }
+
+  Future<ApiResponse<MatingCheck>> updateMatingCheck({
+    required int matingCheckId,
+    required String checkDate,
+    required String result,
+    String? notes,
+    String? expectedBirthDate,
+  }) async {
+    try {
+      final response = await _dio.put(
+        '/mating-records/check/$matingCheckId',
+        data: {
+          'check_date': checkDate,
+          'result': result,
+          'notes': notes,
+          if (expectedBirthDate != null) 'expected_birth_date': expectedBirthDate,
         },
       );
 

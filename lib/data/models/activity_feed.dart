@@ -35,13 +35,19 @@ class UpdatedProperties extends ActivityProperties {
 
   static String label(String key) {
     const labels = {
-      'weight': 'Berat',
+      'weight': 'Berat (Kg)',
       'breed': 'Ras',
       'cage': 'Kandang',
       'gender': 'Jenis Kelamin',
       'condition': 'Kondisi',
       'severity': 'Tingkat',
       'category': 'Kategori',
+      'notes': 'Catatan',
+      'result': 'Hasil',
+      'check_date': 'Tanggal Pemeriksaan',
+      'expected_birth_date': 'Tanggal Perkiraan Lahir',
+      'end_date': 'Tanggal Selesai',
+      'status': 'Status',
     };
     return labels[key] ?? key;
   }

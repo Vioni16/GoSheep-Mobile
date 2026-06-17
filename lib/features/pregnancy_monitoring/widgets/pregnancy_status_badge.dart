@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/core/theme/theme.dart';
 
 class PregnancyStatusBadge extends StatelessWidget {
   final String status;
 
-  const PregnancyStatusBadge({
-    super.key,
-    required this.status,
-  });
+  const PregnancyStatusBadge({super.key, required this.status});
 
   Color _color() {
     switch (status) {
       case 'ongoing':
-        return Colors.green;
+        return const Color(0xFF2E7D52);
       case 'birthed':
-        return Colors.blue;
+        return const Color(0xFF1E88E5);
       case 'miscarried':
-        return Colors.red;
+        return Colors.red.shade700;
       default:
         return Colors.grey;
     }
@@ -41,7 +39,7 @@ class PregnancyStatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: AppTheme.cream,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(

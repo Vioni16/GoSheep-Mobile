@@ -1,11 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/core/theme/theme.dart';
 import 'package:gosheep_mobile/core/utils/format_helper.dart';
 import 'package:gosheep_mobile/data/models/weight.dart';
+import 'package:gosheep_mobile/data/providers/weight_record_provider.dart';
+import 'package:gosheep_mobile/data/providers/statistic_provider.dart';
+import 'package:gosheep_mobile/features/weight_record/widgets/edit_weight_sheet.dart';
+import 'package:provider/provider.dart';
 
 class WeightRecordCard extends StatelessWidget {
   final Weight weight;
+  final int sheepId;
 
-  const WeightRecordCard({super.key, required this.weight});
+  const WeightRecordCard({
+    super.key,
+    required this.weight,
+    required this.sheepId,
+  });
+
+  void _showEditSheet(BuildContext context) {
+    final provider = context.read<WeightRecordProvider>();
+    final statisticProvider = context.read<StatisticProvider>();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: provider),
+          ChangeNotifierProvider.value(value: statisticProvider),
+        ],
+        child: EditWeightSheet(
+          weight: weight,
+          sheepId: sheepId,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +58,9 @@ class WeightRecordCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
+            padding: const EdgeInsets.fromLTRB(14, 10, 6, 10),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Icon(
                   Icons.monitor_weight_outlined,
@@ -36,24 +68,21 @@ class WeightRecordCard extends StatelessWidget {
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 const SizedBox(width: 10),
-                Text(
-                  FormatHelper.formatWeight(weight.weight),
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF2D3132),
+                Expanded(
+                  child: Text(
+                    FormatHelper.formatWeight(weight.weight),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF2D3132),
+                    ),
                   ),
                 ),
-                const Spacer(),
+                const SizedBox(width: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.primary.withValues(alpha: 0.08),
+                    color: AppTheme.cream,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -64,6 +93,15 @@ class WeightRecordCard extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
+                ),
+                const SizedBox(width: 4),
+                IconButton(
+                  icon: Icon(
+                    Icons.edit_outlined,
+                    size: 20,
+                    color: Colors.grey.shade500,
+                  ),
+                  onPressed: () => _showEditSheet(context),
                 ),
               ],
             ),

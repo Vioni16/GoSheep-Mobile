@@ -4,11 +4,28 @@ import 'package:gosheep_mobile/core/theme/theme.dart';
 import 'package:gosheep_mobile/core/utils/format_helper.dart';
 import 'package:gosheep_mobile/core/utils/sheep_status_util.dart';
 import 'package:gosheep_mobile/data/models/health.dart';
+import 'package:gosheep_mobile/data/providers/health_record_provider.dart';
+import 'package:gosheep_mobile/features/health_record/widgets/edit_health_sheet.dart';
+import 'package:provider/provider.dart';
 
 class HealthRecordCard extends StatelessWidget {
   final Health health;
 
   const HealthRecordCard({super.key, required this.health});
+
+  void _showEditSheet(BuildContext context) {
+    final provider = context.read<HealthRecordProvider>();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => ChangeNotifierProvider.value(
+        value: provider,
+        child: EditHealthSheet(health: health),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +46,10 @@ class HealthRecordCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Header ──
           Padding(
-            padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
+            padding: const EdgeInsets.fromLTRB(14, 10, 6, 12),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   child: Text(
@@ -45,7 +61,7 @@ class HealthRecordCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
@@ -64,11 +80,19 @@ class HealthRecordCard extends StatelessWidget {
                     ),
                   ),
                 ),
+                const SizedBox(width: 4),
+                IconButton(
+                  icon: Icon(
+                    Icons.edit_outlined,
+                    size: 20,
+                    color: Colors.grey.shade500,
+                  ),
+                  onPressed: () => _showEditSheet(context),
+                ),
               ],
             ),
           ),
 
-          // ── Meta section ──
           Container(
             decoration: BoxDecoration(
               color: Colors.grey.shade50,
@@ -126,7 +150,6 @@ class HealthRecordCard extends StatelessWidget {
             ),
           ),
 
-          // ── Notes ──
           if (health.notes != null && health.notes!.isNotEmpty)
             Container(
               decoration: BoxDecoration(
@@ -161,6 +184,10 @@ class HealthRecordCard extends StatelessWidget {
     );
   }
 }
+
+
+
+// ── Meta Item ───────────────────────────────────────────────────────────────
 
 class _MetaItem extends StatelessWidget {
   final IconData icon;

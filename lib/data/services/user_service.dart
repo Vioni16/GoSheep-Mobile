@@ -32,4 +32,26 @@ class UserService {
       throw ErrorHandler.handle(e);
     }
   }
+
+  Future<String> requestPasswordReset(String email) async {
+    try {
+      final response = await _dio.post(
+        '/request-password-reset',
+        data: {'email': email},
+      );
+
+      final ApiResponse<dynamic> apiResponse = ApiResponse.fromJson(
+        response.data,
+        (data) => data,
+      );
+
+      if (!apiResponse.success) {
+        throw ApiException(apiResponse.message);
+      }
+
+      return apiResponse.message;
+    } on DioException catch (e) {
+      throw ErrorHandler.handle(e);
+    }
+  }
 }

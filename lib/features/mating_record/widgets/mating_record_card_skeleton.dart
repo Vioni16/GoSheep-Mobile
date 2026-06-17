@@ -23,7 +23,6 @@ class MatingRecordCardSkeleton extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Baris atas: dua chip + badge
               Row(
                 children: [
                   _box(width: 80, height: 26, radius: 20),
@@ -38,7 +37,6 @@ class MatingRecordCardSkeleton extends StatelessWidget {
               _box(width: double.infinity, height: 1, radius: 0),
               const SizedBox(height: 12),
 
-              // Baris bawah: dua info item
               Row(
                 children: [
                   _box(width: 90, height: 12, radius: 4),

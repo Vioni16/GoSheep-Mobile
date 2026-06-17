@@ -11,6 +11,7 @@ import 'package:gosheep_mobile/data/providers/health_record_provider.dart';
 import 'package:gosheep_mobile/features/health_record/widgets/add_health_sheet.dart';
 import 'package:gosheep_mobile/features/health_record/widgets/health_record_card.dart';
 import 'package:gosheep_mobile/features/health_record/widgets/health_overview_card_skeleton.dart';
+import 'package:gosheep_mobile/core/widgets/pagination_loading_footer.dart';
 import 'package:provider/provider.dart';
 
 class HealthRecordScreen extends StatelessWidget {
@@ -300,8 +301,13 @@ class _HealthRecordScreenViewState extends State<_HealthRecordScreenView> {
               onSuccess: (data) => SliverPadding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                 sliver: SliverList.builder(
-                  itemCount: data.length,
-                  itemBuilder: (_, i) => HealthRecordCard(health: data[i]),
+                  itemCount: data.length + 1,
+                  itemBuilder: (_, i) {
+                    if (i == data.length) {
+                      return PaginationLoadingFooter(hasMore: provider.hasMore);
+                    }
+                    return HealthRecordCard(health: data[i]);
+                  },
                 ),
               ),
             ),

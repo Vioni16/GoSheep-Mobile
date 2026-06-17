@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/features/authentication/screens/forgot_password_screen.dart';
 import 'package:gosheep_mobile/features/authentication/screens/login_screen.dart';
 import 'package:gosheep_mobile/features/mating_record/screens/mating_record_screen.dart';
 import 'package:gosheep_mobile/features/cage/screens/cage_screen.dart';
@@ -20,8 +21,11 @@ class AppRoutes {
   static const String healthHistory = '/health-history';
   static const String inactiveSheep = '/inactive-sheep';
 
+  static const String forgotPassword = '/forgot-password';
+
   static Map<String, WidgetBuilder> routes = {
     login: (context) => LoginScreen(),
+    forgotPassword: (context) => const ForgotPasswordScreen(),
     home: (context) => MainNavigation(),
     cage: (context) => CageScreen(),
     breedingHistory: (context) => MatingRecordScreen(),

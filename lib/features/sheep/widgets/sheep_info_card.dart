@@ -4,17 +4,20 @@ class ModernCard extends StatelessWidget {
   final IconData icon;
   final String title;
   final List<Widget> children;
+  final Color? iconColor;
 
   const ModernCard({
     super.key,
     required this.icon,
     required this.title,
     required this.children,
+    this.iconColor,
   });
 
   @override
   Widget build(BuildContext context) {
     final primary = Theme.of(context).colorScheme.primary;
+    final color = iconColor ?? primary;
 
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 14),
@@ -40,16 +43,16 @@ class ModernCard extends StatelessWidget {
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: primary.withValues(alpha: 0.1),
+                    color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(icon, color: primary, size: 18),
+                  child: Icon(icon, color: color, size: 18),
                 ),
                 const SizedBox(width: 10),
                 Text(
                   title,
                   style: TextStyle(
-                    color: primary,
+                    color: color,
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.2,
@@ -70,6 +73,7 @@ class ModernCard extends StatelessWidget {
     );
   }
 }
+
 
 class ModernInfoRow extends StatelessWidget {
   final String label;

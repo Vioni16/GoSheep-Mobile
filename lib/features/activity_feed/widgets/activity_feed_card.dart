@@ -149,6 +149,7 @@ class _CardHeader extends StatelessWidget {
     'weight_record' => 'berat badan',
     'breeding' => 'perkawinan',
     'mating_check' => 'pemeriksaan perkawinan',
+    'pregnancy' => 'kehamilan',
     _ => entity,
   };
 }
@@ -190,7 +191,7 @@ class _PropertiesBlock extends StatelessWidget {
   }
 
   static const Map<String, String> _createdLabels = {
-    'weight': 'Berat',
+    'weight': 'Berat (Kg)',
     'breed': 'Ras',
     'gender': 'Jenis kelamin',
     'cage': 'Kandang',
@@ -202,11 +203,28 @@ class _PropertiesBlock extends StatelessWidget {
     'check_date': 'Tanggal Pemeriksaan',
   };
 
+  String _pregnancyStatus(String status) {
+    switch (status) {
+      case 'ongoing':
+        return 'Bunting';
+      case 'birthed':
+        return 'Melahirkan';
+      case 'miscarried':
+        return 'Keguguran';
+      default:
+        return 'Unknown';
+    }
+  }
+
   static const Map<String, String> _deletedLabels = {
     'breed': 'Ras',
     'gender': 'Jenis kelamin',
     'cage': 'Kandang',
     'eartag': 'Eartag',
+    'condition': 'Kondisi',
+    'category': 'Kategori',
+    'severity': 'Tingkat',
+    'notes': 'Catatan',
   };
 
   List<Widget> _createdRows(CreatedProperties p) {
@@ -252,9 +270,18 @@ class _PropertiesBlock extends StatelessWidget {
       'severity' => value.capitalizeFirst,
       'category' => SheepStatusUtil.healthCategoryLabel(value),
       'result' => MatingResult.fromString(value).label,
-      'check_date' => FormatHelper.formatDate(DateTime.parse(value)),
+      'check_date' => _parseDate(value),
+      'status' => _pregnancyStatus(value),
+      'expected_birth_date' => _parseDate(value),
+      'end_date' => _parseDate(value),
       _ => value,
     };
+  }
+
+  /// Safely parse a date string — returns formatted date or original value if invalid/null.
+  String _parseDate(String value) {
+    final date = DateTime.tryParse(value);
+    return date != null ? FormatHelper.formatDate(date) : value;
   }
 }
 
@@ -283,6 +310,8 @@ class _KVRow extends StatelessWidget {
               fontWeight: FontWeight.w600,
               color: Color(0xFF2D3132),
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],
@@ -303,7 +332,7 @@ class _KVChangeRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(
           width: 80,
@@ -312,30 +341,42 @@ class _KVChangeRow extends StatelessWidget {
             style: const TextStyle(fontSize: 11, color: Colors.black38),
           ),
         ),
-        Text(
-          from,
-          style: const TextStyle(
-            fontSize: 11,
-            color: Colors.black38,
-            decoration: TextDecoration.lineThrough,
-          ),
-        ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 5),
-          child: Icon(
-            Icons.arrow_forward_rounded,
-            size: 11,
-            color: Colors.black26,
-          ),
-        ),
         Expanded(
-          child: Text(
-            to,
-            style: const TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF2D3132),
-            ),
+          child: Row(
+            children: [
+              Flexible(
+                child: Text(
+                  from,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: Colors.black38,
+                    decoration: TextDecoration.lineThrough,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 5),
+                child: Icon(
+                  Icons.arrow_forward_rounded,
+                  size: 11,
+                  color: Colors.black26,
+                ),
+              ),
+              Flexible(
+                child: Text(
+                  to,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF2D3132),
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -353,6 +394,7 @@ class _EntityBadge extends StatelessWidget {
     'weight_record' => 'Berat badan',
     'breeding' => 'Perkawinan',
     'mating_check' => 'Pemeriksaan perkawinan',
+    'pregnancy' => 'Kehamilan',
     _ => activity.entity,
   };
 

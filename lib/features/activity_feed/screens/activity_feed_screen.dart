@@ -4,15 +4,16 @@ import 'package:gosheep_mobile/core/widgets/app_refresh_indicator.dart';
 import 'package:gosheep_mobile/core/widgets/async_state_sliver.dart';
 import 'package:gosheep_mobile/core/widgets/empty_data.dart';
 import 'package:gosheep_mobile/core/widgets/no_connection.dart';
+import 'package:gosheep_mobile/core/widgets/pagination_loading_footer.dart';
 import 'package:gosheep_mobile/core/widgets/toast_widget.dart';
 import 'package:gosheep_mobile/data/models/activity_feed.dart';
 import 'package:gosheep_mobile/data/providers/activity_feed_provider.dart';
 import 'package:gosheep_mobile/features/activity_feed/widgets/activity_feed_card.dart';
 import 'package:gosheep_mobile/features/health_record/screens/health_record_screen.dart';
 import 'package:gosheep_mobile/features/sheep/screens/sheep_detail_screen.dart';
-import 'package:gosheep_mobile/data/providers/mating_check_provider.dart';
 import 'package:gosheep_mobile/data/services/mating_record_service.dart';
-import 'package:gosheep_mobile/features/mating_record/widgets/mating_check_sheet.dart';
+import 'package:gosheep_mobile/features/mating_record/screens/mating_check_screen.dart';
+import 'package:gosheep_mobile/features/weight_record/screens/weight_record_screen.dart';
 import 'package:provider/provider.dart';
 
 class ActivityFeedScreen extends StatelessWidget {
@@ -101,6 +102,31 @@ class _ActivityFeedScreenViewState extends State<_ActivityFeedScreenView> {
           ),
         );
 
+      case 'weight_record':
+        final props = activity.properties;
+        final sheepId = props is CreatedProperties
+            ? int.tryParse(props.get('sheep_id') ?? '')
+            : null;
+        final eartag = props is CreatedProperties
+            ? (props.get('sheep_eartag') ?? '-')
+            : '-';
+        final gender = props is CreatedProperties
+            ? (props.get('sheep_gender') ?? '-')
+            : '-';
+
+        if (sheepId == null) return;
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => WeightRecordScreen(
+              sheepId: sheepId,
+              earTag: eartag,
+              gender: gender,
+            ),
+          ),
+        );
+
       case 'mating_check':
         final props = activity.properties;
         final matingRecordId = props is CreatedProperties
@@ -121,14 +147,15 @@ class _ActivityFeedScreenViewState extends State<_ActivityFeedScreenView> {
           if (!mounted) return;
           Navigator.pop(context);
 
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            backgroundColor: Colors.transparent,
-            builder: (_) => ChangeNotifierProvider(
-              create: (_) =>
-                  MatingCheckProvider(matingRecord.id)..fetchMatingChecks(),
-              child: MatingCheckSheet(matingRecord: matingRecord),
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => MatingCheckScreen(
+                matingRecordId: matingRecord.id,
+                ramEarTag: matingRecord.ramEarTag,
+                eweEarTag: matingRecord.eweEarTag,
+                result: matingRecord.result,
+              ),
             ),
           );
         } catch (e) {
@@ -246,8 +273,13 @@ class _ActivityFeedScreenViewState extends State<_ActivityFeedScreenView> {
                 return SliverPadding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                   sliver: SliverList.builder(
-                    itemCount: dateKeys.length,
+                    itemCount: dateKeys.length + 1,
                     itemBuilder: (_, i) {
+                      if (i == dateKeys.length) {
+                        return PaginationLoadingFooter(
+                          hasMore: provider.hasMore,
+                        );
+                      }
                       final key = dateKeys[i];
                       final items = grouped[key]!;
                       return Column(

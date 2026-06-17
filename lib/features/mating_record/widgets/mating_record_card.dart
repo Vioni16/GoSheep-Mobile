@@ -4,9 +4,8 @@ import 'package:gosheep_mobile/core/utils/format_helper.dart';
 import 'package:gosheep_mobile/core/widgets/gender_badge.dart';
 import 'package:gosheep_mobile/core/widgets/sheep_chip.dart';
 import 'package:gosheep_mobile/data/models/mating_record.dart';
-import 'package:gosheep_mobile/data/providers/mating_check_provider.dart';
 import 'package:gosheep_mobile/data/providers/mating_record_provider.dart';
-import 'package:gosheep_mobile/features/mating_record/widgets/mating_check_sheet.dart';
+import 'package:gosheep_mobile/features/mating_record/screens/mating_check_screen.dart';
 import 'package:gosheep_mobile/features/mating_record/widgets/mating_partners_sheet.dart';
 
 import 'package:provider/provider.dart';
@@ -16,24 +15,34 @@ class MatingRecordCard extends StatelessWidget {
 
   const MatingRecordCard({super.key, required this.matingRecord});
 
-  void _openCheckSheet(BuildContext context) {
-    final matingRecordProvider = Provider.of<MatingRecordProvider>(context, listen: false);
+  void _openCheckScreen(BuildContext context) {
+    MatingRecordProvider? matingRecordProvider;
+    try {
+      matingRecordProvider = Provider.of<MatingRecordProvider>(context, listen: false);
+    } catch (_) {}
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => MultiProvider(
-        providers: [
-          ChangeNotifierProvider(
-            create: (_) =>
-                MatingCheckProvider(matingRecord.id)..fetchMatingChecks(),
-          ),
-          ChangeNotifierProvider.value(
-            value: matingRecordProvider,
-          ),
-        ],
-        child: MatingCheckSheet(matingRecord: matingRecord),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) {
+          if (matingRecordProvider != null) {
+            return ChangeNotifierProvider.value(
+              value: matingRecordProvider,
+              child: MatingCheckScreen(
+                matingRecordId: matingRecord.id,
+                ramEarTag: matingRecord.ramEarTag,
+                eweEarTag: matingRecord.eweEarTag,
+                result: matingRecord.result,
+              ),
+            );
+          }
+          return MatingCheckScreen(
+            matingRecordId: matingRecord.id,
+            ramEarTag: matingRecord.ramEarTag,
+            eweEarTag: matingRecord.eweEarTag,
+            result: matingRecord.result,
+          );
+        },
       ),
     );
   }
@@ -47,7 +56,7 @@ class MatingRecordCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         elevation: 0,
         child: InkWell(
-          onTap: () => _openCheckSheet(context),
+          onTap: () => _openCheckScreen(context),
           borderRadius: BorderRadius.circular(12),
           child: Container(
             padding: const EdgeInsets.all(14),

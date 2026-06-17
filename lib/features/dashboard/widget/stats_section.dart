@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/core/widgets/marquee_text.dart';
 import 'package:gosheep_mobile/data/models/statistics/overview_stats.dart';
 
 class StatsSection extends StatelessWidget {
@@ -118,14 +119,12 @@ class _StatCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 2),
-                Text(
-                  item.title,
+                MarqueeText(
+                  text: item.title,
                   style: TextStyle(
                     fontSize: 11,
                     color: scheme.onSurfaceVariant,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),

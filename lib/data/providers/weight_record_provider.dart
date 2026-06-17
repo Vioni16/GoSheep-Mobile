@@ -97,6 +97,41 @@ class WeightRecordProvider with ChangeNotifier {
     }
   }
 
+  Future<bool> updateWeightRecord({
+    required int recordId,
+    required double weight,
+  }) async {
+    if (_isCreating) return false;
+
+    _isCreating = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final response = await _service.updateWeightRecord(
+        recordId: recordId,
+        weight: weight,
+      );
+
+      final index = _weightRecords.indexWhere((r) => r.id == recordId);
+      if (index != -1 && response.data != null) {
+        _weightRecords[index] = response.data!;
+      }
+
+      _message = response.message;
+      return true;
+    } on ApiException catch (e) {
+      _error = e.message;
+      return false;
+    } catch (e) {
+      _error = e.toString();
+      return false;
+    } finally {
+      _isCreating = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> refresh() async {
     await fetchInitial();
   }
