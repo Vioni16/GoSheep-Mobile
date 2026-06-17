@@ -43,6 +43,8 @@ class UpdatedProperties extends ActivityProperties {
       'severity': 'Tingkat',
       'category': 'Kategori',
       'notes': 'Catatan',
+      'result': 'Hasil',
+      'check_date': 'Tanggal Pemeriksaan',
     };
     return labels[key] ?? key;
   }

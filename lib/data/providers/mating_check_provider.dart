@@ -54,6 +54,7 @@ class MatingCheckProvider with ChangeNotifier {
     required String checkDate,
     required String result,
     String? notes,
+    String? expectedBirthDate,
   }) async {
     if (_isCreating) return false;
 
@@ -68,6 +69,7 @@ class MatingCheckProvider with ChangeNotifier {
         checkDate: checkDate,
         result: result,
         notes: notes,
+        expectedBirthDate: expectedBirthDate,
       );
 
       _matingChecks.insert(0, response.data!);
@@ -99,5 +101,58 @@ class MatingCheckProvider with ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  Future<bool> updateMatingCheck({
+    required int matingCheckId,
+    required String checkDate,
+    required String result,
+    String? notes,
+    String? expectedBirthDate,
+  }) async {
+    if (_isCreating) return false;
+
+    _isCreating = true;
+    _error = null;
+    _validationError = null;
+    notifyListeners();
+
+    try {
+      final response = await _service.updateMatingCheck(
+        matingCheckId: matingCheckId,
+        checkDate: checkDate,
+        result: result,
+        notes: notes,
+        expectedBirthDate: expectedBirthDate,
+      );
+
+      final updatedCheck = response.data!;
+      final index = _matingChecks.indexWhere((c) => c.id == matingCheckId);
+      if (index != -1) {
+        _matingChecks[index] = updatedCheck;
+        _matingChecks.sort((a, b) {
+          int cmp = b.checkDate.compareTo(a.checkDate);
+          if (cmp == 0) {
+            return b.id.compareTo(a.id);
+          }
+          return cmp;
+        });
+      }
+      _message = response.message;
+
+      return true;
+    } on ValidationException catch (e) {
+      _validationError = e;
+      return false;
+    } on ApiException catch (e) {
+      _error = e.message;
+      return false;
+    } catch (e) {
+      _error = e.toString();
+      return false;
+    } finally {
+      _isCreating = false;
+      notifyListeners();
+    }
   }
 }

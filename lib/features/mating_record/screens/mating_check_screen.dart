@@ -10,6 +10,7 @@ import 'package:gosheep_mobile/data/models/mating_check.dart';
 import 'package:gosheep_mobile/data/providers/mating_check_provider.dart';
 import 'package:gosheep_mobile/data/providers/mating_record_provider.dart';
 import 'package:gosheep_mobile/features/mating_record/widgets/add_mating_check_sheet.dart';
+import 'package:gosheep_mobile/features/mating_record/widgets/edit_mating_check_sheet.dart';
 import 'package:gosheep_mobile/features/mating_record/widgets/mating_check_card_skeleton.dart';
 import 'package:provider/provider.dart';
 
@@ -82,6 +83,33 @@ class _MatingCheckScreenViewState extends State<_MatingCheckScreenView> {
     );
   }
 
+  void _openEditSheet(MatingCheck check, MatingResult currentResult) {
+    final matingCheckProvider = context.read<MatingCheckProvider>();
+
+    MatingRecordProvider? matingRecordProvider;
+    try {
+      matingRecordProvider = context.read<MatingRecordProvider>();
+    } catch (_) {}
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: matingCheckProvider),
+          if (matingRecordProvider != null)
+            ChangeNotifierProvider.value(value: matingRecordProvider),
+        ],
+        child: EditMatingCheckSheet(
+          matingRecordId: widget.matingRecordId,
+          matingCheck: check,
+          currentResult: currentResult,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<MatingCheckProvider>();
@@ -146,35 +174,36 @@ class _MatingCheckScreenViewState extends State<_MatingCheckScreenView> {
                         ],
                       ),
                     ),
-                    Material(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(20),
-                      child: InkWell(
-                        onTap: _openAddSheet,
+                    if (currentResult == MatingResult.unknown)
+                      Material(
+                        color: Colors.black,
                         borderRadius: BorderRadius.circular(20),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 10,
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.add, color: Colors.white, size: 16),
-                              SizedBox(width: 6),
-                              Text(
-                                'Pemeriksaan',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
+                        child: InkWell(
+                          onTap: _openAddSheet,
+                          borderRadius: BorderRadius.circular(20),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 10,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.add, color: Colors.white, size: 16),
+                                SizedBox(width: 6),
+                                Text(
+                                  'Pemeriksaan',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),
@@ -326,12 +355,31 @@ class _MatingCheckScreenViewState extends State<_MatingCheckScreenView> {
                                 ],
                               ),
                             ),
-                            Text(
-                              FormatHelper.timeAgo(check.createdAt),
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Colors.grey.shade400,
-                              ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  FormatHelper.timeAgo(check.createdAt),
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.grey.shade400,
+                                  ),
+                                ),
+                                if (index == 0) ...[
+                                  const SizedBox(height: 6),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.edit_outlined,
+                                      size: 18,
+                                      color: Colors.grey.shade500,
+                                    ),
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(),
+                                    onPressed: () =>
+                                        _openEditSheet(check, currentResult),
+                                  ),
+                                ],
+                              ],
                             ),
                           ],
                         ),

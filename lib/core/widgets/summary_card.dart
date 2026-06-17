@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/core/widgets/summary_card_skeleton.dart';
+import 'package:gosheep_mobile/core/widgets/marquee_text.dart';
 
 class SummaryCard extends StatelessWidget {
   final String label, value;
@@ -55,9 +56,8 @@ class SummaryCard extends StatelessWidget {
             const SizedBox(height: 6), 
           ],
 
-          Text(
-            label,
-            textAlign: TextAlign.center, 
+          MarqueeText(
+            text: label,
             style: const TextStyle(
               fontSize: 12,
               color: Colors.black54,

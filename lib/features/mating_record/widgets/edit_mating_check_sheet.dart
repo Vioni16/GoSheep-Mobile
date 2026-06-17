@@ -3,26 +3,50 @@ import 'package:gosheep_mobile/core/constants/form_options.dart';
 import 'package:gosheep_mobile/core/enums/mating_result_enum.dart';
 import 'package:gosheep_mobile/core/widgets/custom_textfield.dart';
 import 'package:gosheep_mobile/core/widgets/toast_widget.dart';
+import 'package:gosheep_mobile/data/models/mating_check.dart';
 import 'package:gosheep_mobile/data/providers/mating_check_provider.dart';
 import 'package:gosheep_mobile/data/providers/mating_record_provider.dart';
 import 'package:provider/provider.dart';
 
-class AddMatingCheckSheet extends StatefulWidget {
+class EditMatingCheckSheet extends StatefulWidget {
   final int matingRecordId;
+  final MatingCheck matingCheck;
+  final MatingResult currentResult;
 
-  const AddMatingCheckSheet({super.key, required this.matingRecordId});
+  const EditMatingCheckSheet({
+    super.key,
+    required this.matingRecordId,
+    required this.matingCheck,
+    required this.currentResult,
+  });
 
   @override
-  State<AddMatingCheckSheet> createState() => _AddMatingCheckSheetState();
+  State<EditMatingCheckSheet> createState() => _EditMatingCheckSheetState();
 }
 
-class _AddMatingCheckSheetState extends State<AddMatingCheckSheet> {
+class _EditMatingCheckSheetState extends State<EditMatingCheckSheet> {
   final _formKey = GlobalKey<FormState>();
-  final _notes = TextEditingController();
+  late final TextEditingController _notes;
 
   DateTime? _checkDate;
   DateTime? _expectedBirthDate;
   String? _selectedResult;
+
+  @override
+  void initState() {
+    super.initState();
+    _notes = TextEditingController(text: widget.matingCheck.notes ?? '');
+    _checkDate = widget.matingCheck.checkDate;
+    _expectedBirthDate = widget.matingCheck.expectedBirthDate;
+
+    final apiValue = widget.currentResult.toApiValue();
+    _selectedResult = FormOptions.matingCheckResults.entries
+        .firstWhere(
+          (entry) => entry.value == apiValue,
+          orElse: () => FormOptions.matingCheckResults.entries.first,
+        )
+        .key;
+  }
 
   @override
   void dispose() {
@@ -37,7 +61,7 @@ class _AddMatingCheckSheetState extends State<AddMatingCheckSheet> {
       context: context,
       firstDate: DateTime(2020),
       lastDate: DateTime.now(),
-      initialDate: DateTime.now(),
+      initialDate: _checkDate ?? DateTime.now(),
     );
 
     if (picked != null && mounted) {
@@ -49,28 +73,56 @@ class _AddMatingCheckSheetState extends State<AddMatingCheckSheet> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final provider = context.read<MatingCheckProvider>();
-    final resultValue = FormOptions.matingCheckResults[_selectedResult]!;
+    final targetResult = FormOptions.matingCheckResults[_selectedResult]!;
+    final targetNotes = _notes.text.trim().isEmpty ? null : _notes.text.trim();
+    final targetDate = _checkDate!;
 
-    final success = await provider.createMatingCheck(
-      checkDate: _checkDate!.toIso8601String().split('T')[0],
-      result: resultValue,
-      notes: _notes.text.trim().isEmpty ? null : _notes.text.trim(),
-      expectedBirthDate: resultValue == 'pregnant' && _expectedBirthDate != null
-          ? _expectedBirthDate!.toIso8601String().split('T')[0]
-          : null,
+    final originalApiResult = widget.currentResult.toApiValue();
+    final originalNotes = widget.matingCheck.notes;
+    final originalDate = widget.matingCheck.checkDate;
+
+    final originalDateStr = originalDate.toIso8601String().split('T')[0];
+    final targetDateStr = targetDate.toIso8601String().split('T')[0];
+
+    final originalExpectedBirthDateStr = widget.matingCheck.expectedBirthDate
+        ?.toIso8601String()
+        .split('T')[0];
+    final targetExpectedBirthDateStr =
+        targetResult == 'pregnant' && _expectedBirthDate != null
+        ? _expectedBirthDate!.toIso8601String().split('T')[0]
+        : null;
+
+    if (originalApiResult == targetResult &&
+        originalNotes == targetNotes &&
+        originalDateStr == targetDateStr &&
+        originalExpectedBirthDateStr == targetExpectedBirthDateStr) {
+      ToastService.show(
+        context,
+        'Tidak ada perubahan data untuk disimpan.',
+        title: 'Info',
+        type: ToastType.warning,
+      );
+      return;
+    }
+
+    final provider = context.read<MatingCheckProvider>();
+
+    final success = await provider.updateMatingCheck(
+      matingCheckId: widget.matingCheck.id,
+      checkDate: targetDateStr,
+      result: targetResult,
+      notes: targetNotes,
+      expectedBirthDate: targetExpectedBirthDateStr,
     );
 
     if (!mounted) return;
 
     if (success) {
       try {
-        final resultValue =
-            FormOptions.matingCheckResults[_selectedResult]!;
         context.read<MatingRecordProvider>().updateResult(
-              widget.matingRecordId,
-              MatingResult.fromString(resultValue),
-            );
+          widget.matingRecordId,
+          MatingResult.fromString(targetResult),
+        );
       } catch (_) {}
 
       Navigator.pop(context);
@@ -94,7 +146,7 @@ class _AddMatingCheckSheetState extends State<AddMatingCheckSheet> {
 
     ToastService.show(
       context,
-      provider.error ?? 'Gagal menambah pemeriksaan',
+      provider.error ?? 'Gagal memperbarui pemeriksaan',
       title: 'Gagal!',
       type: ToastType.error,
     );
@@ -130,9 +182,7 @@ class _AddMatingCheckSheetState extends State<AddMatingCheckSheet> {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-
             const Divider(height: 1),
-
             Flexible(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
@@ -145,7 +195,7 @@ class _AddMatingCheckSheetState extends State<AddMatingCheckSheet> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Tambah Pemeriksaan',
+                            'Edit Pemeriksaan',
                             style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.bold,
@@ -153,23 +203,18 @@ class _AddMatingCheckSheetState extends State<AddMatingCheckSheet> {
                           ),
                           SizedBox(height: 2),
                           Text(
-                            'Catat hasil pemeriksaan kawin',
-                            style:
-                                TextStyle(fontSize: 12, color: Colors.grey),
+                            'Ubah hasil pemeriksaan kawin',
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
                           ),
                         ],
                       ),
-
                       const SizedBox(height: 20),
-
                       _dateField(
-                        context
-                            .read<MatingCheckProvider>()
-                            .fieldError('check_date'),
+                        context.read<MatingCheckProvider>().fieldError(
+                          'check_date',
+                        ),
                       ),
-
                       const SizedBox(height: 16),
-
                       _resultField(),
 
                       if (_selectedResult != null &&
@@ -177,23 +222,20 @@ class _AddMatingCheckSheetState extends State<AddMatingCheckSheet> {
                               'pregnant') ...[
                         const SizedBox(height: 16),
                         _expectedBirthDateField(
-                          context
-                              .read<MatingCheckProvider>()
-                              .fieldError('expected_birth_date'),
+                          context.read<MatingCheckProvider>().fieldError(
+                            'expected_birth_date',
+                          ),
                         ),
                       ],
 
                       const SizedBox(height: 16),
-
                       CustomTextFormField(
                         label: 'Catatan',
                         hint: 'Opsional',
                         icon: Icons.notes,
                         controller: _notes,
                       ),
-
                       const SizedBox(height: 24),
-
                       _submitButton(),
                     ],
                   ),
@@ -326,8 +368,7 @@ class _AddMatingCheckSheetState extends State<AddMatingCheckSheet> {
                             ? Icons.radio_button_checked
                             : Icons.radio_button_off,
                         size: 20,
-                        color:
-                            isSelected ? result.color : Colors.grey.shade400,
+                        color: isSelected ? result.color : Colors.grey.shade400,
                       ),
                       const SizedBox(width: 10),
                       Icon(result.icon, size: 16, color: result.color),
@@ -376,7 +417,7 @@ class _AddMatingCheckSheetState extends State<AddMatingCheckSheet> {
             )
           : const Icon(Icons.save_alt_rounded, size: 14),
       label: Text(
-        isCreating ? 'Menyimpan...' : 'Simpan',
+        isCreating ? 'Menyimpan...' : 'Simpan Perubahan',
         style: const TextStyle(color: Colors.white),
       ),
       style: ElevatedButton.styleFrom(
@@ -410,12 +451,14 @@ class _AddMatingCheckSheetState extends State<AddMatingCheckSheet> {
                   context: context,
                   firstDate: DateTime.now().subtract(const Duration(days: 30)),
                   lastDate: DateTime.now().add(const Duration(days: 200)),
-                  initialDate: _expectedBirthDate ?? DateTime.now().add(const Duration(days: 147)),
+                  initialDate:
+                      _expectedBirthDate ??
+                      DateTime.now().add(const Duration(days: 147)),
                 );
                 if (picked != null && mounted) {
-                  context
-                      .read<MatingCheckProvider>()
-                      .clearValidationError('expected_birth_date');
+                  context.read<MatingCheckProvider>().clearValidationError(
+                    'expected_birth_date',
+                  );
                   setState(() => _expectedBirthDate = picked);
                   field.didChange(_expectedBirthDate);
                 }
