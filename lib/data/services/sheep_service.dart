@@ -43,6 +43,44 @@ class SheepService {
     }
   }
 
+  Future<CursorResponse<Sheep>> getInactiveSheep({
+  int? lastId,
+  int limit = 10,
+  String? search,
+  }) async {
+    try {
+      final queryParams = <String, dynamic>{
+        'limit': limit,
+      };
+
+      if (lastId != null) {
+        queryParams['last_id'] = lastId;
+      }
+
+      if (search != null && search.isNotEmpty) {
+        queryParams['search'] = search;
+      }
+
+      final response = await _dio.get(
+        '/sheep/inactive',
+        queryParameters: queryParams,
+      );
+
+      final result = CursorResponse<Sheep>.fromJson(
+        response.data,
+        (e) => Sheep.fromJson(e),
+      );
+
+      if (!result.success) {
+        throw ApiException(result.message);
+      }
+
+      return result;
+    } on DioException catch (e) {
+      throw ErrorHandler.handle(e);
+    }
+  }
+
   Future<SheepDetail> getSheepDetails(int sheepId) async {
     try {
       final response = await _dio.get('/sheep/$sheepId');
