@@ -45,6 +45,9 @@ class UpdatedProperties extends ActivityProperties {
       'notes': 'Catatan',
       'result': 'Hasil',
       'check_date': 'Tanggal Pemeriksaan',
+      'expected_birth_date': 'Tanggal Perkiraan Lahir',
+      'end_date': 'Tanggal Selesai',
+      'status': 'Status',
     };
     return labels[key] ?? key;
   }

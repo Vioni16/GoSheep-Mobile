@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/data/exceptions/api_exception.dart';
 import 'package:gosheep_mobile/data/models/pregnancy.dart';
 import 'package:gosheep_mobile/data/models/statistics/pregnancy_stats.dart';
 import 'package:gosheep_mobile/data/services/pregnant_sheep_service.dart';
@@ -19,6 +20,9 @@ class PregnantSheepProvider with ChangeNotifier {
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+
+  bool _isUpdating = false;
+  bool get isUpdating => _isUpdating;
 
   bool _isStatsLoading = false;
   bool get isStatsLoading => _isStatsLoading;
@@ -107,9 +111,51 @@ class PregnantSheepProvider with ChangeNotifier {
   }
 
   Future<void> refresh() async {
-    await Future.wait([
-      fetchInitial(forceRefresh: true),
-      fetchSummary(),
-    ]);
+    await Future.wait([fetchInitial(forceRefresh: true), fetchSummary()]);
+  }
+
+  Future<bool> updatePregnancy(
+    int id, {
+    required String expectedBirthDate,
+    required String status,
+    String? endDate,
+    String? notes,
+    int? totalLambs,
+    String? birthNotes,
+  }) async {
+    if (_isUpdating) return false;
+
+    _isUpdating = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final updated = await _service.updatePregnancy(
+        id,
+        expectedBirthDate: expectedBirthDate,
+        status: status,
+        endDate: endDate,
+        notes: notes,
+        totalLambs: totalLambs,
+        birthNotes: birthNotes,
+      );
+
+      final index = _pregnancies.indexWhere((p) => p.id == id);
+      if (index != -1) {
+        _pregnancies[index] = updated;
+      }
+
+      await fetchSummary();
+      return true;
+    } on ApiException catch (e) {
+      _error = e.message;
+      return false;
+    } catch (e) {
+      _error = e.toString();
+      return false;
+    } finally {
+      _isUpdating = false;
+      notifyListeners();
+    }
   }
 }

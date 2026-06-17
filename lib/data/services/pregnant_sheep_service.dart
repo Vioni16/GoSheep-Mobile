@@ -64,4 +64,53 @@ class PregnantSheepService {
       throw ErrorHandler.handle(e);
     }
   }
+
+  Future<Pregnancy> updatePregnancy(
+    int id, {
+    required String expectedBirthDate,
+    required String status,
+    String? endDate,
+    String? notes,
+    int? totalLambs,
+    String? birthNotes,
+  }) async {
+    try {
+      final data = <String, dynamic>{
+        'expected_birth_date': expectedBirthDate,
+        'status': status,
+        'notes': notes,
+      };
+
+      if (endDate != null) {
+        data['end_date'] = endDate;
+      }
+
+      if (totalLambs != null) {
+        data['total_lambs'] = totalLambs;
+      }
+
+      if (birthNotes != null && birthNotes.isNotEmpty) {
+        data['birth_notes'] = birthNotes;
+      }
+
+      final response = await _dio.put(
+        '/sheep-pregnancies/$id',
+        data: data,
+      );
+
+      final apiResponse = ApiResponse<Pregnancy>.fromJson(
+        response.data,
+        (data) => Pregnancy.fromJson(data),
+      );
+
+      if (!apiResponse.success) {
+        throw ApiException(apiResponse.message);
+      }
+
+      return apiResponse.data!;
+    } on DioException catch (e) {
+      throw ErrorHandler.handle(e);
+    }
+  }
 }
+
