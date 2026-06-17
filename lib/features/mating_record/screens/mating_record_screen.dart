@@ -10,6 +10,7 @@ import 'package:gosheep_mobile/core/widgets/gender_badge.dart';
 import 'package:gosheep_mobile/core/widgets/no_connection.dart';
 import 'package:gosheep_mobile/core/widgets/summary_card.dart';
 import 'package:gosheep_mobile/data/models/mating_record.dart';
+import 'package:gosheep_mobile/core/widgets/pagination_loading_footer.dart';
 import 'package:gosheep_mobile/data/providers/mating_record_provider.dart';
 import 'package:gosheep_mobile/data/providers/statistic_provider.dart';
 import 'package:gosheep_mobile/features/mating_record/widgets/mating_record_card.dart';
@@ -94,7 +95,6 @@ class _MatingRecordViewState extends State<_MatingRecordView> {
 
     if (pos.maxScrollExtent == 0) return;
     if (provider.error?.isNotEmpty == true) return;
-    if (provider.message.isEmpty) return;
 
     if (pos.pixels >= pos.maxScrollExtent - 200) {
       provider.fetchMore();
@@ -390,11 +390,15 @@ class _MatingRecordViewState extends State<_MatingRecordView> {
                   ),
                 ),
                 onSuccess: (data) => SliverPadding(
-                  padding: EdgeInsets.fromLTRB(16, 0, 16, 24),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                   sliver: SliverList.builder(
-                    itemBuilder: (_, index) =>
-                        MatingRecordCard(matingRecord: data[index]),
-                    itemCount: data.length,
+                    itemBuilder: (_, index) {
+                      if (index == data.length) {
+                        return PaginationLoadingFooter(hasMore: provider.hasMore);
+                      }
+                      return MatingRecordCard(matingRecord: data[index]);
+                    },
+                    itemCount: data.length + 1,
                   ),
                 ),
               ),

@@ -4,6 +4,7 @@ import 'package:gosheep_mobile/core/widgets/app_refresh_indicator.dart';
 import 'package:gosheep_mobile/core/widgets/async_state_sliver.dart';
 import 'package:gosheep_mobile/core/widgets/empty_data.dart';
 import 'package:gosheep_mobile/core/widgets/no_connection.dart';
+import 'package:gosheep_mobile/core/widgets/pagination_loading_footer.dart';
 import 'package:gosheep_mobile/core/widgets/toast_widget.dart';
 import 'package:gosheep_mobile/data/models/activity_feed.dart';
 import 'package:gosheep_mobile/data/providers/activity_feed_provider.dart';
@@ -246,8 +247,13 @@ class _ActivityFeedScreenViewState extends State<_ActivityFeedScreenView> {
                 return SliverPadding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                   sliver: SliverList.builder(
-                    itemCount: dateKeys.length,
+                    itemCount: dateKeys.length + 1,
                     itemBuilder: (_, i) {
+                      if (i == dateKeys.length) {
+                        return PaginationLoadingFooter(
+                          hasMore: provider.hasMore,
+                        );
+                      }
                       final key = dateKeys[i];
                       final items = grouped[key]!;
                       return Column(

@@ -21,6 +21,7 @@ import 'package:gosheep_mobile/core/widgets/summary_card.dart';
 import '../../../data/models/sheep.dart';
 import '../../../data/providers/sheep_provider.dart';
 import '../widgets/sheep_card_skeleton.dart';
+import 'package:gosheep_mobile/core/widgets/pagination_loading_footer.dart';
 
 class SheepScreen extends StatelessWidget {
   const SheepScreen({super.key});
@@ -408,25 +409,30 @@ class _SheepScreenViewState extends State<_SheepScreenView> {
               onSuccess: (data) => SliverPadding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                 sliver: SliverList.builder(
-                  itemBuilder: (_, index) => SheepCard(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => SheepDetailScreen(
-                          id: data[index].id,
-                          initialData: data[index],
+                  itemBuilder: (_, index) {
+                    if (index == data.length) {
+                      return PaginationLoadingFooter(hasMore: provider.hasMore);
+                    }
+                    return SheepCard(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => SheepDetailScreen(
+                            id: data[index].id,
+                            initialData: data[index],
+                          ),
                         ),
                       ),
-                    ),
-                    sheep: data[index],
-                    showEnvironmentStatus: _filter == 'stress_monitor',
-                    onConfirmDelete: (context) => _handleConfirmDelete(
-                      context,
-                      data[index].id,
-                      data[index].earTag,
-                    ),
-                  ),
-                  itemCount: data.length,
+                      sheep: data[index],
+                      showEnvironmentStatus: _filter == 'stress_monitor',
+                      onConfirmDelete: (context) => _handleConfirmDelete(
+                        context,
+                        data[index].id,
+                        data[index].earTag,
+                      ),
+                    );
+                  },
+                  itemCount: data.length + 1,
                 ),
               ),
             ),

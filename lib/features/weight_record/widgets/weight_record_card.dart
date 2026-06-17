@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gosheep_mobile/core/theme/theme.dart';
 import 'package:gosheep_mobile/core/utils/format_helper.dart';
 import 'package:gosheep_mobile/data/models/weight.dart';
 
@@ -46,14 +47,9 @@ class WeightRecordCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.primary.withValues(alpha: 0.08),
+                    color: AppTheme.cream,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(

@@ -12,6 +12,7 @@ import 'package:gosheep_mobile/data/models/pregnancy.dart';
 import 'package:gosheep_mobile/data/providers/pregnant_sheep_provider.dart';
 import 'package:gosheep_mobile/features/pregnancy_monitoring/widgets/pregnancy_monitoring_card.dart';
 import 'package:gosheep_mobile/features/pregnancy_monitoring/widgets/pregnancy_monitoring_card_skeleton.dart';
+import 'package:gosheep_mobile/core/widgets/pagination_loading_footer.dart';
 import 'package:provider/provider.dart';
 
 class PregnancyMonitoringScreen extends StatelessWidget {
@@ -312,9 +313,13 @@ class _PregnancyMonitoringViewState extends State<_PregnancyMonitoringView> {
                 onSuccess: (data) => SliverPadding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                   sliver: SliverList.builder(
-                    itemCount: data.length,
-                    itemBuilder: (_, index) =>
-                        PregnancyMonitoringCard(pregnancy: data[index]),
+                    itemCount: data.length + 1,
+                    itemBuilder: (_, index) {
+                      if (index == data.length) {
+                        return PaginationLoadingFooter(hasMore: provider.hasMore);
+                      }
+                      return PregnancyMonitoringCard(pregnancy: data[index]);
+                    },
                   ),
                 ),
               ),

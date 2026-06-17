@@ -12,6 +12,7 @@ import 'package:gosheep_mobile/data/providers/weight_record_provider.dart';
 import 'package:gosheep_mobile/features/health_record/widgets/health_overview_card_skeleton.dart';
 import 'package:gosheep_mobile/features/weight_record/widgets/weight_chart_card.dart';
 import 'package:gosheep_mobile/features/weight_record/widgets/weight_record_card.dart';
+import 'package:gosheep_mobile/core/widgets/pagination_loading_footer.dart';
 import 'package:provider/provider.dart';
 
 class WeightRecordScreen extends StatelessWidget {
@@ -358,8 +359,13 @@ class _WeightRecordScreenViewState extends State<_WeightRecordScreenView> {
               onSuccess: (data) => SliverPadding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                 sliver: SliverList.builder(
-                  itemCount: data.length,
-                  itemBuilder: (_, i) => WeightRecordCard(weight: data[i]),
+                  itemCount: data.length + 1,
+                  itemBuilder: (_, i) {
+                    if (i == data.length) {
+                      return PaginationLoadingFooter(hasMore: provider.hasMore);
+                    }
+                    return WeightRecordCard(weight: data[i]);
+                  },
                 ),
               ),
             ),
