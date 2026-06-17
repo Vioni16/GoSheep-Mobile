@@ -42,6 +42,7 @@ class UpdatedProperties extends ActivityProperties {
       'condition': 'Kondisi',
       'severity': 'Tingkat',
       'category': 'Kategori',
+      'notes': 'Catatan',
     };
     return labels[key] ?? key;
   }

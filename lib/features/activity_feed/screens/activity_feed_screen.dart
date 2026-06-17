@@ -13,6 +13,7 @@ import 'package:gosheep_mobile/features/health_record/screens/health_record_scre
 import 'package:gosheep_mobile/features/sheep/screens/sheep_detail_screen.dart';
 import 'package:gosheep_mobile/data/services/mating_record_service.dart';
 import 'package:gosheep_mobile/features/mating_record/screens/mating_check_screen.dart';
+import 'package:gosheep_mobile/features/weight_record/screens/weight_record_screen.dart';
 import 'package:provider/provider.dart';
 
 class ActivityFeedScreen extends StatelessWidget {
@@ -94,6 +95,31 @@ class _ActivityFeedScreenViewState extends State<_ActivityFeedScreenView> {
           context,
           MaterialPageRoute(
             builder: (_) => HealthRecordScreen(
+              sheepId: sheepId,
+              earTag: eartag,
+              gender: gender,
+            ),
+          ),
+        );
+
+      case 'weight_record':
+        final props = activity.properties;
+        final sheepId = props is CreatedProperties
+            ? int.tryParse(props.get('sheep_id') ?? '')
+            : null;
+        final eartag = props is CreatedProperties
+            ? (props.get('sheep_eartag') ?? '-')
+            : '-';
+        final gender = props is CreatedProperties
+            ? (props.get('sheep_gender') ?? '-')
+            : '-';
+
+        if (sheepId == null) return;
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => WeightRecordScreen(
               sheepId: sheepId,
               earTag: eartag,
               gender: gender,

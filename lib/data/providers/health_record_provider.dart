@@ -108,4 +108,40 @@ class HealthRecordProvider with ChangeNotifier {
   Future<void> refresh() async {
     await fetchInitial();
   }
+
+  Future<bool> updateHealthRecord({
+    required int recordId,
+    String? condition,
+    String? category,
+    String? severity,
+    String? notes,
+  }) async {
+    try {
+      final response = await _service.updateHealthRecord(
+        recordId: recordId,
+        condition: condition,
+        category: category,
+        severity: severity,
+        notes: notes,
+      );
+
+      final index = _healthRecords.indexWhere((r) => r.id == recordId);
+      if (index != -1 && response.data != null) {
+        _healthRecords[index] = response.data!;
+      }
+
+      _message = response.message;
+      notifyListeners();
+
+      return true;
+    } on ApiException catch (e) {
+      _error = e.message;
+      notifyListeners();
+      return false;
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
 }

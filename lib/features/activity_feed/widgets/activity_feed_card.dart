@@ -207,6 +207,10 @@ class _PropertiesBlock extends StatelessWidget {
     'gender': 'Jenis kelamin',
     'cage': 'Kandang',
     'eartag': 'Eartag',
+    'condition': 'Kondisi',
+    'category': 'Kategori',
+    'severity': 'Tingkat',
+    'notes': 'Catatan',
   };
 
   List<Widget> _createdRows(CreatedProperties p) {
@@ -283,6 +287,8 @@ class _KVRow extends StatelessWidget {
               fontWeight: FontWeight.w600,
               color: Color(0xFF2D3132),
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],
@@ -303,7 +309,7 @@ class _KVChangeRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(
           width: 80,
@@ -312,30 +318,42 @@ class _KVChangeRow extends StatelessWidget {
             style: const TextStyle(fontSize: 11, color: Colors.black38),
           ),
         ),
-        Text(
-          from,
-          style: const TextStyle(
-            fontSize: 11,
-            color: Colors.black38,
-            decoration: TextDecoration.lineThrough,
-          ),
-        ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 5),
-          child: Icon(
-            Icons.arrow_forward_rounded,
-            size: 11,
-            color: Colors.black26,
-          ),
-        ),
         Expanded(
-          child: Text(
-            to,
-            style: const TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF2D3132),
-            ),
+          child: Row(
+            children: [
+              Flexible(
+                child: Text(
+                  from,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: Colors.black38,
+                    decoration: TextDecoration.lineThrough,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 5),
+                child: Icon(
+                  Icons.arrow_forward_rounded,
+                  size: 11,
+                  color: Colors.black26,
+                ),
+              ),
+              Flexible(
+                child: Text(
+                  to,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF2D3132),
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
         ),
       ],

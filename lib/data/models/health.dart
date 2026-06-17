@@ -35,4 +35,25 @@ class Health {
       notes: json['notes'],
     );
   }
+
+  Health copyWith({
+    RecordedBy? recordedBy,
+    DateTime? recordedAt,
+    String? category,
+    String? condition,
+    String? severity,
+    String? source,
+    String? notes,
+  }) {
+    return Health(
+      id: id,
+      recordedBy: recordedBy ?? this.recordedBy,
+      recordedAt: recordedAt ?? this.recordedAt,
+      category: category ?? this.category,
+      condition: condition ?? this.condition,
+      severity: severity ?? this.severity,
+      source: source ?? this.source,
+      notes: notes ?? this.notes,
+    );
+  }
 }

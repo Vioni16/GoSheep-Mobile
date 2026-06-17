@@ -112,4 +112,37 @@ class HealthRecordService {
       throw ErrorHandler.handle(e);
     }
   }
+
+  Future<ApiResponse<Health>> updateHealthRecord({
+    required int recordId,
+    String? condition,
+    String? category,
+    String? severity,
+    String? notes,
+  }) async {
+    try {
+      final response = await _dio.put(
+        '/health-records/$recordId',
+        data: {
+          if (condition != null) 'condition': condition,
+          if (category != null) 'category': category,
+          if (severity != null) 'severity': severity,
+          'notes': notes,
+        },
+      );
+
+      final result = ApiResponse.fromJson(
+        response.data,
+        (data) => Health.fromJson(data),
+      );
+
+      if (!result.success) {
+        throw ApiException(result.message);
+      }
+
+      return result;
+    } on DioException catch (e) {
+      throw ErrorHandler.handle(e);
+    }
+  }
 }
