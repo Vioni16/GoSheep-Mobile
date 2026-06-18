@@ -11,6 +11,7 @@ import 'package:gosheep_mobile/features/sheep/widgets/sheep_detail_skeleton.dart
 import 'package:gosheep_mobile/features/sheep/widgets/sheep_detail_widgets.dart';
 import 'package:gosheep_mobile/features/sheep/widgets/sheep_hero_header.dart';
 import 'package:gosheep_mobile/features/sheep/widgets/sheep_info_card.dart';
+import 'package:gosheep_mobile/data/models/inactive_sheep.dart';
 import 'package:provider/provider.dart';
 
 class SheepDetailScreen extends StatelessWidget {
@@ -32,6 +33,17 @@ class _SheepDetailView extends StatelessWidget {
   final int id;
 
   const _SheepDetailView({required this.id});
+
+  String _getStatusLabel(SheepStatus status) {
+    switch (status) {
+      case SheepStatus.sold:
+        return 'Dijual';
+      case SheepStatus.dead:
+        return 'Mati';
+      case SheepStatus.inactive:
+        return 'Nonaktif';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +135,14 @@ class _SheepDetailView extends StatelessWidget {
                         isLoading: sheep.isFromInitial,
                       ),
                       buildStatusTile(
-                        sheep.status,
+                        sheep.status.toLowerCase() == 'active'
+                            ? 'Aktif'
+                            : _getStatusLabel(
+                                SheepStatus.values.firstWhere(
+                                  (e) => e.name.toLowerCase() == sheep.status.toLowerCase(),
+                                  orElse: () => SheepStatus.inactive,
+                                ),
+                              ),
                         isLoading: sheep.isFromInitial,
                       ),
                       ModernInfoRow(

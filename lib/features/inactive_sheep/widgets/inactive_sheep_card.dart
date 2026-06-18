@@ -3,6 +3,7 @@ import 'package:gosheep_mobile/core/theme/theme.dart';
 import 'package:gosheep_mobile/core/widgets/gender_badge.dart';
 import 'package:gosheep_mobile/core/widgets/sheep_chip.dart';
 import 'package:gosheep_mobile/data/models/inactive_sheep.dart';
+import 'package:gosheep_mobile/features/sheep/screens/sheep_detail_screen.dart';
 
 class InactiveSheepCard extends StatelessWidget {
   final InactiveSheep sheep;
@@ -73,7 +74,15 @@ class InactiveSheepCard extends StatelessWidget {
                             label: sheep.earTag,
                             backgroundColor: Colors.white,
                             borderColor: isMale ? Colors.blue : Colors.pink,
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      SheepDetailScreen(id: sheep.id),
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
