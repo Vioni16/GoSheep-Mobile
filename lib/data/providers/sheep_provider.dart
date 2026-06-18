@@ -7,6 +7,8 @@ import '../services/sheep_service.dart';
 class SheepProvider with ChangeNotifier {
   final SheepService _service = SheepService();
 
+  bool _inactiveOnly = false;
+
   List<Sheep> _sheepList = [];
   List<Sheep> get sheepList => _sheepList;
 
@@ -40,8 +42,13 @@ class SheepProvider with ChangeNotifier {
     return _validationError?.first(field);
   }
 
-  Future<void> fetchInitial({bool forceRefresh = false}) async {
+  Future<void> fetchInitial({
+    bool forceRefresh = false,
+    bool inactiveOnly = false,
+    }) async {
     if (_isInitialized && !forceRefresh) return;
+
+    _inactiveOnly = inactiveOnly;
 
     _isInitialized = true;
 
@@ -62,11 +69,17 @@ class SheepProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await _service.getSheep(
-        lastId: _lastId,
-        limit: _limit,
-        search: _search,
-      );
+      final response = _inactiveOnly
+        ? await _service.getInactiveSheep(
+            lastId: _lastId,
+            limit: _limit,
+            search: _search,
+          )
+        : await _service.getSheep(
+            lastId: _lastId,
+            limit: _limit,
+            search: _search,
+          );
 
       _sheepList.addAll(response.data);
       _lastId = response.nextCursor;
