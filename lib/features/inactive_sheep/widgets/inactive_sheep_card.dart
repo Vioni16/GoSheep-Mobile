@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/core/theme/theme.dart';
 import 'package:gosheep_mobile/core/widgets/gender_badge.dart';
 import 'package:gosheep_mobile/core/widgets/sheep_chip.dart';
-import '../screens/inactive_sheep_screen.dart';
+import 'package:gosheep_mobile/data/models/inactive_sheep.dart';
 
 class InactiveSheepCard extends StatelessWidget {
   final InactiveSheep sheep;
@@ -73,8 +73,7 @@ class InactiveSheepCard extends StatelessWidget {
                             label: sheep.earTag,
                             backgroundColor: Colors.white,
                             borderColor: isMale ? Colors.blue : Colors.pink,
-                            onTap: () {
-                            },
+                            onTap: () {},
                           ),
                         ],
                       ),
@@ -99,18 +98,14 @@ class InactiveSheepCard extends StatelessWidget {
                             Icon(
                               _getStatusIcon(sheep.status),
                               size: 13,
-                              color: const Color(
-                                0xFF2D3132,
-                              ), 
+                              color: const Color(0xFF2D3132),
                             ),
                             const SizedBox(width: 4),
                             Flexible(
                               child: Text(
                                 _getStatusLabel(sheep.status),
                                 style: const TextStyle(
-                                  color: Color(
-                                    0xFF2D3132,
-                                  ), 
+                                  color: Color(0xFF2D3132),
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -134,7 +129,7 @@ class InactiveSheepCard extends StatelessWidget {
                     _infoItem(
                       Icons.layers_outlined,
                       "Ras / Kandang",
-                      "${sheep.breed} · ${sheep.pen}",
+                      "${sheep.breed} · ${sheep.cage}",
                     ),
                     _infoItem(
                       Icons.scale_outlined,
@@ -143,8 +138,8 @@ class InactiveSheepCard extends StatelessWidget {
                     ),
                     _infoItem(
                       Icons.calendar_today_outlined,
-                      "Selesai",
-                      sheep.inactiveDate,
+                      "Lahir",
+                      sheep.birthDate,
                     ),
                   ],
                 ),
