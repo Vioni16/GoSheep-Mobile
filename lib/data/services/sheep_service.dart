@@ -74,28 +74,34 @@ class SheepService {
     required String condition,
     required String category,
     required String severity,
+    required bool isNewborn,
     required double weight,
+    double? weightBirth,
     String? notes,
   }) async {
     try {
-      final response = await _dio.post(
-        '/sheep',
-        data: {
-          'eartag': earTag,
-          'eartag_color': earTagColor,
-          'gender': gender,
-          'birth_date': birthDate,
-          'breed_id': breedId,
-          'cage_id': cageId,
-          'sire_id': sireId,
-          'dam_id': damId,
-          'condition': condition,
-          'category': category,
-          'severity': severity,
-          'weight': weight,
-          'notes': notes,
-        },
-      );
+      final body = <String, dynamic>{
+        'eartag':       earTag,
+        'eartag_color': earTagColor,
+        'gender':       gender,
+        'birth_date':   birthDate,
+        'breed_id':     breedId,
+        'cage_id':      cageId,
+        'sire_id':      sireId,
+        'dam_id':       damId,
+        'condition':    condition,
+        'category':     category,
+        'severity':     severity,
+        'is_newborn':   isNewborn,
+        'weight':       weight,
+        'notes':        notes,
+      };
+
+      if (!isNewborn && weightBirth != null) {
+        body['weight_birth'] = weightBirth;
+      }
+
+      final response = await _dio.post('/sheep', data: body);
 
       final result = ApiResponse<Sheep>.fromJson(
         response.data,

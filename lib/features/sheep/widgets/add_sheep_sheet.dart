@@ -24,10 +24,12 @@ class _AddSheepSheetState extends State<AddSheepSheet> {
 
   final _earTag = TextEditingController();
   final _weight = TextEditingController();
+  final _weightBirth = TextEditingController();
   final _color = TextEditingController();
   final _notes = TextEditingController();
   final _condition = TextEditingController();
 
+  bool _isNewborn = false;
   String? _gender;
   DateTime? _birthDate;
 
@@ -81,7 +83,7 @@ class _AddSheepSheetState extends State<AddSheepSheet> {
       earTag: _earTag.text.trim(),
       earTagColor: _color.text.trim(),
       gender: FormOptions.genders[_gender]!,
-      birthDate: _birthDate!.toIso8601String(),
+      birthDate: _birthDate!.toIso8601String().split('T')[0],
       breedId: _selectedBreed?.id,
       cageId: _selectedCage?.id,
       sireId: _selectedSire?.id,
@@ -89,7 +91,11 @@ class _AddSheepSheetState extends State<AddSheepSheet> {
       condition: _condition.text.trim(),
       category: FormOptions.categories[_selectedCategory]!,
       severity: FormOptions.severities[_selectedSeverity]!,
+      isNewborn: _isNewborn,
       weight: double.parse(_weight.text),
+      weightBirth: !_isNewborn && _weightBirth.text.isNotEmpty
+          ? double.parse(_weightBirth.text)
+          : null,
       notes: _notes.text.trim().isEmpty ? null : _notes.text.trim(),
     );
 
@@ -531,8 +537,10 @@ class _AddSheepSheetState extends State<AddSheepSheet> {
 
                           Expanded(
                             child: CustomTextFormField(
-                              label: 'Berat (kg)',
-                              hint: '35',
+                              label: _isNewborn
+                                  ? 'Berat Lahir (kg)'
+                                  : 'Berat Saat Ini (kg)',
+                              hint: _isNewborn ? '3.5' : '25',
                               icon: Icons.scale,
                               controller: _weight,
                               keyboardType: TextInputType.number,
@@ -546,6 +554,78 @@ class _AddSheepSheetState extends State<AddSheepSheet> {
                           ),
                         ],
                       ),
+
+                      const SizedBox(height: 8),
+
+                      // Checkbox: Domba baru lahir hari ini
+                      InkWell(
+                        onTap: () => setState(() {
+                          _isNewborn = !_isNewborn;
+                          if (_isNewborn) _weightBirth.clear();
+                        }),
+                        borderRadius: BorderRadius.circular(10),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 6,
+                            horizontal: 2,
+                          ),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: Checkbox(
+                                  value: _isNewborn,
+                                  onChanged: (val) => setState(() {
+                                    _isNewborn = val ?? false;
+                                    if (_isNewborn) _weightBirth.clear();
+                                  }),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              const Text(
+                                'Domba ini baru lahir hari ini',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      // Field Berat Lahir — muncul jika BUKAN newborn
+                      if (!_isNewborn) ...[
+                        const SizedBox(height: 10),
+                        CustomTextFormField(
+                          label: 'Berat Lahir (kg)',
+                          hint: '3.5',
+                          icon: Icons.child_care_rounded,
+                          controller: _weightBirth,
+                          keyboardType: TextInputType.number,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          serverError: sheepProvider.fieldError('weight_birth'),
+                          validator: (v) {
+                            if (v == null || v.trim().isEmpty) {
+                              return 'Berat lahir wajib diisi';
+                            }
+                            final n = double.tryParse(v.trim());
+                            if (n == null || n < 0) {
+                              return 'Berat lahir tidak valid';
+                            }
+                            return null;
+                          },
+                          onChanged: (_) => sheepProvider.clearValidationError(
+                            'weight_birth',
+                          ),
+                        ),
+                      ],
 
                       const SizedBox(height: 14),
 

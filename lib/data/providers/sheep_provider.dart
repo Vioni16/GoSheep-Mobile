@@ -93,7 +93,9 @@ class SheepProvider with ChangeNotifier {
     required String condition,
     required String category,
     required String severity,
+    required bool isNewborn,
     required double weight,
+    double? weightBirth,
     String? notes,
   }) async {
     try {
@@ -116,7 +118,9 @@ class SheepProvider with ChangeNotifier {
         condition: condition,
         category: category,
         severity: severity,
+        isNewborn: isNewborn,
         weight: weight,
+        weightBirth: weightBirth,
         notes: notes,
       );
 
