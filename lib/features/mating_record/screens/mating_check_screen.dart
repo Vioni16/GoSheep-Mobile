@@ -6,12 +6,16 @@ import 'package:gosheep_mobile/core/widgets/app_refresh_indicator.dart';
 import 'package:gosheep_mobile/core/widgets/async_state_sliver.dart';
 import 'package:gosheep_mobile/core/widgets/empty_data.dart';
 import 'package:gosheep_mobile/core/widgets/no_connection.dart';
+import 'package:gosheep_mobile/core/widgets/toast_widget.dart';
 import 'package:gosheep_mobile/data/models/mating_check.dart';
 import 'package:gosheep_mobile/data/providers/mating_check_provider.dart';
 import 'package:gosheep_mobile/data/providers/mating_record_provider.dart';
+import 'package:gosheep_mobile/data/providers/pregnant_sheep_provider.dart';
+import 'package:gosheep_mobile/data/services/pregnant_sheep_service.dart';
 import 'package:gosheep_mobile/features/mating_record/widgets/add_mating_check_sheet.dart';
 import 'package:gosheep_mobile/features/mating_record/widgets/edit_mating_check_sheet.dart';
 import 'package:gosheep_mobile/features/mating_record/widgets/mating_check_card_skeleton.dart';
+import 'package:gosheep_mobile/features/pregnancy_monitoring/screens/pregnancy_monitoring_detail_screen.dart';
 import 'package:provider/provider.dart';
 
 class MatingCheckScreen extends StatelessWidget {
@@ -243,6 +247,12 @@ class _MatingCheckScreenViewState extends State<_MatingCheckScreenView> {
                         ],
                       ),
                     ),
+                    if (currentResult == MatingResult.pregnant) ...[
+                      const SizedBox(width: 12),
+                      _PregnancyShortcutButton(
+                        matingRecordId: widget.matingRecordId,
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -390,6 +400,103 @@ class _MatingCheckScreenViewState extends State<_MatingCheckScreenView> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PregnancyShortcutButton extends StatefulWidget {
+  final int matingRecordId;
+
+  const _PregnancyShortcutButton({required this.matingRecordId});
+
+  @override
+  State<_PregnancyShortcutButton> createState() =>
+      _PregnancyShortcutButtonState();
+}
+
+class _PregnancyShortcutButtonState extends State<_PregnancyShortcutButton> {
+  bool _isLoading = false;
+
+  Future<void> _navigateToPregnancy(BuildContext context) async {
+    setState(() => _isLoading = true);
+
+    try {
+      final pregnancy = await PregnantSheepService()
+          .getPregnancyByMatingRecordId(widget.matingRecordId);
+
+      if (mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ChangeNotifierProvider(
+              create: (_) => PregnantSheepProvider()..fetchInitial(),
+              child: PregnancyMonitoringDetailScreen(pregnancy: pregnancy),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ToastService.show(
+          context,
+          'Gagal memuat detail kebuntingan: ${e.toString().replaceAll('Exception: ', '')}',
+          title: 'Error',
+          type: ToastType.error,
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: const Color(0xFF0F5132),
+      borderRadius: BorderRadius.circular(20),
+      child: InkWell(
+        onTap: _isLoading ? null : () => _navigateToPregnancy(context),
+        borderRadius: BorderRadius.circular(20),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _isLoading
+                  ? const SizedBox(
+                      width: 12,
+                      height: 12,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(
+                      Icons.monitor_heart_outlined,
+                      size: 14,
+                      color: Colors.white,
+                    ),
+              const SizedBox(width: 6),
+              const Text(
+                'Pantau Kebuntingan',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(width: 2),
+              const Icon(
+                Icons.chevron_right_rounded,
+                size: 14,
+                color: Colors.white,
+              ),
+            ],
+          ),
         ),
       ),
     );

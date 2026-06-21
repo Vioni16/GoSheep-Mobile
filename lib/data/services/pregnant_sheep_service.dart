@@ -112,5 +112,25 @@ class PregnantSheepService {
       throw ErrorHandler.handle(e);
     }
   }
+
+  Future<Pregnancy> getPregnancyByMatingRecordId(int matingRecordId) async {
+    try {
+      final response = await _dio.get('/sheep-pregnancies/mating-record/$matingRecordId');
+      final data = response.data;
+      
+      final apiResponse = ApiResponse<Pregnancy>.fromJson(
+        data,
+        (json) => Pregnancy.fromJson(json),
+      );
+
+      if (!apiResponse.success) {
+        throw ApiException(apiResponse.message);
+      }
+
+      return apiResponse.data!;
+    } on DioException catch (e) {
+      throw ErrorHandler.handle(e);
+    }
+  }
 }
 
