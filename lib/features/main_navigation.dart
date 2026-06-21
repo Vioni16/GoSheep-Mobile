@@ -35,10 +35,10 @@ class _MainNavigationState extends State<MainNavigation> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          'GoSheep',
-          style: TextStyle(
+          _navIndex == 2 ? 'Rekomendasi Perkawinan' : 'GoSheep',
+          style: const TextStyle(
             color: Colors.white,
-            fontSize: 24,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),

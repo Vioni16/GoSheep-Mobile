@@ -72,4 +72,32 @@ class MatingRecordService {
       throw ErrorHandler.handle(e);
     }
   }
+
+  Future<MatingRecord> createMatingRecord({
+    required int eweId,
+    required int ramId,
+    int? recommendationId,
+    required String matingDate,
+    required String endDate,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/mating-records',
+        data: {
+          'ewe_id': eweId,
+          'ram_id': ramId,
+          'recommendation_id': recommendationId,
+          'mating_date': matingDate,
+          'end_date': endDate,
+        },
+      );
+      final data = response.data;
+      if (data['success'] != true) {
+        throw ApiException(data['message'] ?? 'Gagal mencatat perkawinan domba');
+      }
+      return MatingRecord.fromJson(data['data']);
+    } on DioException catch (e) {
+      throw ErrorHandler.handle(e);
+    }
+  }
 }
