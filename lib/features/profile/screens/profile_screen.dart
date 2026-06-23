@@ -10,8 +10,21 @@ import 'package:provider/provider.dart';
 import '../widgets/profile_menu_item.dart';
 import 'edit_profile_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<UserProvider>().fetchProfile();
+    });
+  }
 
   void _showLogoutDialog(BuildContext context) {
     final userProvider = context.read<UserProvider>();
@@ -37,6 +50,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final user = context.watch<UserProvider>().user;
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -66,21 +80,13 @@ class ProfileScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Dhominica Riskana",
-                          style: TextStyle(
+                        Text(
+                          user?.name ?? '-',
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 0.2,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          "Mandiri Jaya Farm",
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.75),
-                            fontSize: 13,
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -97,13 +103,13 @@ class ProfileScreen extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
-                                Icons.location_on_outlined,
+                                Icons.shield_outlined,
                                 size: 13,
                                 color: Colors.white.withValues(alpha: 0.85),
                               ),
                               const SizedBox(width: 5),
                               Text(
-                                "Batam, Kepulauan Riau",
+                                user?.role ?? '-',
                                 style: TextStyle(
                                   color: Colors.white.withValues(alpha: 0.85),
                                   fontSize: 12,
@@ -129,14 +135,7 @@ class ProfileScreen extends StatelessWidget {
                   CustomTextFormField(
                     icon: Icons.email_outlined,
                     label: 'Email',
-                    hint: 'dhominica@farm.id',
-                    enabled: false,
-                  ),
-                  const SizedBox(height: 12),
-                  CustomTextFormField(
-                    icon: Icons.app_registration,
-                    label: 'Tanggal Bergabung',
-                    hint: '30 Mei 2026',
+                    hint: user?.email ?? '-',
                     enabled: false,
                   ),
 
@@ -167,6 +166,7 @@ class ProfileScreen extends StatelessWidget {
                               ),
                             ),
                           ),
+           
                           _Divider(),
                           ProfileMenuItem(
                             icon: Icons.lock_reset_rounded,

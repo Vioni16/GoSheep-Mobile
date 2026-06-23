@@ -4,6 +4,7 @@ import 'package:gosheep_mobile/data/exceptions/api_exception.dart';
 import 'package:gosheep_mobile/data/exceptions/error_handler.dart';
 import 'package:gosheep_mobile/data/models/api_response.dart';
 import 'package:gosheep_mobile/data/models/login_response.dart';
+import 'package:gosheep_mobile/data/models/user.dart';
 import 'package:gosheep_mobile/data/services/secure_storage_service.dart';
 
 class UserService {
@@ -50,6 +51,50 @@ class UserService {
       }
 
       return apiResponse.message;
+    } on DioException catch (e) {
+      throw ErrorHandler.handle(e);
+    }
+  }
+
+  Future<User> getProfile() async {
+    try {
+      final response = await _dio.get('/profile');
+
+      final ApiResponse<User> apiResponse = ApiResponse.fromJson(
+        response.data,
+        (data) => User.fromJson(data),
+      );
+
+      if (!apiResponse.success || apiResponse.data == null) {
+        throw ApiException(apiResponse.message);
+      }
+
+      return apiResponse.data!;
+    } on DioException catch (e) {
+      throw ErrorHandler.handle(e);
+    }
+  }
+
+  Future<User> updateProfile({
+    required String name,
+    required String email,
+  }) async {
+    try {
+      final response = await _dio.put(
+        '/profile',
+        data: {'name': name, 'email': email},
+      );
+
+      final ApiResponse<User> apiResponse = ApiResponse.fromJson(
+        response.data,
+        (data) => User.fromJson(data),
+      );
+
+      if (!apiResponse.success || apiResponse.data == null) {
+        throw ApiException(apiResponse.message);
+      }
+
+      return apiResponse.data!;
     } on DioException catch (e) {
       throw ErrorHandler.handle(e);
     }
