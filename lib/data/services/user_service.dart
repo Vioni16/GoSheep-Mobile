@@ -99,4 +99,34 @@ class UserService {
       throw ErrorHandler.handle(e);
     }
   }
+
+  Future<String> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String newPasswordConfirmation,
+  }) async {
+    try {
+      final response = await _dio.put(
+        '/profile/password',
+        data: {
+          'current_password': currentPassword,
+          'password': newPassword,
+          'password_confirmation': newPasswordConfirmation,
+        },
+      );
+
+      final ApiResponse<dynamic> apiResponse = ApiResponse.fromJson(
+        response.data,
+        (data) => data,
+      );
+
+      if (!apiResponse.success) {
+        throw ApiException(apiResponse.message);
+      }
+
+      return apiResponse.message;
+    } on DioException catch (e) {
+      throw ErrorHandler.handle(e);
+    }
+  }
 }

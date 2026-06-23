@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:gosheep_mobile/core/widgets/custom_textfield.dart';
+import 'package:gosheep_mobile/data/providers/user_provider.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -10,10 +12,48 @@ class ChangePasswordScreen extends StatefulWidget {
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _currentController = TextEditingController();
+  final _newController = TextEditingController();
+  final _confirmController = TextEditingController();
+
+  @override
+  void dispose() {
+    _currentController.dispose();
+    _newController.dispose();
+    _confirmController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final provider = context.read<UserProvider>();
+    final success = await provider.changePassword(
+      currentPassword: _currentController.text,
+      newPassword: _newController.text,
+      newPasswordConfirmation: _confirmController.text,
+    );
+
+    if (!mounted) return;
+
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Kata sandi berhasil diubah')),
+      );
+      Navigator.pop(context);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(provider.errorMessage ?? 'Gagal mengubah kata sandi'),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final provider = context.watch<UserProvider>();
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -86,25 +126,49 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     const _SectionLabel('KATA SANDI'),
                     const SizedBox(height: 12),
 
-                    const CustomTextFormField(
+                    CustomTextFormField(
                       icon: Icons.lock_outline,
                       label: "Kata Sandi Lama",
                       hint: "Masukkan kata sandi lama",
                       isPassword: true,
+                      controller: _currentController,
+                      validator: (v) => (v == null || v.isEmpty)
+                          ? 'Kata sandi lama wajib diisi'
+                          : null,
                     ),
                     const SizedBox(height: 12),
-                    const CustomTextFormField(
+                    CustomTextFormField(
                       icon: Icons.lock_outline,
                       label: "Kata Sandi Baru",
                       hint: "Masukkan kata sandi baru",
                       isPassword: true,
+                      controller: _newController,
+                      validator: (v) {
+                        if (v == null || v.isEmpty) {
+                          return 'Kata sandi baru wajib diisi';
+                        }
+                        if (v.length < 8) {
+                          return 'Minimal 8 karakter';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 12),
-                    const CustomTextFormField(
+                    CustomTextFormField(
                       icon: Icons.lock_outline,
                       label: "Konfirmasi Kata Sandi Baru",
                       hint: "Ulangi kata sandi baru",
                       isPassword: true,
+                      controller: _confirmController,
+                      validator: (v) {
+                        if (v == null || v.isEmpty) {
+                          return 'Konfirmasi wajib diisi';
+                        }
+                        if (v != _newController.text) {
+                          return 'Konfirmasi tidak cocok';
+                        }
+                        return null;
+                      },
                     ),
 
                     const SizedBox(height: 20),
@@ -176,17 +240,24 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {}
-                        },
-                        child: const Text(
-                          "Simpan Kata Sandi",
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
+                        onPressed: provider.isLoading ? null : _save,
+                        child: provider.isLoading
+                            ? const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Text(
+                                "Simpan Kata Sandi",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
                       ),
                     ),
 
