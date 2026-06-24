@@ -5,6 +5,7 @@ import 'package:gosheep_mobile/data/models/sheep_detail.dart';
 import 'package:gosheep_mobile/data/services/sheep_service.dart';
 import 'package:gosheep_mobile/features/health_record/screens/health_record_screen.dart';
 import 'package:gosheep_mobile/features/sheep/screens/sheep_detail_screen.dart';
+import 'package:gosheep_mobile/features/sheep/screens/edit_sheep_screen.dart';
 import 'package:gosheep_mobile/features/weight_record/screens/weight_record_screen.dart';
 
 class ScanResultScreen extends StatefulWidget {
@@ -37,10 +38,7 @@ class _ScanResultScreenState extends State<ScanResultScreen>
       duration: const Duration(milliseconds: 500),
     );
 
-    _fadeAnim = CurvedAnimation(
-      parent: _animController,
-      curve: Curves.easeOut,
-    );
+    _fadeAnim = CurvedAnimation(parent: _animController, curve: Curves.easeOut);
 
     _slideAnim = Tween<Offset>(
       begin: const Offset(0, 0.12),
@@ -77,51 +75,35 @@ class _ScanResultScreenState extends State<ScanResultScreen>
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0A2218),
-      body: SafeArea(
-        child: Column(
+      appBar: AppBar(
+        backgroundColor: primary,
+        foregroundColor: Colors.white,
+        centerTitle: false,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(),
-            Expanded(child: _buildBody()),
+            const Text(
+              'Hasil Scan',
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 18,
+                letterSpacing: 0.3,
+              ),
+            ),
+            Text(
+              'Ear Tag: ${widget.earTag}',
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.75),
+                fontSize: 12,
+              ),
+            ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-      child: Row(
-        children: [
-          _CircleBtn(
-            onTap: () => Navigator.pop(context),
-            child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
-          ),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Hasil Scan',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              Text(
-                'Ear Tag: ${widget.earTag}',
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.55),
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+      body: _buildBody(),
     );
   }
 
@@ -140,18 +122,12 @@ class _ScanResultScreenState extends State<ScanResultScreen>
           const SizedBox(
             width: 40,
             height: 40,
-            child: CircularProgressIndicator(
-              color: Color(0xFF4CAF82),
-              strokeWidth: 3,
-            ),
+            child: CircularProgressIndicator(strokeWidth: 3),
           ),
           const SizedBox(height: 16),
-          Text(
+          const Text(
             'Mencari domba...',
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.65),
-              fontSize: 14,
-            ),
+            style: TextStyle(color: Colors.black54, fontSize: 14),
           ),
         ],
       ),
@@ -172,16 +148,12 @@ class _ScanResultScreenState extends State<ScanResultScreen>
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: isNotFound
-                    ? Colors.orange.withValues(alpha: 0.15)
-                    : Colors.red.withValues(alpha: 0.15),
+                color: isNotFound ? Colors.orange : Colors.red,
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                isNotFound
-                    ? Icons.search_off_rounded
-                    : Icons.wifi_off_rounded,
-                color: isNotFound ? Colors.orange : Colors.red,
+                isNotFound ? Icons.search_off_rounded : Icons.wifi_off_rounded,
+                color: Colors.white,
                 size: 34,
               ),
             ),
@@ -189,7 +161,7 @@ class _ScanResultScreenState extends State<ScanResultScreen>
             Text(
               isNotFound ? 'Domba Tidak Ditemukan' : 'Gagal Memuat',
               style: const TextStyle(
-                color: Colors.white,
+                color: Colors.black87,
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
               ),
@@ -200,8 +172,8 @@ class _ScanResultScreenState extends State<ScanResultScreen>
                   ? 'Tidak ada domba dengan ear tag "${widget.earTag}" yang terdaftar di sistem.'
                   : (_error ?? 'Terjadi kesalahan. Silakan coba lagi.'),
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.6),
+              style: const TextStyle(
+                color: Colors.black54,
                 fontSize: 13,
                 height: 1.5,
               ),
@@ -245,20 +217,24 @@ class _ScanResultScreenState extends State<ScanResultScreen>
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // --- Hero Card ---
-              _HeroCard(sheep: sheep, statusColor: statusColor, isHealthy: isHealthy),
+              _HeroCard(
+                sheep: sheep,
+                statusColor: statusColor,
+                isHealthy: isHealthy,
+              ),
 
               const SizedBox(height: 16),
 
               // --- Quick Info ---
               _InfoGrid(sheep: sheep),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
 
               // --- Section label ---
-              Text(
+              const Text(
                 'PILIH TINDAKAN',
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.45),
+                  color: Colors.black45,
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.5,
@@ -273,13 +249,15 @@ class _ScanResultScreenState extends State<ScanResultScreen>
                 color: const Color(0xFF2D9CDB),
                 title: 'Detail Domba',
                 subtitle: 'Lihat informasi lengkap domba ini',
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        SheepDetailScreen(id: sheep.id),
-                  ),
-                ),
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SheepDetailScreen(id: sheep.id),
+                    ),
+                  );
+                  _fetchSheep();
+                },
               ),
 
               const SizedBox(height: 10),
@@ -289,16 +267,19 @@ class _ScanResultScreenState extends State<ScanResultScreen>
                 color: const Color(0xFF27AE60),
                 title: 'Riwayat Berat Badan',
                 subtitle: 'Pantau & catat perkembangan berat badan',
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => WeightRecordScreen(
-                      sheepId: sheep.id,
-                      earTag: sheep.earTag,
-                      gender: sheep.gender,
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => WeightRecordScreen(
+                        sheepId: sheep.id,
+                        earTag: sheep.earTag,
+                        gender: sheep.gender,
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                  _fetchSheep();
+                },
               ),
 
               const SizedBox(height: 10),
@@ -308,16 +289,19 @@ class _ScanResultScreenState extends State<ScanResultScreen>
                 color: const Color(0xFFEB5757),
                 title: 'Riwayat Kesehatan',
                 subtitle: 'Lihat & tambah catatan kondisi kesehatan',
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => HealthRecordScreen(
-                      sheepId: sheep.id,
-                      earTag: sheep.earTag,
-                      gender: sheep.gender,
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => HealthRecordScreen(
+                        sheepId: sheep.id,
+                        earTag: sheep.earTag,
+                        gender: sheep.gender,
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                  _fetchSheep();
+                },
               ),
 
               const SizedBox(height: 10),
@@ -343,76 +327,81 @@ class _ScanResultScreenState extends State<ScanResultScreen>
     required String subtitle,
     required VoidCallback onTap,
   }) {
-    return Material(
-      color: Colors.white.withValues(alpha: 0.06),
-      borderRadius: BorderRadius.circular(16),
-      child: InkWell(
-        onTap: onTap,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.08),
-              width: 0.8,
-            ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-          child: Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(12),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: Colors.white, size: 22),
                 ),
-                child: Icon(icon, color: color, size: 22),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          color: Colors.black87,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.5),
-                        fontSize: 12,
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle,
+                        style: const TextStyle(
+                          color: Colors.black45,
+                          fontSize: 12,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Icon(
-                Icons.chevron_right_rounded,
-                color: Colors.white.withValues(alpha: 0.3),
-                size: 22,
-              ),
-            ],
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  color: Colors.black26,
+                  size: 22,
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  void _openEditSheet(BuildContext context, SheepDetail sheep) {
-    // Navigate to sheep detail which has the edit option
-    Navigator.push(
+  void _openEditSheet(BuildContext context, SheepDetail sheep) async {
+    final updated = await Navigator.push<bool>(
       context,
-      MaterialPageRoute(
-        builder: (_) => SheepDetailScreen(id: sheep.id),
-      ),
+      MaterialPageRoute(builder: (_) => EditSheepScreen(sheep: sheep)),
     );
+    if (updated == true) {
+      _fetchSheep();
+    }
   }
 }
 
@@ -436,17 +425,17 @@ class _HeroCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withValues(alpha: 0.10),
-            Colors.white.withValues(alpha: 0.04),
-          ],
-        ),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.12),
+          color: Colors.black.withValues(alpha: 0.05),
           width: 0.8,
         ),
       ),
@@ -456,14 +445,14 @@ class _HeroCard extends StatelessWidget {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: statusColor.withValues(alpha: 0.18),
+              color: statusColor,
               shape: BoxShape.circle,
             ),
             child: Icon(
               isHealthy
                   ? Icons.check_circle_outline_rounded
                   : Icons.warning_amber_rounded,
-              color: statusColor,
+              color: Colors.white,
               size: 30,
             ),
           ),
@@ -475,7 +464,7 @@ class _HeroCard extends StatelessWidget {
                 Text(
                   sheep.earTag,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Colors.black87,
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 0.5,
@@ -492,15 +481,15 @@ class _HeroCard extends StatelessWidget {
                         vertical: 3,
                       ),
                       decoration: BoxDecoration(
-                        color: statusColor.withValues(alpha: 0.18),
+                        color: statusColor,
                         borderRadius: BorderRadius.circular(100),
                       ),
                       child: Text(
                         SheepStatusUtil.healthConditionStatus(
                           sheep.healthCondition,
                         ),
-                        style: TextStyle(
-                          color: statusColor,
+                        style: const TextStyle(
+                          color: Colors.white,
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                         ),
@@ -517,17 +506,14 @@ class _HeroCard extends StatelessWidget {
               Text(
                 '${sheep.weight.toStringAsFixed(1)} kg',
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: Colors.black87,
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              Text(
+              const Text(
                 'Berat terkini',
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.45),
-                  fontSize: 11,
-                ),
+                style: TextStyle(color: Colors.black45, fontSize: 11),
               ),
             ],
           ),
@@ -547,11 +533,7 @@ class _InfoGrid extends StatelessWidget {
     final items = [
       ('Breed', sheep.breed ?? '-', Icons.pets_rounded),
       ('Kandang', sheep.cage ?? '-', Icons.home_rounded),
-      (
-        'Umur',
-        FormatHelper.formatAge(sheep.birthDate),
-        Icons.cake_rounded,
-      ),
+      ('Umur', FormatHelper.formatAge(sheep.birthDate), Icons.cake_rounded),
       ('Status', _statusLabel(sheep.status), Icons.toggle_on_rounded),
     ];
 
@@ -566,20 +548,23 @@ class _InfoGrid extends StatelessWidget {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.06),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.02),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.08),
+              color: Colors.black.withValues(alpha: 0.04),
               width: 0.7,
             ),
           ),
           child: Row(
             children: [
-              Icon(
-                e.$3,
-                color: Colors.white.withValues(alpha: 0.4),
-                size: 16,
-              ),
+              Icon(e.$3, color: Colors.black38, size: 16),
               const SizedBox(width: 8),
               Expanded(
                 child: Column(
@@ -588,15 +573,15 @@ class _InfoGrid extends StatelessWidget {
                   children: [
                     Text(
                       e.$1,
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.45),
+                      style: const TextStyle(
+                        color: Colors.black45,
                         fontSize: 10,
                       ),
                     ),
                     Text(
                       e.$2,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: Colors.black87,
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                       ),
@@ -631,10 +616,11 @@ class _GenderChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isMale = gender.toLowerCase() == 'male';
+    final chipColor = isMale ? Colors.blue : Colors.pink;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: (isMale ? Colors.blue : Colors.pink).withValues(alpha: 0.2),
+        color: chipColor,
         borderRadius: BorderRadius.circular(100),
       ),
       child: Row(
@@ -642,46 +628,19 @@ class _GenderChip extends StatelessWidget {
         children: [
           Icon(
             isMale ? Icons.male_rounded : Icons.female_rounded,
-            color: isMale ? Colors.lightBlue : Colors.pinkAccent,
+            color: Colors.white,
             size: 13,
           ),
           const SizedBox(width: 3),
           Text(
             isMale ? 'Jantan' : 'Betina',
-            style: TextStyle(
-              color: isMale ? Colors.lightBlue : Colors.pinkAccent,
+            style: const TextStyle(
+              color: Colors.white,
               fontSize: 11,
               fontWeight: FontWeight.w600,
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _CircleBtn extends StatelessWidget {
-  final VoidCallback onTap;
-  final Widget child;
-
-  const _CircleBtn({required this.onTap, required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.1),
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.2),
-            width: 0.7,
-          ),
-        ),
-        child: Center(child: child),
       ),
     );
   }
@@ -702,31 +661,32 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
         decoration: BoxDecoration(
-          color: outline
-              ? Colors.white.withValues(alpha: 0.08)
-              : const Color(0xFF4CAF82),
+          color: outline ? Colors.transparent : primary,
           borderRadius: BorderRadius.circular(12),
           border: outline
-              ? Border.all(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  width: 0.8,
-                )
+              ? Border.all(color: Colors.grey.shade400, width: 0.8)
               : null,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: Colors.white, size: 16),
+            Icon(
+              icon,
+              color: outline ? Colors.black87 : Colors.white,
+              size: 16,
+            ),
             const SizedBox(width: 8),
             Text(
               label,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: outline ? Colors.black87 : Colors.white,
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),

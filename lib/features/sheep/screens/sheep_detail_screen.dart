@@ -11,6 +11,7 @@ import 'package:gosheep_mobile/features/sheep/widgets/sheep_detail_skeleton.dart
 import 'package:gosheep_mobile/features/sheep/widgets/sheep_detail_widgets.dart';
 import 'package:gosheep_mobile/features/sheep/widgets/sheep_hero_header.dart';
 import 'package:gosheep_mobile/features/sheep/widgets/sheep_info_card.dart';
+import 'package:gosheep_mobile/features/sheep/screens/edit_sheep_screen.dart';
 import 'package:gosheep_mobile/data/models/inactive_sheep.dart';
 import 'package:provider/provider.dart';
 
@@ -51,7 +52,6 @@ class _SheepDetailView extends StatelessWidget {
     final primary = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6FA),
       body: CustomScrollView(
         physics: BouncingScrollPhysics(),
         slivers: [
@@ -72,10 +72,22 @@ class _SheepDetailView extends StatelessWidget {
               ),
             ),
             actions: [
-              IconButton(
-                icon: const Icon(Icons.more_vert_rounded),
-                onPressed: () {},
-              ),
+              if (provider.sheepDetail != null)
+                IconButton(
+                  icon: const Icon(Icons.edit_rounded),
+                  onPressed: () async {
+                    final result = await Navigator.push<bool>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            EditSheepScreen(sheep: provider.sheepDetail!),
+                      ),
+                    );
+                    if (result == true) {
+                      provider.refresh(id);
+                    }
+                  },
+                ),
             ],
           ),
 
@@ -139,7 +151,9 @@ class _SheepDetailView extends StatelessWidget {
                             ? 'Aktif'
                             : _getStatusLabel(
                                 SheepStatus.values.firstWhere(
-                                  (e) => e.name.toLowerCase() == sheep.status.toLowerCase(),
+                                  (e) =>
+                                      e.name.toLowerCase() ==
+                                      sheep.status.toLowerCase(),
                                   orElse: () => SheepStatus.inactive,
                                 ),
                               ),

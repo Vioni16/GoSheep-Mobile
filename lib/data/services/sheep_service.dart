@@ -62,6 +62,26 @@ class SheepService {
     }
   }
 
+  Future<SheepDetail> updateSheep(int sheepId, Map<String, dynamic> data) async {
+    try {
+      final response = await _dio.put('/sheep/$sheepId', data: data);
+
+      final apiResponse = ApiResponse.fromJson(
+        response.data,
+        (json) => SheepDetail.fromJson(json),
+      );
+
+      if (!apiResponse.success) {
+        throw ApiException(apiResponse.message);
+      }
+
+      return apiResponse.data!;
+    } on DioException catch (e) {
+      throw ErrorHandler.handle(e);
+    }
+  }
+
+
   Future<ApiResponse<Sheep>> createSheep({
     required String earTag,
     required String earTagColor,

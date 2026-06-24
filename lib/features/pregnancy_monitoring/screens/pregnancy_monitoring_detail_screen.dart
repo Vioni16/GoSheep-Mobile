@@ -41,7 +41,6 @@ class PregnancyMonitoringDetailScreen extends StatelessWidget {
     final primary = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6FA),
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [

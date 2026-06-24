@@ -137,7 +137,7 @@ class _SheepScannerScreenState extends State<SheepScannerScreen>
   }
 
   Future<void> _processCameraImage(CameraImage image) async {
-    if (_isProcessing || _isScanLocked) return;
+    if (_isProcessing || _isScanLocked || !mounted || _controller == null || !_controller!.value.isInitialized) return;
     _isProcessing = true;
 
     try {
@@ -145,7 +145,7 @@ class _SheepScannerScreenState extends State<SheepScannerScreen>
       if (inputImage == null) return;
 
       final recognizedText = await _textRecognizer.processImage(inputImage);
-      if (!mounted) return;
+      if (!mounted || _controller == null || !_controller!.value.isInitialized) return;
 
       final screenSize = MediaQuery.of(context).size;
 
@@ -168,7 +168,9 @@ class _SheepScannerScreenState extends State<SheepScannerScreen>
 
       final detected = buffer.toString().trim();
       if (detected.isNotEmpty) {
-        await _controller?.stopImageStream();
+        if (_controller != null && _controller!.value.isInitialized && _controller!.value.isStreamingImages) {
+          await _controller?.stopImageStream();
+        }
         _scanController.stop();
         if (!mounted) return;
         setState(() {
@@ -236,15 +238,11 @@ class _SheepScannerScreenState extends State<SheepScannerScreen>
   }
 
   @override
-  void dispose() async {
-    if (_controller?.value.isStreamingImages ?? false) {
-      await _controller?.stopImageStream();
-    }
-
-    await _controller?.dispose();
+  void dispose() {
     _scanController.dispose();
     _pulseController.dispose();
     _textRecognizer.close();
+    _controller?.dispose();
     super.dispose();
   }
 

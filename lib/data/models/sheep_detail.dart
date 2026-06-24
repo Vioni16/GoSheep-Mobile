@@ -23,11 +23,13 @@ class SheepDetail {
   final String earTagColor;
   final String gender;
   final String? breed;
+  final int? breedId;
 
   final DateTime birthDate;
   final String status;
   final DateTime createdAt;
   final String? cage;
+  final int? cageId;
 
   final ParentSheep? sire;
   final ParentSheep? dam;
@@ -44,10 +46,12 @@ class SheepDetail {
     required this.earTagColor,
     required this.gender,
     required this.breed,
+    this.breedId,
     required this.birthDate,
     required this.status,
     required this.createdAt,
     required this.cage,
+    this.cageId,
     required this.sire,
     required this.dam,
     required this.weight,
@@ -63,11 +67,13 @@ class SheepDetail {
       earTagColor: json['ear_tag_color'],
       gender: json['gender'],
       breed: json['breed'],
+      breedId: json['breed_id'],
 
       birthDate: DateTime.parse(json['birth_date']),
       status: json['status'],
       createdAt: DateTime.parse(json['created_at']),
       cage: json['cage'],
+      cageId: json['cage_id'],
 
       sire: json['sire'] != null
           ? ParentSheep.fromJson(json['sire'])

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gosheep_mobile/core/widgets/floating_logo.dart';
-import 'package:gosheep_mobile/features/authentication/screens/login_screen.dart';
 import 'package:gosheep_mobile/features/breeding/screens/breeding_screen.dart';
 import 'package:gosheep_mobile/features/dashboard/screens/dashboard_screen.dart';
 import 'package:gosheep_mobile/features/profile/screens/profile_screen.dart';
@@ -52,18 +51,6 @@ class _MainNavigationState extends State<MainNavigation> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         automaticallyImplyLeading: false,
         leading: FloatingLogo(height: 5),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => LoginScreen()),
-              );
-            },
-            icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-          ),
-          const SizedBox(width: 4),
-        ],
       ),
       body: IndexedStack(index: _navIndex, children: _pages),
       bottomNavigationBar: _buildBottomNav(bottomPadding),
