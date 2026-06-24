@@ -118,6 +118,25 @@ class SheepService {
     }
   }
 
+  Future<SheepDetail> scanByEarTag(String earTag) async {
+    try {
+      final response = await _dio.get('/sheep/scan/$earTag');
+
+      final apiResponse = ApiResponse.fromJson(
+        response.data,
+        (data) => SheepDetail.fromJson(data),
+      );
+
+      if (!apiResponse.success) {
+        throw ApiException(apiResponse.message);
+      }
+
+      return apiResponse.data!;
+    } on DioException catch (e) {
+      throw ErrorHandler.handle(e);
+    }
+  }
+
   Future<String> deleteSheep(int sheepId) async {
     try {
       final response = await _dio.delete('/sheep/$sheepId');

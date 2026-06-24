@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:flutter/services.dart';
+import 'package:gosheep_mobile/features/sheep_scanner/screens/scan_result_screen.dart';
 
 class SheepScannerScreen extends StatefulWidget {
   const SheepScannerScreen({super.key});
@@ -670,8 +671,14 @@ class _SheepScannerScreenState extends State<SheepScannerScreen>
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(12),
                                   child: InkWell(
-                                    onTap: () =>
-                                        Navigator.pop(context, _detectedText),
+                                    onTap: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => ScanResultScreen(
+                                          earTag: _detectedText,
+                                        ),
+                                      ),
+                                    ),
                                     borderRadius: BorderRadius.circular(12),
                                     child: const Padding(
                                       padding: EdgeInsets.symmetric(
@@ -679,7 +686,7 @@ class _SheepScannerScreenState extends State<SheepScannerScreen>
                                       ),
                                       child: Center(
                                         child: Text(
-                                          'Gunakan',
+                                          'Lihat Hasil',
                                           style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 14,
