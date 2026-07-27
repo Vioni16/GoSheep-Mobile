@@ -6,10 +6,17 @@ import 'package:gosheep_mobile/data/services/secure_storage_service.dart';
 import 'package:gosheep_mobile/routes/app_routes.dart';
 
 class ApiClient {
+  static const String _defaultBaseUrl = 'http://10.213.37.207:8000/api';
+
+  static const String baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: _defaultBaseUrl,
+  );
+
   static final Dio dio =
       Dio(
           BaseOptions(
-            baseUrl: "http://10.213.37.207:8000/api",
+            baseUrl: baseUrl,
             connectTimeout: const Duration(seconds: 15),
             receiveTimeout: const Duration(seconds: 30),
             headers: {"Accept": "application/json"},

@@ -5,32 +5,38 @@ class AboutScreen extends StatelessWidget {
 
   static const String _appVersion = 'v1.0.0';
   static const String _appDescription =
-      'GoSheep adalah platform manajemen peternakan domba modern yang mengintegrasikan teknologi Internet of Things (IoT) dan Artificial Intelligence (AI). Sistem ini dirancang untuk membantu peternak meningkatkan kualitas genetik kawanan melalui pencatatan performa, pemantauan kesehatan real-time, dan rekomendasi perkawinan yang presisi.';
+      'GoSheep adalah platform manajemen peternakan domba modern yang mengintegrasikan teknologi Internet of Things (IoT) dan Artificial Intelligence (AI). Sensor DHT22 pada setiap kandang memantau suhu dan kelembaban secara otomatis, mendeteksi kondisi heat stress yang berpengaruh pada kesehatan domba. Model AI berbasis Random Forest menghitung EBV (Estimated Breeding Value) dari data berat badan dan kesehatan, lalu sistem merekomendasikan pasangan kawin terbaik menggunakan metode Wright Coefficient, AHP, dan MOORA.';
 
   static const List<_FeatureItem> _features = [
     _FeatureItem(
       icon: Icons.analytics_rounded,
       title: 'Prediksi EBV Pintar',
       description:
-          'Menghitung nilai Estimated Breeding Value (EBV) untuk bobot badan dan kesehatan berdasarkan data fenotip serta silsilah keluarga domba secara otomatis.',
+          'Menghitung tiga nilai Estimated Breeding Value (EBV) — EBV Berat Badan, EBV ADG (pertambahan berat badan harian), dan EBV Kesehatan — menggunakan model Random Forest berdasarkan data berat badan dan riwayat kesehatan domba. EBV diperbarui otomatis setiap ada data baru.',
     ),
     _FeatureItem(
       icon: Icons.account_tree_rounded,
       title: 'Manajemen Silsilah',
       description:
-          'Menyimpan hubungan induk, pejantan, dan keturunan secara terstruktur untuk mendukung analisis genetik, perhitungan EBV, dan pengendalian inbreeding.',
+          'Menyimpan hubungan induk (dam), pejantan (sire), dan keturunan secara terstruktur untuk mendukung analisis genetik, perhitungan EBV, dan pengendalian inbreeding menggunakan Wright Coefficient.',
     ),
     _FeatureItem(
       icon: Icons.favorite_rounded,
-      title: 'Monitoring Kesehatan',
+      title: 'Monitoring Kesehatan & IoT',
       description:
-          'Rekam medis kondisi fisik, kategori penyakit, tingkat keparahan, hingga riwayat pengobatan domba dalam satu dasbor terpadu.',
+          'Pencatatan kondisi kesehatan domba oleh staff, dilengkapi deteksi heat stress otomatis dari sensor DHT22 di kandang. Jika suhu rata-rata 20 menit ≥ 35°C, sistem membuat catatan kesehatan otomatis dan mengirim notifikasi ke aplikasi.',
+    ),
+    _FeatureItem(
+      icon: Icons.device_thermostat_rounded,
+      title: 'Pemantauan Lingkungan Kandang',
+      description:
+          'Sensor DHT22 + ESP32 membaca suhu dan kelembaban kandang setiap 5 menit via MQTT. Data ditampilkan real-time di aplikasi dan tersimpan sebagai riwayat log untuk pemantauan jangka panjang.',
     ),
     _FeatureItem(
       icon: Icons.alt_route_rounded,
       title: 'Rekomendasi Perkawinan',
       description:
-          'Sistem seleksi AI yang menyaring risiko inbreeding (perkawinan sedarah) dan meranking kandidat pasangan berdasarkan kualitas genetik terbaik.',
+          'Sistem seleksi AI empat tahap: filter usia & status aktif → filter inbreeding Wright Coefficient (COI ≥ 6,25% dibuang) → prediksi Expected EBV Offspring → ranking MOORA dengan bobot kriteria AHP.',
     ),
   ];
 
