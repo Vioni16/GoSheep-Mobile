@@ -15,7 +15,7 @@ class _HelpScreenState extends State<HelpScreen> {
   static const List<String> _categories = [
     'Semua',
     'Pendaftaran Domba',
-    'Bobot & IoT',
+    'Berat Badan & IoT',
     'Kesehatan',
     'Perkawinan & Kehamilan',
     'Rekomendasi Kawin',
@@ -23,7 +23,6 @@ class _HelpScreenState extends State<HelpScreen> {
   ];
 
   static const List<_FaqItem> _faqs = [
-    // ── Pendaftaran Domba ─────────────────────────────────────
     _FaqItem(
       category: 'Pendaftaran Domba',
       question: 'Bagaimana cara mendaftarkan domba baru?',
@@ -34,7 +33,7 @@ class _HelpScreenState extends State<HelpScreen> {
       category: 'Pendaftaran Domba',
       question: 'Apa yang terjadi setelah domba selesai didaftarkan?',
       answer:
-          'Sistem otomatis menghitung EBV (Estimated Breeding Value) domba menggunakan model AI berdasarkan data fenotip dan silsilah yang dimasukkan. Nilai EBV ini akan dipakai saat mencari rekomendasi pasangan kawin.',
+          'Sistem otomatis menyimpan data berat awal dan membuat catatan fitur domba. EBV (Estimated Breeding Value) akan dihitung secara otomatis oleh model AI setelah data Berat Badan lahir, Berat Badan sapih, dan pertambahan Berat Badan harian (ADG) tersedia. Nilai EBV ini akan dipakai saat mencari rekomendasi pasangan kawin.',
     ),
     _FaqItem(
       category: 'Pendaftaran Domba',
@@ -55,39 +54,38 @@ class _HelpScreenState extends State<HelpScreen> {
           'Ya. Di halaman detail domba, Anda bisa melihat informasi induk (dam) dan pejantan (sire) domba jika sudah terdaftar. Silsilah ini digunakan untuk menghitung koefisien inbreeding saat rekomendasi kawin dibuat.',
     ),
 
-    // ── Bobot & IoT ───────────────────────────────────────────
     _FaqItem(
-      category: 'Bobot & IoT',
-      question: 'Bagaimana cara mencatat bobot domba secara manual?',
+      category: 'Berat Badan & IoT',
+      question: 'Bagaimana cara mencatat Berat Badan domba?',
       answer:
-          'Buka halaman detail domba, pilih tab Bobot Badan, lalu tekan tombol tambah (+). Masukkan tanggal penimbangan dan nilai bobot dalam kilogram. Catatan bersifat opsional.',
+          'Buka halaman riwayat berat badan, pilih domba yang mau dicatat berat badannya, lalu input berat badan dalam kilogram. Semua pencatatan berat badan dilakukan secara manual oleh staff.',
     ),
     _FaqItem(
-      category: 'Bobot & IoT',
-      question: 'Bagaimana cara mencatat bobot domba secara otomatis?',
+      category: 'Berat Badan & IoT',
+      question: 'Apa fungsi IoT dalam GoSheep?',
       answer:
-          'Hubungkan timbangan IoT ke jaringan yang sama dengan ponsel Anda. Saat domba ditimbang, data bobot akan terkirim dan tersimpan otomatis ke riwayat bobot domba tersebut tanpa perlu input manual.',
-    ),
-    _FaqItem(
-      category: 'Bobot & IoT',
-      question: 'Timbangan IoT tidak mengirim data, apa yang harus dilakukan?',
-      answer:
-          'Periksa apakah timbangan dan ponsel terhubung ke jaringan yang sama, lalu pastikan timbangan menyala dan dalam jangkauan. Jika masih gagal, Anda tetap bisa mencatat bobot secara manual dari halaman detail domba.',
-    ),
-    _FaqItem(
-      category: 'Bobot & IoT',
-      question: 'Apakah bisa melihat grafik perkembangan bobot domba?',
-      answer:
-          'Ya. Di tab Bobot Badan pada halaman detail domba, tersedia grafik garis yang menampilkan tren perkembangan bobot dari waktu ke waktu. Grafik ini membantu memantau pertumbuhan secara visual.',
-    ),
-    _FaqItem(
-      category: 'Bobot & IoT',
-      question: 'Apakah catatan bobot lama bisa diubah atau dihapus?',
-      answer:
-          'Hanya catatan bobot yang paling baru yang dapat diubah atau dihapus. Catatan bobot lama dikunci untuk menjaga konsistensi riwayat data.',
+          'IoT di GoSheep menggunakan sensor DHT22 yang dipasang di setiap kandang untuk memantau suhu dan kelembaban secara otomatis setiap 5 menit. Data dikirim oleh ESP32 melalui WiFi ke server menggunakan protokol MQTT. Informasi ini digunakan untuk mendeteksi kondisi heat stress yang dapat memengaruhi kesehatan domba.',
     ),
 
-    // ── Kesehatan ─────────────────────────────────────────────
+    _FaqItem(
+      category: 'Berat Badan & IoT',
+      question: 'Bagaimana cara melihat kondisi lingkungan kandang?',
+      answer:
+          'Data suhu dan kelembaban kandang ditampilkan secara real-time di aplikasi. Setiap pembacaan sensor tersimpan di riwayat log kandang, sehingga Anda bisa memantau tren kondisi lingkungan dari waktu ke waktu.',
+    ),
+    _FaqItem(
+      category: 'Berat Badan & IoT',
+      question: 'Apakah catatan Berat Badan lama bisa diubah atau dihapus?',
+      answer:
+          'Hanya catatan Berat Badan yang paling baru yang dapat diubah atau dihapus. Catatan Berat Badan lama dikunci untuk menjaga konsistensi riwayat data.',
+    ),
+    _FaqItem(
+      category: 'Berat Badan & IoT',
+      question: 'Apakah bisa melihat grafik perkembangan Berat Badan domba?',
+      answer:
+          'Ya. Di tab Berat Badan Badan pada halaman detail domba, tersedia grafik garis yang menampilkan tren perkembangan Berat Badan dari waktu ke waktu. Grafik ini membantu memantau pertumbuhan secara visual.',
+    ),
+
     _FaqItem(
       category: 'Kesehatan',
       question: 'Bagaimana cara mencatat kondisi kesehatan domba?',
@@ -108,12 +106,23 @@ class _HelpScreenState extends State<HelpScreen> {
     ),
     _FaqItem(
       category: 'Kesehatan',
+      question: 'Apa itu heat stress dan bagaimana sistem menanganinya?',
+      answer:
+          'Heat stress adalah kondisi stres panas saat suhu kandang terlalu tinggi. Sistem IoT memantau rata-rata suhu kandang setiap 20 menit. Jika rata-rata mencapai 35°C, sistem mendeteksi risiko heat stress ringan. Jika mencapai 40°C, terdeteksi heat stress kritis. Saat terdeteksi, catatan kesehatan dibuat otomatis untuk seluruh domba di kandang tersebut dan notifikasi dikirim ke aplikasi.',
+    ),
+    _FaqItem(
+      category: 'Kesehatan',
+      question: 'Apakah catatan kesehatan dari IoT sama dengan catatan manual?',
+      answer:
+          'Catatan kesehatan dari IoT (heat stress) dibuat otomatis oleh sistem dan ditandai dengan sumber "iot". Catatan ini ikut dihitung dalam EBV Kesehatan, namun tidak ditampilkan sebagai kondisi aktif di tampilan utama domba — hanya kondisi yang dicatat manual oleh staff yang ditampilkan secara langsung.',
+    ),
+    _FaqItem(
+      category: 'Kesehatan',
       question: 'Apakah kondisi kesehatan memengaruhi rekomendasi kawin?',
       answer:
-          'Ya. Riwayat kesehatan domba digunakan untuk menghitung EBV Kesehatan. Domba dengan rekam jejak kesehatan yang baik akan mendapatkan nilai EBV Kesehatan lebih tinggi dan lebih diutamakan dalam rekomendasi.',
+          'Ya. Riwayat kesehatan domba — baik yang dicatat manual maupun yang terdeteksi otomatis oleh IoT — digunakan untuk menghitung EBV Kesehatan. Domba dengan rekam jejak kesehatan yang baik akan mendapatkan nilai EBV Kesehatan lebih tinggi dan lebih diutamakan dalam rekomendasi.',
     ),
 
-    // ── Perkawinan & Kehamilan ────────────────────────────────
     _FaqItem(
       category: 'Perkawinan & Kehamilan',
       question: 'Bagaimana cara mencatat perkawinan domba?',
@@ -159,31 +168,36 @@ class _HelpScreenState extends State<HelpScreen> {
           'Ya. Catatan perkawinan dapat dihapus dari riwayat domba. Namun jika domba sudah dinyatakan bunting dan data kehamilan sudah dibuat, disarankan untuk memperbarui status kehamilan terlebih dahulu sebelum menghapus catatan perkawinan.',
     ),
 
-    // ── Rekomendasi Kawin ─────────────────────────────────────
     _FaqItem(
       category: 'Rekomendasi Kawin',
       question: 'Bagaimana sistem menentukan rekomendasi pasangan kawin?',
       answer:
-          'Sistem menyaring kandidat yang terlalu sekerabat menggunakan koefisien inbreeding, lalu memprediksi kualitas genetik anak dari kedua calon induk, dan meranking kandidat sesuai bobot kriteria yang Anda tentukan.',
+          'Sistem menggunakan empat tahap: (1) filter kandidat berdasarkan usia dan status aktif, (2) filter koefisien inbreeding menggunakan Wright Coefficient — pasangan dengan COI ≥ 6,25% dibuang, (3) prediksi Expected EBV Offspring dari rata-rata EBV kedua calon induk, (4) ranking menggunakan metode MOORA dengan Berat Badan kriteria yang ditentukan melalui AHP.',
     ),
     _FaqItem(
       category: 'Rekomendasi Kawin',
       question:
           'Mengapa ada domba yang tidak muncul sebagai kandidat pasangan?',
       answer:
-          'Pasangan dengan tingkat kekerabatan yang terlalu tinggi otomatis disaring oleh sistem agar keturunan tidak berisiko mengalami penurunan kualitas genetik akibat perkawinan sedarah.',
+          'Ada beberapa penyebab: (1) domba memiliki tingkat kekerabatan terlalu tinggi (COI ≥ 6,25%), (2) domba betina sedang bunting atau masih dalam perkawinan aktif, (3) usia domba belum mencukupi (betina minimal 8 bulan / 240 hari, jantan minimal 7 bulan / 210 hari), atau (4) EBV domba belum dihitung karena data Berat Badan belum lengkap.',
     ),
     _FaqItem(
       category: 'Rekomendasi Kawin',
       question: 'Apa itu EBV dan kenapa nilainya penting?',
       answer:
-          'EBV adalah perkiraan nilai genetik domba untuk suatu sifat, seperti bobot badan, pertambahan bobot harian, dan kesehatan. Semakin sesuai EBV calon induk dengan kebutuhan Anda, semakin besar potensi keturunan unggul yang dihasilkan.',
+          'EBV (Estimated Breeding Value) adalah perkiraan nilai genetik domba yang dihitung menggunakan model Random Forest. GoSheep menghitung tiga EBV: EBV Berat Badan (dari data berat badan), EBV ADG (pertambahan Berat Badan harian), dan EBV Kesehatan (dari riwayat kesehatan). EBV ini digunakan untuk memprediksi kualitas genetik keturunan dari pasangan yang direkomendasikan.',
     ),
     _FaqItem(
       category: 'Rekomendasi Kawin',
-      question: 'Apakah bobot kriteria rekomendasi bisa diatur sendiri?',
+      question: 'Kapan EBV domba mulai dihitung?',
       answer:
-          'Ya. Saat membuka fitur Rekomendasi Kawin, Anda dapat mengatur bobot prioritas untuk setiap kriteria seperti EBV Bobot, EBV Pertambahan Bobot Harian, EBV Kesehatan, dan Koefisien Inbreeding sesuai kebutuhan peternakan.',
+          'EBV dihitung otomatis setelah data Berat Badan lahir, Berat Badan sapih, dan ADG (pertambahan Berat Badan harian 0–90 hari) tersedia. Jika data belum lengkap, sistem menunggu hingga penimbangan berikutnya. EBV juga diperbarui otomatis setiap ada catatan kesehatan baru yang masuk.',
+    ),
+    _FaqItem(
+      category: 'Rekomendasi Kawin',
+      question: 'Apakah Berat Badan kriteria rekomendasi bisa diatur sendiri?',
+      answer:
+          'Ya. Saat membuka fitur Rekomendasi Kawin, Anda dapat mengatur Berat Badan prioritas untuk setiap kriteria seperti EBV Berat Badan, EBV Pertambahan Berat Badan Harian, EBV Kesehatan, dan Koefisien Inbreeding sesuai kebutuhan peternakan.',
     ),
     _FaqItem(
       category: 'Rekomendasi Kawin',
@@ -193,7 +207,6 @@ class _HelpScreenState extends State<HelpScreen> {
           'Ya. Dari halaman hasil rekomendasi, Anda bisa langsung menekan tombol Catat Perkawinan pada pasangan yang dipilih. Data pejantan dan induk akan terisi otomatis sehingga proses pencatatan menjadi lebih cepat.',
     ),
 
-    // ── Akun & Profil ─────────────────────────────────────────
     _FaqItem(
       category: 'Akun & Profil',
       question: 'Bagaimana cara mengubah kata sandi akun saya?',
@@ -216,7 +229,7 @@ class _HelpScreenState extends State<HelpScreen> {
       category: 'Akun & Profil',
       question: 'Apakah ada riwayat aktivitas yang bisa dilihat?',
       answer:
-          'Ya. GoSheep mencatat seluruh aktivitas perubahan data seperti penambahan, pembaruan, dan penghapusan data domba, kesehatan, bobot, perkawinan, dan kehamilan. Anda bisa melihatnya di menu Aktivitas di halaman utama.',
+          'Ya. GoSheep mencatat seluruh aktivitas perubahan data seperti penambahan, pembaruan, dan penghapusan data domba, kesehatan, Berat Badan, perkawinan, dan kehamilan. Anda bisa melihatnya di menu Aktivitas di halaman utama.',
     ),
   ];
 
