@@ -9,7 +9,8 @@ class ApiClient {
   static final Dio dio =
       Dio(
           BaseOptions(
-            baseUrl: "http://10.213.37.207:8000/api",
+            baseUrl:
+                "https://psteam.polibatam.ac.id/project/access/gosheep/api",
             connectTimeout: const Duration(seconds: 15),
             receiveTimeout: const Duration(seconds: 30),
             headers: {"Accept": "application/json"},
